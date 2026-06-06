@@ -1,0 +1,223 @@
+---
+import "../styles/global.css";
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Axiom Pathways — Connecting young talent to their passions</title>
+  <meta name="description" content="Axiom Pathways is a nonprofit teaching high school and college students the foundations of modern startups — AI, computer science, and marketing." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,400..600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<nav class="nav">
+  <a class="brand" href="#top"><span class="mark"></span>Axiom Pathways<small>™</small></a>
+  <a class="btn btn-primary" href="#apply">Apply now <span class="arrow">→</span></a>
+</nav>
+
+<header class="hero wrap" id="top">
+  <div>
+    <span class="eyebrow"><span class="dot"></span> Fall '26 cohort · applications open</span>
+    <h1 data-anim="hero">Connecting young talent to their <em>passions.</em></h1>
+    <p class="lede" data-anim="hero">A nonprofit teaching high school and college students the foundations of modern startups — AI, computer science, and marketing. We pick by passion, not credentials.</p>
+    <div class="cta" data-anim="hero">
+      <a class="btn btn-primary" href="#apply">Start your application <span class="arrow">→</span></a>
+    </div>
+  </div>
+</header>
+
+<section id="apply" class="apply">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-eyebrow">— The application</div>
+      <h2 class="sec-title">One form. <em>That's it.</em></h2>
+      <p class="sec-sub">Sections 1 and 2 are required. The letter is optional — but it's how we find the most passionate.</p>
+    </div>
+
+    <form class="form-shell reveal" id="applyForm" novalidate>
+      <!-- Section 1 -->
+      <fieldset class="fieldset">
+        <legend><span class="step">1</span> About you <span class="req">· required</span></legend>
+        <p class="hint">The basics so we can reach you.</p>
+        <div class="grid-2">
+          <div class="field">
+            <label for="name">Full name <span class="star">*</span></label>
+            <input id="name" name="name" type="text" required autocomplete="name" />
+          </div>
+          <div class="field">
+            <label for="email">Email <span class="star">*</span></label>
+            <input id="email" name="email" type="email" required autocomplete="email" />
+          </div>
+          <div class="field">
+            <label for="phone">Phone <span class="star">*</span></label>
+            <input id="phone" name="phone" type="tel" required autocomplete="tel" />
+          </div>
+          <div class="field">
+            <label for="school">School <span class="star">*</span></label>
+            <input id="school" name="school" type="text" required />
+          </div>
+          <div class="field">
+            <label for="grade">Grade / Year <span class="star">*</span></label>
+            <select id="grade" name="grade" required>
+              <option value="" disabled selected>Select…</option>
+              <option>9th grade</option>
+              <option>10th grade</option>
+              <option>11th grade</option>
+              <option>12th grade</option>
+              <option>College — Freshman</option>
+              <option>College — Sophomore</option>
+              <option>College — Junior</option>
+              <option>College — Senior</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Section 2 -->
+      <fieldset class="fieldset">
+        <legend><span class="step">2</span> Your track <span class="req">· required</span></legend>
+        <p class="hint">Where you want to fit and what you want to learn.</p>
+        <div class="grid-2">
+          <div class="field">
+            <label for="track">Which track? <span class="star">*</span></label>
+            <select id="track" name="track" required>
+              <option value="" disabled selected>Select…</option>
+              <option>Join a chapter (Member)</option>
+              <option>Lead a chapter</option>
+              <option>Founding team</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="interest">Main interest <span class="star">*</span></label>
+            <select id="interest" name="interest" required>
+              <option value="" disabled selected>Select…</option>
+              <option>AI</option>
+              <option>Computer Science</option>
+              <option>Marketing</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="chapter">City / Chapter <span class="star">*</span></label>
+            <input id="chapter" name="chapter" type="text" required placeholder="e.g. Bay Area, Online" />
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Section 3 -->
+      <fieldset class="fieldset">
+        <legend><span class="step">3</span> The letter <span class="opt">· optional</span></legend>
+        <p class="hint">No résumé. Just tell us what you want to build, why it matters, and drop your socials.</p>
+        <div class="field">
+          <label for="letter">What do you want to build, and why does it matter to you?</label>
+          <textarea id="letter" name="letter" placeholder="A few paragraphs is plenty."></textarea>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="instagram">Instagram</label>
+            <input id="instagram" name="instagram" type="text" placeholder="@handle" />
+          </div>
+          <div class="field">
+            <label for="linkedin">LinkedIn</label>
+            <input id="linkedin" name="linkedin" type="text" placeholder="profile URL" />
+          </div>
+          <div class="field">
+            <label for="github">GitHub</label>
+            <input id="github" name="github" type="text" placeholder="@username" />
+          </div>
+          <div class="field">
+            <label for="other_link">Other link</label>
+            <input id="other_link" name="other_link" type="text" placeholder="portfolio, X, TikTok…" />
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit" id="submitBtn">Submit application <span class="arrow">→</span></button>
+        <span class="form-status" id="formStatus" role="status" aria-live="polite"></span>
+      </div>
+    </form>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-bottom">
+      <span>© 2026 AXIOM PATHWAYS — A 501(c)(3) IN FORMATION</span>
+      <span>GLOBAL · BUILT FOR THE MOST PASSIONATE</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import Lenis from "lenis";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
+  function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
+  lenis.on("scroll", ScrollTrigger.update);
+
+  document.querySelectorAll('a[href^="#"]').forEach((a) => {
+    a.addEventListener("click", (e) => {
+      const id = (a as HTMLAnchorElement).getAttribute("href")!;
+      if (id.length > 1) { e.preventDefault(); lenis.scrollTo(id, { offset: -70 }); }
+    });
+  });
+
+  gsap.to('[data-anim="hero"]', {
+    opacity: 1, y: 0, duration: 0.9, ease: "power3.out", stagger: 0.12,
+    onStart() { gsap.set('[data-anim="hero"]', { opacity: 0, y: 24 }); },
+  });
+
+  gsap.utils.toArray<HTMLElement>(".reveal").forEach((el) => {
+    gsap.to(el, {
+      opacity: 1, y: 0, duration: 0.8, ease: "power3.out",
+      scrollTrigger: { trigger: el, start: "top 85%" },
+    });
+  });
+
+  // ---- Form submit → Apps Script webhook ----
+  const WEBHOOK_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+  const form = document.getElementById("applyForm") as HTMLFormElement;
+  const statusEl = document.getElementById("formStatus")!;
+  const btn = document.getElementById("submitBtn") as HTMLButtonElement;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+
+    btn.disabled = true;
+    statusEl.className = "form-status";
+    statusEl.textContent = "Sending…";
+
+    const data = Object.fromEntries(new FormData(form).entries());
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "apply", ...data }),
+      });
+      statusEl.className = "form-status ok";
+      statusEl.textContent = "Got it — application received. We'll be in touch.";
+      form.reset();
+    } catch (err) {
+      statusEl.className = "form-status err";
+      statusEl.textContent = "Something went wrong. Email apply@axiompathways.org instead.";
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>
+
+</body>
+</html>
