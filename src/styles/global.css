@@ -265,6 +265,7 @@ img { max-width: 100%; display: block; }
   .h-center { width: auto; text-align: left; }
   .h-center h1 { font-size: clamp(3rem, 18vw, 6rem); }
   .h-metrics { flex-direction: row; flex-wrap: wrap; gap: 18px 30px; text-align: left; }
+  .h-desc p { display: none; }
   .h-desc { max-width: none; }
   .h-mark { opacity: 0.45; }
 }
