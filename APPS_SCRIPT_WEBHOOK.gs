@@ -30,7 +30,7 @@
 // Open your "Axiom Interns" sheet. The ID is the long string in the URL:
 //   https://docs.google.com/spreadsheets/d/THIS_PART_IS_THE_ID/edit
 // Copy it between /d/ and /edit and paste it below.
-var SHEET_ID = "1DHxtMllRRCBx9eMziqjirV4PuOrrf_ZrvuaZS4YMmlU";
+var SHEET_ID = "1h1r0gAI2itYXFOiyqVrzKr_iGP9q3BbV0gq78ImFeiM";
 
 // Tab the website writes to. Created automatically if missing.
 var APPLICATIONS_TAB = "Applications";
