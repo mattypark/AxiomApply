@@ -7,6 +7,7 @@ import "../styles/global.css";
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="/axiom-mark.png" />
   <title>Axiom Pathways — Connecting young talent to their passions</title>
   <meta name="description" content="Axiom Pathways is a nonprofit teaching high school and college students the foundations of modern startups — AI, computer science, and marketing." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -15,169 +16,173 @@ import "../styles/global.css";
 </head>
 <body>
 
-<div class="shell">
-
-  <!-- HOME BOX -->
+  <!-- HOME -->
   <section class="panel hero-panel" id="top">
     <div class="hero-canvas">
       <div class="h-mark" aria-hidden="true"></div>
 
       <div class="h-tl">
-        <div class="h-brand">Axiom</div>
+        <span class="h-est">Est. May 2025 — very new</span>
+      </div>
+
+      <div class="h-center">
+        <h1><span class="l1">Axiom</span><span class="l2">Pathways</span></h1>
       </div>
 
       <div class="h-metrics">
-        <div class="metric"><span class="ml">Startups</span><span class="mv">40+ partners</span></div>
-        <div class="metric"><span class="ml">Interns</span><span class="mv">300+ placed</span></div>
-        <div class="metric"><span class="ml">Employees</span><span class="mv">25 mentors</span></div>
-        <div class="metric"><span class="ml">Outreach</span><span class="mv">12 cities</span></div>
+        <div class="metric"><span class="ml">Startups</span><span class="mv">3 partners</span></div>
+        <div class="metric"><span class="ml">Interns</span><span class="mv">0 placed</span></div>
+        <div class="metric"><span class="ml">Team</span><span class="mv">2 founders</span></div>
+        <div class="metric"><span class="ml">Outreach</span><span class="mv">SF & NYC</span></div>
       </div>
 
       <div class="h-desc">
         <p>We drop high school and college students straight into real startups — building what ships, not slide decks. Picked for passion, not credentials.</p>
         <a class="know" href="#apply">Start your application →</a>
       </div>
-
-      <div class="h-br">Pathways</div>
     </div>
   </section>
 
-  <!-- APPLICATION BOX -->
-  <section class="panel" id="apply">
-    <aside class="panel-rail">
-      <span class="glyph">✳</span>
-      <span class="rail-label">Apply</span>
-    </aside>
-    <div class="panel-body">
+  <!-- APPLICATION -->
+  <section class="apply-section" id="apply">
+    <div class="apply-inner">
+      <div id="formWrap">
       <span class="tag reveal"><span class="plus">+</span> The application</span>
       <h2 class="sec-title reveal">One step <em>at a time.</em></h2>
       <div class="sec-rule"></div>
-
-      <form id="applyForm" class="reveal" novalidate>
-        <div class="stepper">
-          <div class="stepper-dots">
-            <span class="sdot active" data-dot="0"></span>
-            <span class="sdot" data-dot="1"></span>
-            <span class="sdot" data-dot="2"></span>
+        <form id="applyForm" class="reveal" novalidate>
+          <div class="stepper">
+            <div class="stepper-dots">
+              <span class="sdot active" data-dot="0"></span>
+              <span class="sdot" data-dot="1"></span>
+              <span class="sdot" data-dot="2"></span>
+            </div>
+            <div class="stepper-label"><span id="stepNum">1</span> / 3 — <span id="stepName">About you</span></div>
           </div>
-          <div class="stepper-label"><span id="stepNum">1</span> / 3 — <span id="stepName">About you</span></div>
-        </div>
 
-        <!-- Step 1 -->
-        <div class="step-panel active" data-step="0">
-          <fieldset class="fieldset">
-            <p class="hint">The basics so we can reach you. All required.</p>
-            <div class="grid-2">
-              <div class="field">
-                <label for="name">Full name <span class="star">*</span></label>
-                <input id="name" name="name" type="text" required autocomplete="name" />
+          <!-- Step 1 -->
+          <div class="step-panel active" data-step="0">
+            <fieldset class="fieldset">
+              <p class="hint">The basics so we can reach you. All required.</p>
+              <div class="grid-2">
+                <div class="field">
+                  <label for="name">Full name <span class="star">*</span></label>
+                  <input id="name" name="name" type="text" required autocomplete="name" />
+                </div>
+                <div class="field">
+                  <label for="email">Email <span class="star">*</span></label>
+                  <input id="email" name="email" type="email" required autocomplete="email" />
+                </div>
+                <div class="field">
+                  <label for="phone">Phone <span class="star">*</span></label>
+                  <input id="phone" name="phone" type="tel" required autocomplete="tel" />
+                </div>
+                <div class="field">
+                  <label for="school">School <span class="star">*</span></label>
+                  <input id="school" name="school" type="text" required />
+                </div>
+                <div class="field">
+                  <label for="grade">Grade / Year <span class="star">*</span></label>
+                  <select id="grade" name="grade" required>
+                    <option value="" disabled selected>Select…</option>
+                    <option>9th grade</option>
+                    <option>10th grade</option>
+                    <option>11th grade</option>
+                    <option>12th grade</option>
+                    <option>College — Freshman</option>
+                    <option>College — Sophomore</option>
+                    <option>College — Junior</option>
+                    <option>College — Senior</option>
+                    <option>Other</option>
+                  </select>
+                </div>
               </div>
-              <div class="field">
-                <label for="email">Email <span class="star">*</span></label>
-                <input id="email" name="email" type="email" required autocomplete="email" />
-              </div>
-              <div class="field">
-                <label for="phone">Phone <span class="star">*</span></label>
-                <input id="phone" name="phone" type="tel" required autocomplete="tel" />
-              </div>
-              <div class="field">
-                <label for="school">School <span class="star">*</span></label>
-                <input id="school" name="school" type="text" required />
-              </div>
-              <div class="field">
-                <label for="grade">Grade / Year <span class="star">*</span></label>
-                <select id="grade" name="grade" required>
-                  <option value="" disabled selected>Select…</option>
-                  <option>9th grade</option>
-                  <option>10th grade</option>
-                  <option>11th grade</option>
-                  <option>12th grade</option>
-                  <option>College — Freshman</option>
-                  <option>College — Sophomore</option>
-                  <option>College — Junior</option>
-                  <option>College — Senior</option>
-                  <option>Other</option>
-                </select>
-              </div>
-            </div>
-          </fieldset>
-        </div>
+            </fieldset>
+          </div>
 
-        <!-- Step 2 -->
-        <div class="step-panel" data-step="1">
-          <fieldset class="fieldset">
-            <p class="hint">Where you want to fit and what you want to learn. All required.</p>
-            <div class="grid-2">
-              <div class="field">
-                <label for="track">Which track? <span class="star">*</span></label>
-                <select id="track" name="track" required>
-                  <option value="" disabled selected>Select…</option>
-                  <option>Join a chapter (Member)</option>
-                  <option>Lead a chapter</option>
-                  <option>Founding team</option>
-                </select>
+          <!-- Step 2 -->
+          <div class="step-panel" data-step="1">
+            <fieldset class="fieldset">
+              <p class="hint">Where you want to fit and what you want to learn. All required.</p>
+              <div class="grid-2">
+                <div class="field">
+                  <label for="interest">Main interest <span class="star">*</span></label>
+                  <select id="interest" name="interest" required>
+                    <option value="" disabled selected>Select…</option>
+                    <option>AI</option>
+                    <option>Computer Science</option>
+                    <option>Marketing</option>
+                    <option>Finance</option>
+                    <option>Startups</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+                <div class="field" id="interestOtherField" style="display:none">
+                  <label for="interestOther">Tell us what <span class="star">*</span></label>
+                  <input id="interestOther" name="interest_other" type="text" placeholder="What else are you interested in?" />
+                </div>
+                <div class="field">
+                  <label for="chapter">City / Chapter <span class="star">*</span></label>
+                  <input id="chapter" name="chapter" type="text" required placeholder="e.g. Bay Area, Online" />
+                </div>
               </div>
-              <div class="field">
-                <label for="interest">Main interest <span class="star">*</span></label>
-                <select id="interest" name="interest" required>
-                  <option value="" disabled selected>Select…</option>
-                  <option>AI</option>
-                  <option>Computer Science</option>
-                  <option>Marketing</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="chapter">City / Chapter <span class="star">*</span></label>
-                <input id="chapter" name="chapter" type="text" required placeholder="e.g. Bay Area, Online" />
-              </div>
-            </div>
-          </fieldset>
-        </div>
+            </fieldset>
+          </div>
 
-        <!-- Step 3 -->
-        <div class="step-panel" data-step="2">
-          <fieldset class="fieldset">
-            <p class="hint">Optional. No résumé — just tell us what you want to build, why it matters, and drop your socials.</p>
-            <div class="field">
-              <label for="letter">What do you want to build, and why does it matter to you?</label>
-              <textarea id="letter" name="letter" placeholder="A few paragraphs is plenty."></textarea>
-            </div>
-            <div class="grid-2">
+          <!-- Step 3 -->
+          <div class="step-panel" data-step="2">
+            <fieldset class="fieldset">
+              <p class="hint">Optional. No résumé — just tell us what you want to build, why it matters, and drop your socials.</p>
               <div class="field">
-                <label for="instagram">Instagram</label>
-                <input id="instagram" name="instagram" type="text" placeholder="@handle" />
+                <label for="letter">What do you want to build, and why does it matter to you?</label>
+                <textarea id="letter" name="letter" placeholder="A few paragraphs is plenty."></textarea>
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label for="instagram">Instagram</label>
+                  <input id="instagram" name="instagram" type="text" placeholder="@handle" />
+                </div>
+                <div class="field">
+                  <label for="linkedin">LinkedIn</label>
+                  <input id="linkedin" name="linkedin" type="text" placeholder="profile URL" />
+                </div>
+                <div class="field">
+                  <label for="github">GitHub</label>
+                  <input id="github" name="github" type="text" placeholder="@username" />
+                </div>
+                <div class="field">
+                  <label for="other_link">Other link</label>
+                  <input id="other_link" name="other_link" type="text" placeholder="portfolio, X, TikTok…" />
+                </div>
               </div>
               <div class="field">
-                <label for="linkedin">LinkedIn</label>
-                <input id="linkedin" name="linkedin" type="text" placeholder="profile URL" />
+                <label for="resume">Resume / CV <span class="optnote">(optional — PDF, DOC, max 8MB)</span></label>
+                <input id="resume" name="resume" type="file" accept=".pdf,.doc,.docx,application/pdf" />
               </div>
-              <div class="field">
-                <label for="github">GitHub</label>
-                <input id="github" name="github" type="text" placeholder="@username" />
-              </div>
-              <div class="field">
-                <label for="other_link">Other link</label>
-                <input id="other_link" name="other_link" type="text" placeholder="portfolio, X, TikTok…" />
-              </div>
-            </div>
-            <div class="field">
-              <label for="resume">Resume / CV <span class="optnote">(optional — PDF, DOC, max 8MB)</span></label>
-              <input id="resume" name="resume" type="file" accept=".pdf,.doc,.docx,application/pdf" />
-            </div>
-          </fieldset>
-        </div>
+            </fieldset>
+          </div>
 
-        <div class="form-actions">
-          <button class="btn btn-ghost" type="button" id="backBtn" style="display:none">← Back</button>
-          <button class="btn btn-primary" type="button" id="nextBtn">Next <span class="arrow">→</span></button>
-          <button class="btn btn-primary" type="submit" id="submitBtn" style="display:none">Submit application <span class="arrow">→</span></button>
-          <span class="form-status" id="formStatus" role="status" aria-live="polite"></span>
+          <div class="form-actions">
+            <button class="btn btn-ghost" type="button" id="backBtn" style="display:none">← Back</button>
+            <button class="btn btn-primary" type="button" id="nextBtn">Next <span class="arrow">→</span></button>
+            <button class="btn btn-primary" type="submit" id="submitBtn" style="display:none">Submit application <span class="arrow">→</span></button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Success screen (replaces form after submit) -->
+      <div id="successScreen" class="success-screen" style="display:none">
+        <div class="success-checkmark">
+          <svg class="checkmark-svg" viewBox="0 0 52 52">
+            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+          </svg>
         </div>
-      </form>
+        <h3 class="success-title">Received. We'll get back to you soon.</h3>
+        <p class="success-sub">Check your email for results soon.</p>
+      </div>
     </div>
   </section>
-
-</div>
 
 <script>
   import { gsap } from "gsap";
@@ -198,10 +203,12 @@ import "../styles/global.css";
     });
   });
 
-  gsap.set([".h-mark", ".h-tl", ".h-metrics", ".h-desc", ".h-br"], { opacity: 0, y: 20 });
-  gsap.to([".h-tl", ".h-metrics", ".h-desc", ".h-br"], {
+  gsap.set([".h-mark", ".h-metrics", ".h-desc"], { opacity: 0, y: 20 });
+  gsap.set(".h-center", { opacity: 0 });
+  gsap.to([".h-metrics", ".h-desc"], {
     opacity: 1, y: 0, duration: 0.9, ease: "power3.out", stagger: 0.1,
   });
+  gsap.to(".h-center", { opacity: 1, duration: 0.9, ease: "power3.out" });
   gsap.to(".h-mark", { opacity: 1, y: 0, duration: 1.1, ease: "power3.out" });
 
   gsap.utils.toArray<HTMLElement>(".reveal").forEach((el) => {
@@ -212,7 +219,7 @@ import "../styles/global.css";
   });
 
   // ---- Multi-step wizard ----
-  const STEP_NAMES = ["About you", "Your track", "The letter"];
+  const STEP_NAMES = ["About you", "Your focus", "The letter"];
   const stepPanels = Array.from(document.querySelectorAll<HTMLElement>(".step-panel"));
   const dots = Array.from(document.querySelectorAll<HTMLElement>(".sdot"));
   const backBtn = document.getElementById("backBtn") as HTMLButtonElement;
@@ -243,6 +250,17 @@ import "../styles/global.css";
     return true;
   }
 
+  // Show "tell us what" only when Main interest = Other
+  const interestSel = document.getElementById("interest") as HTMLSelectElement;
+  const interestOtherField = document.getElementById("interestOtherField") as HTMLElement;
+  const interestOther = document.getElementById("interestOther") as HTMLInputElement;
+  interestSel.addEventListener("change", () => {
+    const isOther = interestSel.value === "Other";
+    interestOtherField.style.display = isOther ? "" : "none";
+    interestOther.required = isOther;
+    if (!isOther) interestOther.value = "";
+  });
+
   nextBtn.addEventListener("click", () => {
     if (!validateStep(current)) return;
     if (current < stepPanels.length - 1) { current++; showStep(current); }
@@ -253,6 +271,8 @@ import "../styles/global.css";
 
   // ---- Submit → Apps Script webhook ----
   const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycby9A1cAAWRPtdWr0XBe8q1X17tpn49RmZ1UWUBjrXE11n7kI211mhxVKFpCIpfdtY5fwA/exec";
+  const formWrap = document.getElementById("formWrap") as HTMLElement;
+  const successScreen = document.getElementById("successScreen") as HTMLElement;
 
   function fileToBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -265,21 +285,24 @@ import "../styles/global.css";
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (current !== stepPanels.length - 1) return;
     if (!validateStep(current)) return;
 
     submitBtn.disabled = true;
-    statusEl.className = "form-status";
-    statusEl.textContent = "Sending…";
+    submitBtn.textContent = "Sending…";
 
     const fd = new FormData(form);
     const data: Record<string, string> = {};
     fd.forEach((v, k) => { if (typeof v === "string") data[k] = v; });
+    if (data.interest === "Other" && data.interest_other) {
+      data.interest = "Other — " + data.interest_other;
+    }
+    delete data.interest_other;
     const resumeInput = document.getElementById("resume") as HTMLInputElement;
     const file = resumeInput.files && resumeInput.files[0];
     if (file) {
       if (file.size > 8 * 1024 * 1024) {
-        statusEl.className = "form-status err";
-        statusEl.textContent = "Resume too large (max 8MB).";
+        submitBtn.textContent = "Resume too large (max 8MB).";
         submitBtn.disabled = false;
         return;
       }
@@ -287,23 +310,23 @@ import "../styles/global.css";
       data.resume_type = file.type || "application/octet-stream";
       data.resume_base64 = await fileToBase64(file);
     }
+    const payload = JSON.stringify({ action: "apply", ...data });
+
+    // Use fetch with no-cors — fires the POST reliably, Apps Script processes it.
     try {
       await fetch(WEBHOOK_URL, {
         method: "POST",
         mode: "no-cors",
+        keepalive: true,
         headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ action: "apply", ...data }),
+        body: payload,
       });
-      statusEl.className = "form-status ok";
-      statusEl.textContent = "Got it — application received. We'll be in touch.";
-      form.reset();
-      current = 0; showStep(0);
-    } catch (err) {
-      statusEl.className = "form-status err";
-      statusEl.textContent = "Something went wrong. Email apply@axiompathways.org instead.";
-    } finally {
-      submitBtn.disabled = false;
-    }
+    } catch (_) {}
+
+    // Hide form, show success screen
+    formWrap.style.display = "none";
+    successScreen.style.display = "";
+    gsap.fromTo(successScreen, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" });
   });
 </script>
 

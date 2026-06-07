@@ -44,6 +44,23 @@ Interest | City/Chapter | Status | Letter | Instagram | LinkedIn |
 GitHub | Other Link
 ```
 
+## Step 2.5 — Paste your Sheet ID (IMPORTANT)
+
+The script writes by **Sheet ID**, not "active sheet" (more reliable — works
+even if the script isn't bound to the sheet).
+
+1. Open your **Axiom Interns** sheet.
+2. Copy the ID from the URL — the long part between `/d/` and `/edit`:
+   `https://docs.google.com/spreadsheets/d/`**`THIS_IS_THE_ID`**`/edit`
+3. In the script, paste it here:
+   ```js
+   var SHEET_ID = "THIS_IS_THE_ID";
+   ```
+4. Save.
+
+> If submissions previously errored with "unable to open the file," this is why
+> — the old script tried `getActiveSpreadsheet()` on a sheet it couldn't open.
+
 ## Step 3 — Deploy as a web app
 
 1. Top right: **Deploy → New deployment**.

@@ -26,6 +26,12 @@
  * an extra Drive permission. Click Allow.
  */
 
+// ── PASTE YOUR SHEET ID HERE ────────────────────────────────────────
+// Open your "Axiom Interns" sheet. The ID is the long string in the URL:
+//   https://docs.google.com/spreadsheets/d/THIS_PART_IS_THE_ID/edit
+// Copy it between /d/ and /edit and paste it below.
+var SHEET_ID = "1DHxtMllRRCBx9eMziqjirV4PuOrrf_ZrvuaZS4YMmlU";
+
 // Tab the website writes to. Created automatically if missing.
 var APPLICATIONS_TAB = "Applications";
 
@@ -112,7 +118,9 @@ function getOrCreateFolder_(name) {
 }
 
 function getOrCreateTab_() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var ss = SHEET_ID && SHEET_ID !== "PASTE_YOUR_SHEET_ID_HERE"
+    ? SpreadsheetApp.openById(SHEET_ID)
+    : SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(APPLICATIONS_TAB);
   if (!sheet) {
     sheet = ss.insertSheet(APPLICATIONS_TAB);

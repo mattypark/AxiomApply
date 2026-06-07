@@ -28,7 +28,6 @@ body {
   -webkit-font-smoothing: antialiased;
   line-height: 1.6;
   overflow-x: hidden;
-  padding: var(--gutter);
 }
 
 a { color: inherit; text-decoration: none; }
@@ -78,6 +77,10 @@ img { max-width: 100%; display: block; }
   .panel-rail .rail-label { writing-mode: horizontal-tb; transform: none; }
   .panel-rail .glyph { font-size: 1.8rem; }
 }
+
+/* ---------- Application section (deboxed) ---------- */
+.apply-section { padding: clamp(60px, 10vw, 140px) clamp(26px, 4vw, 56px) clamp(80px, 12vw, 160px); }
+.apply-inner { max-width: 860px; margin: 0 auto; }
 
 /* ---------- Tag / eyebrow ---------- */
 .tag {
@@ -159,6 +162,44 @@ img { max-width: 100%; display: block; }
 .form-status.ok { color: var(--green); }
 .form-status.err { color: #d23b3b; }
 
+/* ---------- Success screen ---------- */
+.success-screen {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 60px 20px 80px; min-height: 340px;
+}
+
+.success-checkmark { width: 80px; height: 80px; margin-bottom: 32px; }
+
+.checkmark-svg { width: 80px; height: 80px; border-radius: 50%; display: block; }
+
+.checkmark-circle {
+  stroke: var(--green); stroke-width: 2; stroke-miterlimit: 10;
+  stroke-dasharray: 157; stroke-dashoffset: 157;
+  animation: checkmark-circle 0.6s ease-in-out forwards;
+}
+
+.checkmark-check {
+  stroke: var(--green); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 48; stroke-dashoffset: 48;
+  animation: checkmark-check 0.4s 0.4s ease-in-out forwards;
+}
+
+@keyframes checkmark-circle {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes checkmark-check {
+  to { stroke-dashoffset: 0; }
+}
+
+.success-title {
+  font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700; letter-spacing: -0.02em;
+  color: var(--ink); margin-bottom: 10px;
+}
+
+.success-sub {
+  font-size: 1.05rem; color: var(--muted);
+}
+
 /* Reveal base */
 .reveal { opacity: 0; transform: translateY(24px); }
 
@@ -176,18 +217,22 @@ img { max-width: 100%; display: block; }
 .field input[type="file"]::file-selector-button:hover { border-color: var(--green); color: var(--green); }
 
 /* ---------- Tres-Mares-style hero composition ---------- */
-.hero-panel { display: block; position: relative; min-height: calc(100svh - 2 * var(--gutter)); overflow: hidden; }
+.hero-panel { display: block; position: relative; min-height: 100svh; overflow: hidden; background: transparent; border: none; border-radius: 0; margin: 0; }
 .hero-canvas { position: absolute; inset: 0; padding: clamp(26px, 4vw, 56px); }
 .hero-canvas > *:not(.h-mark) { position: absolute; z-index: 1; }
 
 .h-mark {
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  width: min(72vw, 680px); aspect-ratio: 1;
+  width: min(92vw, 920px); aspect-ratio: 1;
   background: url("/axiom-mark.png") center / contain no-repeat;
   z-index: 0;
 }
 
 .h-tl { top: clamp(26px, 4vw, 56px); left: clamp(26px, 4vw, 56px); }
+.h-est {
+  font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); font-weight: 600;
+}
 .h-brand { font-size: 1.45rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 22px; }
 .h-progs { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
 .h-prog {
@@ -197,10 +242,12 @@ img { max-width: 100%; display: block; }
 .h-prog:hover { color: var(--ink); }
 .h-prog.active { color: var(--ink); font-weight: 600; }
 
-.h-center { top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center; pointer-events: none; }
-.h-center h1 { font-size: clamp(3rem, 13vw, 11rem); line-height: 0.9; letter-spacing: -0.045em; font-weight: 700; color: var(--ink); }
+.h-center { top: 50%; left: 50%; transform: translate(-50%, calc(-50% - 10px)); width: min(92vw, 1100px); pointer-events: none; }
+.h-center h1 { font-size: clamp(3rem, 13vw, 11rem); line-height: 0.86; letter-spacing: -0.045em; font-weight: 700; color: var(--ink); display: flex; flex-direction: column; }
+.h-center .l1 { align-self: flex-start; }
+.h-center .l2 { align-self: flex-end; }
 
-.h-metrics { right: clamp(26px, 4vw, 56px); top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 26px; text-align: right; }
+.h-metrics { right: clamp(26px, 4vw, 56px); bottom: clamp(26px, 4vw, 56px); display: flex; flex-direction: column; gap: 26px; text-align: right; }
 .metric .ml { display: block; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; color: var(--ink); }
 .metric .mv { display: block; font-size: 1.05rem; color: var(--muted); margin-top: 4px; }
 
