@@ -293,6 +293,42 @@ import "../styles/global.css";
   // Block all native form submissions — submit only via button click
   form.addEventListener("submit", (e) => { e.preventDefault(); });
 
+  // Hidden iframe approach — most reliable way to POST to Apps Script
+  function postViaIframe(url: string, payload: string): Promise<void> {
+    return new Promise((resolve) => {
+      const iframe = document.createElement("iframe");
+      iframe.name = "axiom_submit_frame";
+      iframe.style.display = "none";
+      document.body.appendChild(iframe);
+
+      const hiddenForm = document.createElement("form");
+      hiddenForm.method = "POST";
+      hiddenForm.action = url;
+      hiddenForm.target = "axiom_submit_frame";
+
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "payload";
+      input.value = payload;
+      hiddenForm.appendChild(input);
+
+      document.body.appendChild(hiddenForm);
+
+      iframe.onload = () => {
+        setTimeout(() => {
+          iframe.remove();
+          hiddenForm.remove();
+        }, 500);
+        resolve();
+      };
+
+      // Timeout fallback — resolve after 6s no matter what
+      setTimeout(resolve, 6000);
+
+      hiddenForm.submit();
+    });
+  }
+
   submitBtn.addEventListener("click", async () => {
     if (current !== stepPanels.length - 1) return;
     if (!validateStep(current)) return;
@@ -338,16 +374,27 @@ import "../styles/global.css";
 
     const payload = JSON.stringify({ action: "apply", ...data });
 
-    // Use fetch with no-cors — fires the POST reliably, Apps Script processes it.
+    // Send via three methods for maximum reliability
+    // 1. Hidden iframe form POST (most reliable for Apps Script)
+    const iframePromise = postViaIframe(WEBHOOK_URL, payload);
+
+    // 2. Fetch as backup
+    const fetchPromise = fetch(WEBHOOK_URL, {
+      method: "POST",
+      mode: "no-cors",
+      keepalive: true,
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: payload,
+    }).catch(() => {});
+
+    // 3. sendBeacon as second backup
     try {
-      await fetch(WEBHOOK_URL, {
-        method: "POST",
-        mode: "no-cors",
-        keepalive: true,
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: payload,
-      });
+      const blob = new Blob([payload], { type: "text/plain;charset=utf-8" });
+      navigator.sendBeacon(WEBHOOK_URL, blob);
     } catch (_) {}
+
+    // Wait for iframe (has timeout) then show success
+    await iframePromise;
 
     // Hide form, show success screen
     formWrap.style.display = "none";

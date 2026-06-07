@@ -61,7 +61,20 @@ var HEADERS = [
 
 function doPost(e) {
   try {
-    var data = JSON.parse(e.postData.contents);
+    var raw = e.postData.contents;
+    var data;
+    // Handle both JSON body and form-encoded "payload" field
+    try {
+      data = JSON.parse(raw);
+    } catch (_) {
+      // Form POST sends payload=<json> as URL-encoded
+      var params = e.parameter || {};
+      if (params.payload) {
+        data = JSON.parse(params.payload);
+      } else {
+        data = params;
+      }
+    }
     var sheet = getOrCreateTab_();
 
     var resumeUrl = "";
