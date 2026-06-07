@@ -55,6 +55,8 @@ var HEADERS = [
   "GitHub",
   "Other Link",
   "Resume",
+  "Comments",
+  "Extra File",
 ];
 
 function doPost(e) {
@@ -64,7 +66,12 @@ function doPost(e) {
 
     var resumeUrl = "";
     if (data.resume_base64) {
-      resumeUrl = saveResume_(data);
+      resumeUrl = saveFile_(data, "resume_base64", "resume_type", "resume_name");
+    }
+
+    var extraFileUrl = "";
+    if (data.extra_file_base64) {
+      extraFileUrl = saveFile_(data, "extra_file_base64", "extra_file_type", "extra_file_name");
     }
 
     sheet.appendRow([
@@ -84,6 +91,8 @@ function doPost(e) {
       data.github     || "",
       data.other_link || "",
       resumeUrl,
+      data.comments   || "",
+      extraFileUrl,
     ]);
 
     return json_({ ok: true, resume: resumeUrl });
@@ -97,17 +106,16 @@ function doGet() {
   return json_({ ok: true, service: "axiom-pathways-webhook" });
 }
 
-function saveResume_(data) {
+function saveFile_(data, base64Key, typeKey, nameKey) {
   var folder = getOrCreateFolder_(RESUME_FOLDER);
-  var bytes = Utilities.base64Decode(data.resume_base64);
-  var type = data.resume_type || "application/octet-stream";
+  var bytes = Utilities.base64Decode(data[base64Key]);
+  var type = data[typeKey] || "application/octet-stream";
   var safeName = (data.name || "applicant").replace(/[^\w \-]/g, "").trim() || "applicant";
-  var fileName = data.resume_name
-    ? safeName + " — " + data.resume_name
-    : safeName + " — resume";
+  var fileName = data[nameKey]
+    ? safeName + " — " + data[nameKey]
+    : safeName + " — file";
   var blob = Utilities.newBlob(bytes, type, fileName);
   var file = folder.createFile(blob);
-  // Anyone in the org / with the link can view (so you can click it from the sheet).
   file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
   return file.getUrl();
 }

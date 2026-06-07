@@ -159,13 +159,21 @@ import "../styles/global.css";
                 <label for="resume">Resume / CV <span class="optnote">(optional — PDF, DOC, max 8MB)</span></label>
                 <input id="resume" name="resume" type="file" accept=".pdf,.doc,.docx,application/pdf" />
               </div>
+              <div class="field">
+                <label for="comments">Anything else you want to share with us?</label>
+                <textarea id="comments" name="comments" placeholder="Anything goes — context, questions, fun facts…"></textarea>
+              </div>
+              <div class="field">
+                <label for="extra_file">Additional file <span class="optnote">(optional — image, PDF, etc. max 8MB)</span></label>
+                <input id="extra_file" name="extra_file" type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.gif,image/*,application/pdf" />
+              </div>
             </fieldset>
           </div>
 
           <div class="form-actions">
             <button class="btn btn-ghost" type="button" id="backBtn" style="display:none">← Back</button>
             <button class="btn btn-primary" type="button" id="nextBtn">Next <span class="arrow">→</span></button>
-            <button class="btn btn-primary" type="submit" id="submitBtn" style="display:none">Submit application <span class="arrow">→</span></button>
+            <button class="btn btn-primary" type="button" id="submitBtn" style="display:none">Submit application <span class="arrow">→</span></button>
           </div>
         </form>
       </div>
@@ -283,8 +291,10 @@ import "../styles/global.css";
     });
   }
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  // Block all native form submissions — submit only via button click
+  form.addEventListener("submit", (e) => { e.preventDefault(); });
+
+  submitBtn.addEventListener("click", async () => {
     if (current !== stepPanels.length - 1) return;
     if (!validateStep(current)) return;
 
@@ -298,18 +308,35 @@ import "../styles/global.css";
       data.interest = "Other — " + data.interest_other;
     }
     delete data.interest_other;
+
+    // Resume file
     const resumeInput = document.getElementById("resume") as HTMLInputElement;
-    const file = resumeInput.files && resumeInput.files[0];
-    if (file) {
-      if (file.size > 8 * 1024 * 1024) {
+    const resumeFile = resumeInput.files && resumeInput.files[0];
+    if (resumeFile) {
+      if (resumeFile.size > 8 * 1024 * 1024) {
         submitBtn.textContent = "Resume too large (max 8MB).";
         submitBtn.disabled = false;
         return;
       }
-      data.resume_name = file.name;
-      data.resume_type = file.type || "application/octet-stream";
-      data.resume_base64 = await fileToBase64(file);
+      data.resume_name = resumeFile.name;
+      data.resume_type = resumeFile.type || "application/octet-stream";
+      data.resume_base64 = await fileToBase64(resumeFile);
     }
+
+    // Extra file
+    const extraInput = document.getElementById("extra_file") as HTMLInputElement;
+    const extraFile = extraInput.files && extraInput.files[0];
+    if (extraFile) {
+      if (extraFile.size > 8 * 1024 * 1024) {
+        submitBtn.textContent = "Extra file too large (max 8MB).";
+        submitBtn.disabled = false;
+        return;
+      }
+      data.extra_file_name = extraFile.name;
+      data.extra_file_type = extraFile.type || "application/octet-stream";
+      data.extra_file_base64 = await fileToBase64(extraFile);
+    }
+
     const payload = JSON.stringify({ action: "apply", ...data });
 
     // Use fetch with no-cors — fires the POST reliably, Apps Script processes it.
