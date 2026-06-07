@@ -61,19 +61,15 @@ var HEADERS = [
 
 function doPost(e) {
   try {
-    var raw = e.postData.contents;
+    // Read data from either FormData fields (e.parameter) or JSON body
     var data;
-    // Handle both JSON body and form-encoded "payload" field
-    try {
-      data = JSON.parse(raw);
-    } catch (_) {
-      // Form POST sends payload=<json> as URL-encoded
-      var params = e.parameter || {};
-      if (params.payload) {
-        data = JSON.parse(params.payload);
-      } else {
-        data = params;
-      }
+    var params = e.parameter || {};
+    if (params.name || params.email) {
+      // FormData submission (from browser)
+      data = params;
+    } else {
+      // JSON body (from curl / programmatic)
+      data = JSON.parse(e.postData.contents);
     }
     var sheet = getOrCreateTab_();
 

@@ -293,42 +293,6 @@ import "../styles/global.css";
   // Block all native form submissions — submit only via button click
   form.addEventListener("submit", (e) => { e.preventDefault(); });
 
-  // Hidden iframe approach — most reliable way to POST to Apps Script
-  function postViaIframe(url: string, payload: string): Promise<void> {
-    return new Promise((resolve) => {
-      const iframe = document.createElement("iframe");
-      iframe.name = "axiom_submit_frame";
-      iframe.style.display = "none";
-      document.body.appendChild(iframe);
-
-      const hiddenForm = document.createElement("form");
-      hiddenForm.method = "POST";
-      hiddenForm.action = url;
-      hiddenForm.target = "axiom_submit_frame";
-
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = "payload";
-      input.value = payload;
-      hiddenForm.appendChild(input);
-
-      document.body.appendChild(hiddenForm);
-
-      iframe.onload = () => {
-        setTimeout(() => {
-          iframe.remove();
-          hiddenForm.remove();
-        }, 500);
-        resolve();
-      };
-
-      // Timeout fallback — resolve after 6s no matter what
-      setTimeout(resolve, 6000);
-
-      hiddenForm.submit();
-    });
-  }
-
   submitBtn.addEventListener("click", async () => {
     if (current !== stepPanels.length - 1) return;
     if (!validateStep(current)) return;
@@ -336,6 +300,7 @@ import "../styles/global.css";
     submitBtn.disabled = true;
     submitBtn.textContent = "Sending…";
 
+    // Collect text fields
     const fd = new FormData(form);
     const data: Record<string, string> = {};
     fd.forEach((v, k) => { if (typeof v === "string") data[k] = v; });
@@ -344,7 +309,7 @@ import "../styles/global.css";
     }
     delete data.interest_other;
 
-    // Resume file
+    // Resume file → base64
     const resumeInput = document.getElementById("resume") as HTMLInputElement;
     const resumeFile = resumeInput.files && resumeInput.files[0];
     if (resumeFile) {
@@ -358,7 +323,7 @@ import "../styles/global.css";
       data.resume_base64 = await fileToBase64(resumeFile);
     }
 
-    // Extra file
+    // Extra file → base64
     const extraInput = document.getElementById("extra_file") as HTMLInputElement;
     const extraFile = extraInput.files && extraInput.files[0];
     if (extraFile) {
@@ -372,29 +337,23 @@ import "../styles/global.css";
       data.extra_file_base64 = await fileToBase64(extraFile);
     }
 
-    const payload = JSON.stringify({ action: "apply", ...data });
+    // Build FormData (NOT JSON) — this is the proven Apps Script pattern
+    const submitData = new FormData();
+    for (const [k, v] of Object.entries(data)) {
+      submitData.append(k, v);
+    }
 
-    // Send via three methods for maximum reliability
-    // 1. Hidden iframe form POST (most reliable for Apps Script)
-    const iframePromise = postViaIframe(WEBHOOK_URL, payload);
-
-    // 2. Fetch as backup
-    const fetchPromise = fetch(WEBHOOK_URL, {
-      method: "POST",
-      mode: "no-cors",
-      keepalive: true,
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: payload,
-    }).catch(() => {});
-
-    // 3. sendBeacon as second backup
+    // Send via fetch no-cors with FormData (browser sets Content-Type automatically)
     try {
-      const blob = new Blob([payload], { type: "text/plain;charset=utf-8" });
-      navigator.sendBeacon(WEBHOOK_URL, blob);
+      await fetch(WEBHOOK_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body: submitData,
+      });
     } catch (_) {}
 
-    // Wait for iframe (has timeout) then show success
-    await iframePromise;
+    // Wait a moment for Apps Script to process
+    await new Promise((r) => setTimeout(r, 1500));
 
     // Hide form, show success screen
     formWrap.style.display = "none";
