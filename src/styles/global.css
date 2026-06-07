@@ -228,6 +228,8 @@ img { max-width: 100%; display: block; }
   z-index: 0;
 }
 
+.h-logo-mobile { display: none; }
+
 .h-tl { top: clamp(26px, 4vw, 56px); left: clamp(26px, 4vw, 56px); }
 .h-est {
   font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase;
@@ -260,12 +262,12 @@ img { max-width: 100%; display: block; }
 
 @media (max-width: 760px) {
   .hero-panel { min-height: auto; }
-  .hero-canvas { position: relative; inset: auto; display: flex; flex-direction: column; gap: 28px; }
+  .hero-canvas { position: relative; inset: auto; display: flex; flex-direction: column; gap: 28px; padding: 26px; }
   .hero-canvas > *:not(.h-mark) { position: static; transform: none; }
-  .h-center { width: auto; text-align: left; }
-  .h-center h1 { font-size: clamp(3rem, 18vw, 6rem); }
-  .h-metrics { flex-direction: row; flex-wrap: wrap; gap: 18px 30px; text-align: left; }
+  .h-center { width: auto; text-align: left; display: none; }
+  .h-logo-mobile { display: block; width: 80px; height: 80px; }
+  .h-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; text-align: left; }
   .h-desc p { display: none; }
   .h-desc { max-width: none; }
-  .h-mark { opacity: 0.45; }
+  .h-mark { display: none; }
 }
