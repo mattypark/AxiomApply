@@ -32,7 +32,7 @@ import "../styles/global.css";
       </div>
 
       <div class="h-metrics">
-        <div class="metric"><span class="ml">Startups</span><span class="mv">5 partners</span></div>
+        <div class="metric"><span class="ml">Startups</span><span class="mv">6 partners</span></div>
         <div class="metric"><span class="ml">Interns</span><span class="mv">0 placed</span></div>
         <div class="metric"><span class="ml">Team</span><span class="mv">2 founders</span></div>
         <div class="metric"><span class="ml">Outreach</span><span class="mv">SF & NYC</span></div>
@@ -136,6 +136,14 @@ import "../styles/global.css";
                 <label for="background">Why that, and what's your background? <span class="star">*</span> <span class="optnote">(maximum 200 words)</span></label>
                 <textarea id="background" name="background" required placeholder="What draws you to that role and what have you done so far?"></textarea>
               </div>
+              <div class="field">
+                <label for="fields_interest">What fields are you interested in? <span class="star">*</span></label>
+                <textarea id="fields_interest" name="fields_interest" required placeholder="e.g. AI infra, consumer growth, fintech, devtools…"></textarea>
+              </div>
+              <div class="field">
+                <label for="startup_picks">What startups do you want to join specifically? <span class="star">*</span></label>
+                <textarea id="startup_picks" name="startup_picks" required placeholder="Our partners: FinalDose, Stealth YC S26, Anvara, Tally, Quarter Life Crisis, Topit AI"></textarea>
+              </div>
             </fieldset>
           </div>
 
@@ -216,7 +224,7 @@ import "../styles/global.css";
         <article class="p-row">
           <div class="p-row-top">
             <span class="p-num">01</span>
-            <h3 class="p-name">FinalDose <span class="p-yc">YC&nbsp;P26</span></h3>
+            <h3 class="p-name">FinalDose <span class="p-yc-text">YC&nbsp;P26</span></h3>
             <span class="p-sector">Biotech / Medicine</span>
             <span class="p-status">Cohort opens summer</span>
             <span class="p-arrow" aria-hidden="true">↗</span>
@@ -246,7 +254,7 @@ import "../styles/global.css";
         <article class="p-row">
           <div class="p-row-top">
             <span class="p-num">02</span>
-            <h3 class="p-name">Stealth <span class="p-yc">YC&nbsp;S26</span></h3>
+            <h3 class="p-name">Stealth <span class="p-yc-text">YC&nbsp;S26</span></h3>
             <span class="p-sector">Hardware</span>
             <span class="p-status">Taking interns</span>
             <span class="p-arrow" aria-hidden="true">↗</span>
