@@ -1,0 +1,91 @@
+---
+import "../styles/global.css";
+
+const founders = [
+  {
+    name: "Matthew Park",
+    role: "Co-founder",
+    links: [
+      { label: "LinkedIn ↗", url: "https://www.linkedin.com/in/matthew-park-487889350/" },
+      { label: "Instagram ↗", url: "https://www.instagram.com/matty.park/" },
+    ],
+  },
+  {
+    name: "Frank Niu",
+    role: "Co-founder",
+    links: [
+      { label: "LinkedIn ↗", url: "https://www.linkedin.com/in/frank-niu-55054a290/" },
+    ],
+  },
+];
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="/axiom-mark.png" />
+  <title>Contact — Axiom Pathways</title>
+  <meta name="description" content="Get in touch with the Axiom Pathways founders." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <main class="page-wrap">
+    <a class="page-back" href="/">← Back</a>
+
+    <h1 class="page-title">Talk to us.</h1>
+    <p class="page-lede">Two founders. Reach either of us directly — we read everything.</p>
+
+    <div class="contact-grid">
+      {founders.map((f) => (
+        <article class="contact-card">
+          <h2 class="contact-name">{f.name}</h2>
+          <span class="contact-role">{f.role}</span>
+          <div class="contact-links">
+            {f.links.map((l) => (
+              <a href={l.url} target="_blank" rel="noopener">{l.label}</a>
+            ))}
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <p class="contact-foot">
+      Prefer to apply? <a href="/#apply">Start your application →</a>
+    </p>
+  </main>
+
+  <style>
+    .contact-grid { margin-top: clamp(48px, 8vw, 80px); display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 4vw, 36px); }
+    @media (max-width: 560px) { .contact-grid { grid-template-columns: 1fr; } }
+    .contact-card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: clamp(26px, 4vw, 36px); transition: border-color .3s, transform .3s; }
+    .contact-card:hover { border-color: var(--green); transform: translateY(-3px); }
+    .contact-name { font-family: var(--font-serif); font-weight: 500; font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: -0.01em; }
+    .contact-role { display: block; margin-top: 6px; font-family: var(--font-sans); font-size: 0.74rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+    .contact-links { margin-top: 22px; display: flex; flex-direction: column; gap: 10px; font-family: var(--font-sans); font-size: 0.95rem; }
+    .contact-links a { color: var(--ink); width: fit-content; border-bottom: 1px solid var(--line); padding-bottom: 2px; transition: color .25s, border-color .25s; }
+    .contact-links a:hover { color: var(--green); border-color: var(--green); }
+    .contact-foot { margin-top: auto; padding-top: clamp(48px, 8vw, 80px); font-family: var(--font-sans); color: var(--muted); font-size: 0.95rem; }
+    .contact-foot a { color: var(--ink); border-bottom: 1px solid var(--ink); padding-bottom: 2px; }
+    .contact-foot a:hover { color: var(--green); border-color: var(--green); }
+  </style>
+
+  <script>
+    // Page transition: fade out before navigating to an internal page.
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.addEventListener("click", (e) => {
+      const a = (e.target as HTMLElement).closest("a[href]") as HTMLAnchorElement | null;
+      if (!a) return;
+      const url = a.getAttribute("href");
+      if (!url || a.target === "_blank" || /^(https?:|mailto:|#)/.test(url)) return;
+      e.preventDefault();
+      if (reduce) { window.location.href = url; return; }
+      document.body.classList.add("is-leaving");
+      setTimeout(() => { window.location.href = url; }, 280);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+---
+import "../styles/global.css";
+
+const groups = [
+  {
+    heading: "Axiom Pathways",
+    socials: [
+      { platform: "Instagram", handle: "@axiompathways", url: "https://www.instagram.com/axiompathways/" },
+      { platform: "LinkedIn", handle: "Axiom Pathways", url: "https://www.linkedin.com/company/axiom-pathways/" },
+    ],
+  },
+  {
+    heading: "The founders",
+    socials: [
+      { platform: "LinkedIn", handle: "Matthew Park", url: "https://www.linkedin.com/in/matthew-park-487889350/" },
+      { platform: "Instagram", handle: "@matty.park", url: "https://www.instagram.com/matty.park/" },
+      { platform: "LinkedIn", handle: "Frank Niu", url: "https://www.linkedin.com/in/frank-niu-55054a290/" },
+    ],
+  },
+];
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="/axiom-mark.png" />
+  <title>Social — Axiom Pathways</title>
+  <meta name="description" content="Follow Axiom Pathways and its founders across social media." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <main class="page-wrap">
+    <a class="page-back" href="/">← Back</a>
+
+    <h1 class="page-title">Find us everywhere.</h1>
+    <p class="page-lede">What we're building, who we're placing, and the rooms we're getting students into — in real time.</p>
+
+    {groups.map((g) => (
+      <section class="social-group">
+        <h2 class="social-heading">{g.heading}</h2>
+        <ul class="social-list">
+          {g.socials.map((s) => (
+            <li class="social-row">
+              <a href={s.url} target="_blank" rel="noopener">
+                <span class="social-platform">{s.platform}</span>
+                <span class="social-handle">{s.handle}</span>
+                <span class="social-arrow" aria-hidden="true">↗</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </main>
+
+  <style>
+    .social-group { margin-top: clamp(40px, 7vw, 64px); }
+    .social-heading { font-family: var(--font-sans); font-size: 0.74rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+    .social-list { list-style: none; border-top: 1px solid var(--ink); }
+    .social-row { border-bottom: 1px solid var(--ink); }
+    .social-row a { display: grid; grid-template-columns: 1fr auto 32px; align-items: baseline; gap: 18px; padding: clamp(18px, 3vw, 26px) clamp(6px, 1.5vw, 16px); transition: background .3s, color .3s, padding-left .3s; }
+    .social-platform { font-family: var(--font-serif); font-weight: 500; font-size: clamp(1.3rem, 3vw, 1.9rem); letter-spacing: -0.015em; }
+    .social-handle { font-family: var(--font-sans); font-size: 0.9rem; letter-spacing: 0.04em; color: var(--muted); transition: color .3s; }
+    .social-arrow { font-size: 1.2rem; justify-self: end; transition: transform .3s; }
+    .social-row a:hover { background: var(--green); color: #fff; padding-left: clamp(16px, 3vw, 28px); }
+    .social-row a:hover .social-handle { color: rgba(255,255,255,0.8); }
+    .social-row a:hover .social-arrow { transform: translate(4px, -4px); }
+  </style>
+
+  <script>
+    // Page transition: fade out before navigating to an internal page.
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.addEventListener("click", (e) => {
+      const a = (e.target as HTMLElement).closest("a[href]") as HTMLAnchorElement | null;
+      if (!a) return;
+      const url = a.getAttribute("href");
+      if (!url || a.target === "_blank" || /^(https?:|mailto:|#)/.test(url)) return;
+      e.preventDefault();
+      if (reduce) { window.location.href = url; return; }
+      document.body.classList.add("is-leaving");
+      setTimeout(() => { window.location.href = url; }, 280);
+    });
+  </script>
+</body>
+</html>

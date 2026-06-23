@@ -1,5 +1,52 @@
 ---
 import "../styles/global.css";
+
+// Full startup data — drives the trusted row, the inline Apply list, and the
+// expandable full startups list. yc = null when the company isn't YC-backed.
+const startups = [
+  {
+    name: "FinalDose", yc: "YC P26", sector: "Biotech / Medicine", status: "Cohort opens summer",
+    what: "Building the world's first programmable drug — engineered to target and cure all cancers. Deep science, massive ambition, ground floor.",
+    roles: ["Medicine", "Research", "Software engineering"],
+    details: "Not taking interns yet — first cohort opens this summer (June–August), built for students serious about medicine. Technical applicants like software engineers are welcome too.",
+  },
+  {
+    name: "Stealth", yc: "YC S26", sector: "Hardware", status: "Taking interns",
+    what: "Still in stealth — backed by Y Combinator (S26). The full picture is under wraps for now, but it's serious hardware with a team that's already shipping.",
+    roles: ["Hardware", "Prototyping", "Engineering"],
+    details: "Looking for hardware interns who are genuinely obsessed with building physical things. If you tinker, prototype, and can't stop making — this is your room.",
+  },
+  {
+    name: "Anvara", yc: null, sector: "Sponsorships / Marketplace", status: "Taking interns",
+    what: "The marketplace for sponsorships — connecting brands with sports teams, festivals, and live events worldwide. One platform for the entire deal: discovery, contracts, payments, and performance tracking.",
+    roles: ["Partnerships & growth", "Brand outreach", "Market research", "Deal sourcing"],
+    details: "Source and onboard brands and rightsholders onto the platform — real business development with a fast-moving NYC team. Remote friendly; in-person in New York strongly preferred.",
+  },
+  {
+    name: "Tally", yc: null, sector: "Consumer / Social", status: "Taking interns",
+    what: "Bet on yourself — literally. Put money on your own goals: work out, cook, ship the thing. Do it, keep the money and win from the group. Skip it, the group takes yours. Accountability with real stakes.",
+    roles: ["Execution", "Video editing", "Content creation", "Launch support"],
+    details: "Work directly with the founders during launch — editing, content, and whatever needs to ship that day. Pure execution role on a brand-new consumer app at day zero.",
+  },
+  {
+    name: "Quarter Life Crisis", yc: null, sector: "Brand / Lifestyle", status: "Taking interns",
+    what: "A brand built around the chaos of figuring your life out — and the merch to match. Early-stage, culture-first, and growing through community and drops.",
+    roles: ["Marketing", "Merch design", "Campaigns", "Brand growth"],
+    details: "Own marketing and merch from day one. Prove yourself here and they'll bring you deeper into the startup — this is a real foot in the door.",
+  },
+  {
+    name: "Topit AI", yc: null, sector: "AI / Consumer", status: "Taking interns",
+    what: "An AI startup building consumer-facing products with a culture-first, internet-native brand. Fast-moving and growing through content.",
+    roles: ["Marketing", "Social & content", "Software engineering"],
+    details: "Mostly marketing and content — own the brand's voice and growth. Technical applicants like software engineers welcome too.",
+  },
+  {
+    name: "TypeOS", yc: "YC X25", sector: "AI / Productivity", status: "Taking interns",
+    what: "The AI layer for writing. Starting with Google Docs, you can write, edit, and format your documents with AI — reference any article, video, or file across the web without ever switching tabs.",
+    roles: ["Marketing", "Research", "Content & growth"],
+    details: "Mainly marketing and research. If you're a high schooler who's genuinely ambitious, they'll take anyone driven for their fellowship — show up hungry and prove it.",
+  },
+];
 ---
 
 <!doctype html>
@@ -8,618 +55,597 @@ import "../styles/global.css";
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" type="image/png" href="/axiom-mark.png" />
-  <title>Axiom Pathways — Connecting young talent to their passions</title>
-  <meta name="description" content="Axiom Pathways is a nonprofit teaching high school and college students the foundations of modern startups — AI, computer science, and marketing." />
+  <title>Axiom Pathways — Drop into a real startup</title>
+  <meta name="description" content="Axiom Pathways drops high school and college students straight into real startups — building what ships, picked for passion, not credentials." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,400..600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&display=swap" rel="stylesheet" />
 </head>
 <body>
 
-  <!-- HOME -->
-  <section class="panel hero-panel" id="top">
-    <div class="hero-canvas">
-      <div class="h-mark" aria-hidden="true"></div>
+  <!-- BACKGROUND SHAPE FIELD -->
+  <canvas class="bg-dots" id="bgDots" aria-hidden="true"></canvas>
 
-      <div class="h-tl">
-        <span class="h-est">Est. May 2025 — very new</span>
-      </div>
+  <!-- No top nav — everything lives in the chat (type ? to see options) -->
 
-      <img class="h-logo-mobile" src="/axiom-mark.png" alt="Axiom Pathways" />
+  <!-- HERO -->
+  <main class="hero">
+    <img class="hero-logo" src="/axiom-logo.png" alt="Axiom Pathways" />
+    <p class="hero-tagline">Drop into a real startup. Build what ships — picked for passion, not credentials.</p>
 
-      <div class="h-center">
-        <h1><span class="l1">Axiom</span><span class="l2">Pathways</span></h1>
-      </div>
-
-      <div class="h-metrics">
-        <div class="metric"><span class="ml">Startups</span><span class="mv">6 partners</span></div>
-        <div class="metric"><span class="ml">Interns</span><span class="mv">0 placed</span></div>
-        <div class="metric"><span class="ml">Team</span><span class="mv">2 founders</span></div>
-        <div class="metric"><span class="ml">Outreach</span><span class="mv">SF & NYC</span></div>
-      </div>
-
-      <div class="h-desc">
-        <p>We drop high school and college students straight into real startups — building what ships, not slide decks. Picked for passion, not credentials.</p>
-        <a class="know" href="#apply">Start your application →</a>
-      </div>
+    <div class="ai" id="aiBox">
+      <div class="ai-thread" id="aiThread" aria-live="polite"></div>
+      <p class="ai-hint" id="aiHint">Type <strong>Apply</strong> to start your application — or <strong>?</strong> to see everything you can do.</p>
+      <form class="ai-input" id="aiForm" autocomplete="off">
+        <span class="ai-plus" aria-hidden="true">+</span>
+        <input id="aiField" type="text" placeholder="Ask how Axiom works, or type Apply…" aria-label="Message Axiom" />
+        <button type="submit" class="ai-send" aria-label="Send">↑</button>
+      </form>
     </div>
+
+    <section class="trusted">
+      <p class="trusted-label">Trusted by fast-growing startups worldwide</p>
+      <div class="trusted-marquee">
+        <ul class="trusted-track">
+          {startups.map((s) => (
+            <li class="trusted-logo" title={s.name}>{s.name}{s.yc && <span class="trusted-yc"> {s.yc}</span>}</li>
+          ))}
+          {startups.map((s) => (
+            <li class="trusted-logo" aria-hidden="true">{s.name}{s.yc && <span class="trusted-yc"> {s.yc}</span>}</li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- HOW CAN I USE AXIOM PATHWAYS -->
+  <section class="howuse">
+    <h2 class="howuse-title">We connect young talent to their&nbsp;passions.</h2>
+    <p class="howuse-sub">High school and college students, dropped into real startups — building what ships, learning directly from top entrepreneurs.</p>
   </section>
 
-  <!-- APPLICATION -->
-  <section class="apply-section" id="apply">
-    <div class="apply-inner">
-      <div id="formWrap">
-      <span class="tag reveal"><span class="plus">+</span> The application</span>
-      <h2 class="sec-title reveal">One step <em>at a time.</em></h2>
-      <div class="sec-rule"></div>
-        <form id="applyForm" class="reveal" novalidate>
-          <div class="stepper">
-            <div class="stepper-dots">
-              <span class="sdot active" data-dot="0"></span>
-              <span class="sdot" data-dot="1"></span>
-              <span class="sdot" data-dot="2"></span>
-            </div>
-            <div class="stepper-label"><span id="stepNum">1</span> / 3 — <span id="stepName">About you</span></div>
-          </div>
-
-          <!-- Step 1 -->
-          <div class="step-panel active" data-step="0">
-            <fieldset class="fieldset">
-              <p class="hint">The basics so we can reach you. All required.</p>
-              <div class="grid-2">
-                <div class="field">
-                  <label for="name">Full name <span class="star">*</span></label>
-                  <input id="name" name="name" type="text" required autocomplete="name" />
-                </div>
-                <div class="field">
-                  <label for="email">Email <span class="star">*</span></label>
-                  <input id="email" name="email" type="email" required autocomplete="email" />
-                </div>
-                <div class="field">
-                  <label for="phone">Phone <span class="star">*</span></label>
-                  <input id="phone" name="phone" type="tel" required autocomplete="tel" />
-                </div>
-                <div class="field">
-                  <label for="school">School <span class="star">*</span></label>
-                  <input id="school" name="school" type="text" required />
-                </div>
-                <div class="field">
-                  <label for="grade">Grade / Year <span class="star">*</span></label>
-                  <select id="grade" name="grade" required>
-                    <option value="" disabled selected>Select…</option>
-                    <option>9th grade</option>
-                    <option>10th grade</option>
-                    <option>11th grade</option>
-                    <option>12th grade</option>
-                    <option>College — Freshman</option>
-                    <option>College — Sophomore</option>
-                    <option>College — Junior</option>
-                    <option>College — Senior</option>
-                    <option>Other</option>
-                  </select>
-                </div>
-              </div>
-            </fieldset>
-          </div>
-
-          <!-- Step 2 -->
-          <div class="step-panel" data-step="1">
-            <fieldset class="fieldset">
-              <p class="hint">Where you want to fit and what you want to learn. All required.</p>
-              <div class="grid-2">
-                <div class="field">
-                  <label for="interest">Main interest <span class="star">*</span></label>
-                  <select id="interest" name="interest" required>
-                    <option value="" disabled selected>Select…</option>
-                    <option>AI</option>
-                    <option>Computer Science</option>
-                    <option>Marketing</option>
-                    <option>Finance</option>
-                    <option>Startups</option>
-                    <option>Other</option>
-                  </select>
-                </div>
-                <div class="field" id="interestOtherField" style="display:none">
-                  <label for="interestOther">Tell us what <span class="star">*</span></label>
-                  <input id="interestOther" name="interest_other" type="text" placeholder="What else are you interested in?" />
-                </div>
-                <div class="field">
-                  <label for="chapter">City / Chapter <span class="star">*</span></label>
-                  <input id="chapter" name="chapter" type="text" required placeholder="e.g. Bay Area, Online" />
-                </div>
-              </div>
-              <div class="field">
-                <label for="startup_role">What startup internship are you looking for? <span class="star">*</span> <span class="optnote">(maximum 100 words)</span></label>
-                <textarea id="startup_role" name="startup_role" required placeholder="e.g. AI engineer at an early-stage startup, marketing intern at a consumer app…"></textarea>
-              </div>
-              <div class="field">
-                <label for="background">Why that, and what's your background? <span class="star">*</span> <span class="optnote">(maximum 200 words)</span></label>
-                <textarea id="background" name="background" required placeholder="What draws you to that role and what have you done so far?"></textarea>
-              </div>
-              <div class="field">
-                <label for="fields_interest">What fields are you interested in? <span class="star">*</span></label>
-                <textarea id="fields_interest" name="fields_interest" required placeholder="e.g. AI infra, consumer growth, fintech, devtools…"></textarea>
-              </div>
-              <div class="field">
-                <label for="startup_picks">What startups do you want to join specifically? <span class="star">*</span></label>
-                <textarea id="startup_picks" name="startup_picks" required placeholder="Our partners: FinalDose, Stealth YC S26, Anvara, Tally, Quarter Life Crisis, Topit AI, TypeOS YC X25"></textarea>
-              </div>
-            </fieldset>
-          </div>
-
-          <!-- Step 3 -->
-          <div class="step-panel" data-step="2">
-            <fieldset class="fieldset">
-              <p class="hint">Optional. No résumé — just tell us what you want to build, why it matters, and drop your socials.</p>
-              <div class="field">
-                <label for="letter">What do you want to build, and why does it matter to you? <span class="optnote">(maximum 100 words)</span></label>
-                <textarea id="letter" name="letter" placeholder="A few paragraphs is plenty."></textarea>
-              </div>
-              <div class="grid-2">
-                <div class="field">
-                  <label for="instagram">Instagram <span class="star">*</span></label>
-                  <input id="instagram" name="instagram" type="text" required placeholder="@handle" />
-                </div>
-                <div class="field">
-                  <label for="linkedin">LinkedIn <span class="star">*</span></label>
-                  <input id="linkedin" name="linkedin" type="text" required placeholder="profile URL" />
-                </div>
-                <div class="field">
-                  <label for="github">GitHub <span class="optnote">(highly recommended)</span></label>
-                  <input id="github" name="github" type="text" placeholder="@username" />
-                </div>
-                <div class="field">
-                  <label for="other_link">Other link</label>
-                  <input id="other_link" name="other_link" type="text" placeholder="portfolio, X, TikTok…" />
-                </div>
-              </div>
-              <div class="field">
-                <label for="resume">Resume / CV <span class="optnote">(optional — PDF, DOC, max 8MB)</span></label>
-                <input id="resume" name="resume" type="file" accept=".pdf,.doc,.docx,application/pdf" />
-              </div>
-              <div class="field">
-                <label for="comments">Anything else you want to share with us?</label>
-                <textarea id="comments" name="comments" placeholder="Anything goes — context, questions, fun facts…"></textarea>
-              </div>
-              <div class="field">
-                <label for="extra_file">Additional file <span class="optnote">(optional — image, PDF, etc. max 8MB)</span></label>
-                <input id="extra_file" name="extra_file" type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.gif,image/*,application/pdf" />
-              </div>
-            </fieldset>
-          </div>
-
-          <div class="form-actions">
-            <button class="btn btn-ghost" type="button" id="backBtn" style="display:none">← Back</button>
-            <button class="btn btn-primary" type="button" id="nextBtn">Next <span class="arrow">→</span></button>
-            <button class="btn btn-primary" type="button" id="submitBtn" style="display:none">Submit application <span class="arrow">→</span></button>
-          </div>
-        </form>
-      </div>
-
-      <!-- Success screen (replaces form after submit) -->
-      <div id="successScreen" class="success-screen" style="display:none">
-        <div class="success-checkmark">
-          <svg class="checkmark-svg" viewBox="0 0 52 52">
-            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
-            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
-          </svg>
-        </div>
-        <h3 class="success-title">Received. We'll get back to you soon.</h3>
-        <p class="success-sub">Check your email for results soon.</p>
-      </div>
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-left">
+      <a href="/contact">Contact</a>
+      <a href="https://www.linkedin.com/company/axiom-pathways" target="_blank" rel="noopener">LinkedIn</a>
+      <span>Axiom Pathways</span>
     </div>
-  </section>
+    <div class="footer-right">
+      <a class="footer-social" href="/social">Social media ↗</a>
+    </div>
+  </footer>
 
-  <!-- PARTNERS -->
-  <section class="partners-section" id="partners">
-    <div class="partners-inner">
-      <div class="partners-head">
-        <span class="tag reveal"><span class="plus">+</span> The partners</span>
-        <h2 class="sec-title reveal">Where you'll <em>actually work.</em></h2>
-        <p class="partners-lede reveal">Seven startups. Real codebases, real customers, real stakes. Pick one, tell us why, and we'll make the intro.</p>
-      </div>
+  <!-- FULL STARTUPS LIST — expandable rows (hover / click).
+       data-lenis-prevent lets this overlay scroll natively (Lenis owns the page wheel). -->
+  <section class="flow flow-startups" id="startupsFlow" aria-hidden="true" data-lenis-prevent>
+    <button type="button" class="flow-x" id="startupsX" aria-label="Close">&times;</button>
+    <div class="flow-head">
+      <span class="flow-eyebrow">Where you could land</span>
+      <h2 class="flow-title">The startups.</h2>
+    </div>
 
-      <div class="p-ledger reveal">
-
+    <div class="p-ledger">
+      {startups.map((s, i) => (
         <article class="p-row">
           <div class="p-row-top">
-            <span class="p-num">01</span>
-            <h3 class="p-name">FinalDose <span class="p-yc-text">YC&nbsp;P26</span></h3>
-            <span class="p-sector">Biotech / Medicine</span>
-            <span class="p-status">Cohort opens summer</span>
+            <span class="p-num">{(i + 1).toString().padStart(2, "0")}</span>
+            <h3 class="p-name">{s.name}{s.yc && <span class="p-yc-text"> {s.yc}</span>}</h3>
+            <span class="p-sector">{s.sector}</span>
+            <span class="p-status">{s.status}</span>
             <span class="p-arrow" aria-hidden="true">↗</span>
           </div>
           <div class="p-row-detail">
             <div class="p-detail-grid">
               <div class="p-detail-col">
                 <span class="p-detail-label">What they do</span>
-                <p>Building the world's first programmable drug — engineered to target and cure all cancers. Deep science, massive ambition, ground floor.</p>
+                <p>{s.what}</p>
               </div>
               <div class="p-detail-col">
                 <span class="p-detail-label">The role</span>
-                <ul class="p-chips">
-                  <li>Medicine</li>
-                  <li>Research</li>
-                  <li>Software engineering</li>
-                </ul>
+                <ul class="p-chips">{s.roles.map((r) => <li>{r}</li>)}</ul>
               </div>
               <div class="p-detail-col">
                 <span class="p-detail-label">The details</span>
-                <p>Not taking interns yet — first cohort opens this summer (June–August), built for students serious about medicine. Technical applicants like software engineers are welcome too.</p>
+                <p>{s.details}</p>
               </div>
             </div>
           </div>
         </article>
+      ))}
+    </div>
 
-        <article class="p-row">
-          <div class="p-row-top">
-            <span class="p-num">02</span>
-            <h3 class="p-name">Stealth <span class="p-yc-text">YC&nbsp;S26</span></h3>
-            <span class="p-sector">Hardware</span>
-            <span class="p-status">Taking interns</span>
-            <span class="p-arrow" aria-hidden="true">↗</span>
-          </div>
-          <div class="p-row-detail">
-            <div class="p-detail-grid">
-              <div class="p-detail-col">
-                <span class="p-detail-label">What they do</span>
-                <p>Still in stealth — backed by Y Combinator (S26). The full picture is under wraps for now, but it's serious hardware with a team that's already shipping.</p>
-              </div>
-              <div class="p-detail-col">
-                <span class="p-detail-label">The role</span>
-                <ul class="p-chips">
-                  <li>Hardware</li>
-                  <li>Prototyping</li>
-                  <li>Engineering</li>
-                </ul>
-              </div>
-              <div class="p-detail-col">
-                <span class="p-detail-label">The details</span>
-                <p>Looking for hardware interns who are genuinely obsessed with building physical things. If you tinker, prototype, and can't stop making — this is your room.</p>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="p-row">
-          <div class="p-row-top">
-            <span class="p-num">03</span>
-            <h3 class="p-name">Anvara</h3>
-            <span class="p-sector">Sponsorships / Marketplace</span>
-            <span class="p-status">Taking interns</span>
-            <span class="p-arrow" aria-hidden="true">↗</span>
-          </div>
-          <div class="p-row-detail">
-            <div class="p-detail-grid">
-              <div class="p-detail-col">
-                <span class="p-detail-label">What they do</span>
-                <p>Anvara is the marketplace for sponsorships — connecting brands with sports teams, festivals, and live events worldwide. One platform for the entire deal: discovery, contracts, payments, and performance tracking.</p>
-              </div>
-              <div class="p-detail-col">
-                <span class="p-detail-label">The role</span>
-                <ul class="p-chips">
-                  <li>Partnerships &amp; growth</li>
-                  <li>Brand outreach</li>
-                  <li>Market research</li>
-                  <li>Deal sourcing</li>
-                </ul>
-              </div>
-              <div class="p-detail-col">
-                <span class="p-detail-label">The details</span>
-                <p>Source and onboard brands and rightsholders onto the platform — real business development with a fast-moving NYC team. Remote friendly; in-person in New York strongly preferred.</p>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="p-row">
-          <div class="p-row-top">
-            <span class="p-num">04</span>
-            <h3 class="p-name">Tally</h3>
-            <span class="p-sector">Consumer / Social</span>
-            <span class="p-status">Taking interns</span>
-            <span class="p-arrow" aria-hidden="true">↗</span>
-          </div>
-          <div class="p-row-detail">
-            <div class="p-detail-grid">
-              <div class="p-detail-col">
-                <span class="p-detail-label">What they do</span>
-                <p>Bet on yourself — literally. Put money on your own goals: work out, cook, ship the thing. Do it, keep the money and win from the group. Skip it, the group takes yours. Accountability with real stakes, launching June 13.</p>
-              </div>
-              <div class="p-detail-col">
-                <span class="p-detail-label">The role</span>
-                <ul class="p-chips">
-                  <li>Execution</li>
-                  <li>Video editing</li>
-                  <li>Content creation</li>
-                  <li>Launch support</li>
-                </ul>
-              </div>
-              <div class="p-detail-col">
-                <span class="p-detail-label">The details</span>
-                <p>Work directly with the founders during launch — editing, content, and whatever needs to ship that day. Pure execution role on a brand-new consumer app at day zero.</p>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="p-row">
-          <div class="p-row-top">
-            <span class="p-num">05</span>
-            <h3 class="p-name">Quarter Life Crisis</h3>
-            <span class="p-sector">Brand / Lifestyle</span>
-            <span class="p-status">Taking interns</span>
-            <span class="p-arrow" aria-hidden="true">↗</span>
-          </div>
-          <div class="p-row-detail">
-            <div class="p-detail-grid">
-              <div class="p-detail-col">
-                <span class="p-detail-label">What they do</span>
-                <p>A brand built around the chaos of figuring your life out — and the merch to match. Early-stage, culture-first, and growing through community and drops.</p>
-              </div>
-              <div class="p-detail-col">
-                <span class="p-detail-label">The role</span>
-                <ul class="p-chips">
-                  <li>Marketing</li>
-                  <li>Merch design</li>
-                  <li>Campaigns</li>
-                  <li>Brand growth</li>
-                </ul>
-              </div>
-              <div class="p-detail-col">
-                <span class="p-detail-label">The details</span>
-                <p>Own marketing and merch from day one. Prove yourself here and they'll bring you deeper into the startup — this is a real foot in the door.</p>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="p-row">
-          <div class="p-row-top">
-            <span class="p-num">06</span>
-            <h3 class="p-name">Topit AI</h3>
-            <span class="p-sector">AI / Consumer</span>
-            <span class="p-status">Taking interns</span>
-            <span class="p-arrow" aria-hidden="true">↗</span>
-          </div>
-          <div class="p-row-detail">
-            <div class="p-detail-grid">
-              <div class="p-detail-col">
-                <span class="p-detail-label">What they do</span>
-                <p>An AI startup building consumer-facing products with a culture-first, internet-native brand. Fast-moving and growing through content.</p>
-              </div>
-              <div class="p-detail-col">
-                <span class="p-detail-label">The role</span>
-                <ul class="p-chips">
-                  <li>Marketing</li>
-                  <li>Social &amp; content</li>
-                  <li>Software engineering</li>
-                </ul>
-              </div>
-              <div class="p-detail-col">
-                <span class="p-detail-label">The details</span>
-                <p>Mostly marketing and content — own the brand's voice and growth. Technical applicants like software engineers welcome too.</p>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="p-row">
-          <div class="p-row-top">
-            <span class="p-num">07</span>
-            <h3 class="p-name">TypeOS <span class="p-yc-text">YC&nbsp;X25</span></h3>
-            <span class="p-sector">AI / Productivity</span>
-            <span class="p-status">Taking interns</span>
-            <span class="p-arrow" aria-hidden="true">↗</span>
-          </div>
-          <div class="p-row-detail">
-            <div class="p-detail-grid">
-              <div class="p-detail-col">
-                <span class="p-detail-label">What they do</span>
-                <p>TypeOS is the AI layer for writing. Starting with Google Docs, you can write, edit, and format your documents with AI — reference any article, video, or file across the web without ever switching tabs.</p>
-              </div>
-              <div class="p-detail-col">
-                <span class="p-detail-label">The role</span>
-                <ul class="p-chips">
-                  <li>Marketing</li>
-                  <li>Research</li>
-                  <li>Content &amp; growth</li>
-                </ul>
-              </div>
-              <div class="p-detail-col">
-                <span class="p-detail-label">The details</span>
-                <p>Mainly marketing and research. If you're a high schooler who's genuinely ambitious, they'll take anyone driven for their fellowship — show up hungry and prove it.</p>
-              </div>
-            </div>
-          </div>
-        </article>
-
-      </div>
-
-      <div class="partners-foot reveal">
-        <span class="pf-note">More partners joining — apply early, get first pick.</span>
-        <a class="btn btn-primary" href="#apply">Apply now <span class="arrow">→</span></a>
-      </div>
+    <div class="flow-foot">
+      <button type="button" class="flow-back" data-close-flow="startupsFlow">← Back</button>
     </div>
   </section>
 
 <script>
   import { inject } from "@vercel/analytics";
   inject();
-
   import { gsap } from "gsap";
-  import { ScrollTrigger } from "gsap/ScrollTrigger";
   import Lenis from "lenis";
 
-  gsap.registerPlugin(ScrollTrigger);
+  const startups = [
+    { name: "FinalDose", yc: "YC P26", meta: "Biotech / Medicine · cohort opens summer" },
+    { name: "Stealth", yc: "YC S26", meta: "Hardware · taking interns" },
+    { name: "Anvara", yc: null, meta: "Sponsorships / Marketplace · taking interns" },
+    { name: "Tally", yc: null, meta: "Consumer / Social · taking interns" },
+    { name: "Quarter Life Crisis", yc: null, meta: "Brand / Lifestyle · taking interns" },
+    { name: "Topit AI", yc: null, meta: "AI / Consumer · taking interns" },
+    { name: "TypeOS", yc: "YC X25", meta: "AI / Productivity · taking interns" },
+  ];
 
-  const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
-  function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf); }
-  requestAnimationFrame(raf);
-  lenis.on("scroll", ScrollTrigger.update);
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const D = (n) => (reduce ? Math.min(n, 0.1) : n);
 
-  document.querySelectorAll('a[href^="#"]').forEach((a) => {
-    a.addEventListener("click", (e) => {
-      const id = (a as HTMLAnchorElement).getAttribute("href")!;
-      if (id.length > 1) { e.preventDefault(); lenis.scrollTo(id, { offset: -20 }); }
-    });
+  // ---- Sexy scroll ----
+  let lenis = null;
+  if (!reduce) {
+    lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel: true });
+    const raf = (time) => { lenis.raf(time); requestAnimationFrame(raf); };
+    requestAnimationFrame(raf);
+  }
+
+  // ---- Intro ----
+  if (!reduce) {
+    gsap.set([".hero-logo", ".hero-tagline", ".ai", ".trusted", ".site-nav"], { opacity: 0 });
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+    tl.to(".site-nav", { opacity: 1, duration: 0.6 })
+      .fromTo(".hero-logo", { opacity: 0, scale: 0.95 }, { opacity: 1, scale: 1, duration: 0.9 }, "-=0.2")
+      .to(".hero-tagline", { opacity: 1, duration: 0.6 }, "-=0.4")
+      .to(".ai", { opacity: 1, duration: 0.6 }, "-=0.3")
+      .to(".trusted", { opacity: 1, duration: 0.6 }, "-=0.3");
+  }
+
+  // ====================================================================
+  //  BACKGROUND SHAPE FIELD — round circles + squares, pulsing open/closed,
+  //  cleared in the centre, fading in toward the edges. Fixed to the viewport
+  //  so the shapes stay perfectly round (no oval stretching).
+  // ====================================================================
+  (() => {
+    const canvas = document.getElementById("bgDots");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const GAP = 38, R = 6;
+    let dots = [], w = 0, h = 0, raf = 0;
+
+    function build() {
+      w = window.innerWidth; h = window.innerHeight;
+      canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      dots = [];
+      const cx = w / 2, cy = h / 2;
+      for (let y = GAP / 2; y < h; y += GAP) {
+        for (let x = GAP / 2; x < w; x += GAP) {
+          // small clear ellipse in the centre (keeps the logo/text clean),
+          // shapes fade IN outward — including across the top.
+          const dx = (x - cx) / (w * 0.26);
+          const dy = (y - cy) / (h * 0.30);
+          const vis = Math.min(Math.max((Math.hypot(dx, dy) - 1) / 1.3, 0), 1);
+          if (vis <= 0.02) continue;
+          const type = (Math.round(x / GAP) + Math.round(y / GAP)) % 3;  // 0 circle, 1 square, 2 diamond
+          dots.push({ x, y, edge: vis, type, phase: x * 0.05 + y * 0.045 });
+        }
+      }
+    }
+    function shape(type, x, y, s) {
+      if (type === 0) { ctx.beginPath(); ctx.arc(x, y, s, 0, Math.PI * 2); ctx.fill(); }
+      else if (type === 1) { ctx.fillRect(x - s, y - s, s * 2, s * 2); }
+      else { ctx.save(); ctx.translate(x, y); ctx.rotate(Math.PI / 4); ctx.fillRect(-s, -s, s * 2, s * 2); ctx.restore(); }
+    }
+    function frame(t) {
+      ctx.clearRect(0, 0, w, h);
+      const time = t * 0.001;
+      for (const p of dots) {
+        const pulse = 0.5 + 0.5 * Math.sin(time * 0.95 + p.phase);   // opens + closes
+        const s = R * (0.22 + 0.78 * pulse);
+        const a = p.edge * (0.06 + 0.12 * pulse);
+        ctx.fillStyle = `rgba(21,21,15,${a.toFixed(3)})`;
+        shape(p.type, p.x, p.y, s);
+      }
+      raf = requestAnimationFrame(frame);
+    }
+    function staticDraw() {
+      ctx.clearRect(0, 0, w, h);
+      for (const p of dots) { ctx.fillStyle = `rgba(21,21,15,${(p.edge * 0.12).toFixed(3)})`; shape(p.type, p.x, p.y, R * 0.6); }
+    }
+    function start() { build(); if (reduce) staticDraw(); else { cancelAnimationFrame(raf); raf = requestAnimationFrame(frame); } }
+    let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(start, 180); });
+    start();
+  })();
+
+  // ====================================================================
+  //  AI PROMPT (plain text)
+  // ====================================================================
+  const thread = document.getElementById("aiThread");
+  const hint = document.getElementById("aiHint");
+  const form = document.getElementById("aiForm");
+  const field = document.getElementById("aiField");
+  let busy = false;
+
+  function append(el) {
+    thread.appendChild(el);
+    gsap.fromTo(el, { opacity: 0, y: reduce ? 0 : 8 }, { opacity: 1, y: 0, duration: D(0.4), ease: "power3.out" });
+    return el;
+  }
+  function line(role, html) {
+    const el = document.createElement("p");
+    el.className = `ai-line ai-${role}`;
+    el.innerHTML = html;
+    return append(el);
+  }
+  function thinking() {
+    const el = document.createElement("p");
+    el.className = "ai-line ai-ai ai-thinking";
+    el.innerHTML = `Thinking<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>`;
+    append(el);
+    if (!reduce) gsap.to(el.querySelectorAll(".dot"), { opacity: 0.2, duration: 0.5, ease: "power1.inOut", stagger: { each: 0.15, repeat: -1, yoyo: true } });
+    return el;
+  }
+
+  function showStartupsInline() {
+    line("ai", `Love it. Here are the startups you could land at —`);
+    const rows = startups.map((s) =>
+      `<span class="ai-srow"><span class="ai-sname">${s.name}${s.yc ? ` <span class="ai-yc">${s.yc}</span>` : ""}</span><span class="ai-smeta">${s.meta}</span></span>`).join("");
+    line("ai",
+      `<span class="ai-slist">${rows}</span>
+       <span class="ai-note">You can also browse the <button type="button" class="ai-link" data-open-startups>full startups list</button>, or visit a startup's page (coming soon).</span>
+       <button type="button" class="ai-cta" data-continue>Continue to your application →</button>`);
+  }
+
+  function showMenu() {
+    line("ai", `Here's everything you can do — tap one, or just type it:`);
+    line("ai",
+      `<span class="ai-cmds">
+        <button type="button" class="ai-chip" data-cmd="apply">Apply</button>
+        <button type="button" class="ai-chip" data-cmd="startups">Startups</button>
+        <button type="button" class="ai-chip" data-cmd="contact">Contact us</button>
+        <button type="button" class="ai-chip" data-cmd="socials">Socials</button>
+        <a class="ai-chip" href="https://www.linkedin.com/company/axiom-pathways/" target="_blank" rel="noopener">LinkedIn</a>
+      </span>`);
+  }
+  function showContact() {
+    line("ai", `Reach the founders directly:`);
+    line("ai",
+      `<span class="ai-contact">
+        <span class="ai-cgroup">
+          <span class="ai-cname">Matthew Park</span>
+          <a class="ai-link" href="https://www.linkedin.com/in/matthew-park-487889350/" target="_blank" rel="noopener">LinkedIn ↗</a>
+          <a class="ai-link" href="https://www.instagram.com/matty.park/" target="_blank" rel="noopener">Instagram ↗</a>
+        </span>
+        <span class="ai-cgroup">
+          <span class="ai-cname">Frank Niu</span>
+          <a class="ai-link" href="https://www.linkedin.com/in/frank-niu-55054a290/" target="_blank" rel="noopener">LinkedIn ↗</a>
+        </span>
+      </span>`);
+  }
+  function showSocials() {
+    line("ai",
+      `Follow Axiom: <a class="ai-link" href="https://www.instagram.com/axiompathways/" target="_blank" rel="noopener">Instagram ↗</a> · <a class="ai-link" href="https://www.linkedin.com/company/axiom-pathways/" target="_blank" rel="noopener">LinkedIn ↗</a> · <a class="ai-link" href="/social">all socials →</a>`);
+  }
+
+  function respond(text) {
+    const t = text.trim().toLowerCase();
+    if (t === "?" || t === "help" || t.includes("option")) return { fn: showMenu };
+    if (/\bapply\b/.test(t)) return { fn: showStartupsInline };
+    if (t.includes("contact")) return { fn: showContact };
+    if (t.includes("startup")) return { fn: showStartupsInline };
+    if (t.includes("social") || t.includes("follow") || t.includes("instagram") || t.includes("linkedin")) return { fn: showSocials };
+    if (t.includes("how")) return { reply: `To get an internship at a real startup, or to learn directly from top entrepreneurs. Type <strong>Apply</strong> whenever you're ready.` };
+    if (t.includes("who") || t.includes("what")) return { reply: `Axiom Pathways drops students straight into real startups — building what ships, not slide decks. Picked for passion, not credentials. Type <strong>Apply</strong> to start.` };
+    return { reply: `Type <strong>?</strong> to see everything you can do, or <strong>Apply</strong> to start your application.` };
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const text = field.value.trim();
+    if (!text || busy) return;
+    busy = true; hint.style.display = "none"; field.value = "";
+    line("user", text.replace(/</g, "&lt;"));
+    const r = respond(text);
+    const think = thinking();
+    await new Promise((res) => setTimeout(res, reduce ? 250 : 1200));
+    think.remove();
+    if (r.fn) r.fn(); else line("ai", r.reply);
+    busy = false;
   });
 
-  gsap.set([".h-mark", ".h-metrics", ".h-desc"], { opacity: 0, y: 20 });
-  gsap.set(".h-center", { opacity: 0 });
-  gsap.to([".h-metrics", ".h-desc"], {
-    opacity: 1, y: 0, duration: 0.9, ease: "power3.out", stagger: 0.1,
-  });
-  gsap.to(".h-center", { opacity: 1, duration: 0.9, ease: "power3.out" });
-  gsap.to(".h-mark", { opacity: 1, y: 0, duration: 1.1, ease: "power3.out" });
-
-  gsap.utils.toArray<HTMLElement>(".reveal").forEach((el) => {
-    gsap.to(el, {
-      opacity: 1, y: 0, duration: 0.8, ease: "power3.out",
-      scrollTrigger: { trigger: el, start: "top 88%" },
-    });
+  thread.addEventListener("click", (e) => {
+    if (e.target.closest("[data-continue]")) startApplication(e.target.closest("[data-continue]"));
+    if (e.target.closest("[data-open-startups]")) openStartups();
+    const chip = e.target.closest("[data-cmd]");
+    if (chip && !busy) { field.value = chip.dataset.cmd; form.requestSubmit(); }
   });
 
-  // Partners ledger — tap to expand on touch devices
-  document.querySelectorAll<HTMLElement>(".p-row").forEach((row) => {
+  // ====================================================================
+  //  FULL STARTUPS overlay — expandable rows
+  // ====================================================================
+  const startupsFlow = document.getElementById("startupsFlow");
+  function openStartups() {
+    startupsFlow.classList.add("open"); startupsFlow.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden"; lenis?.stop();
+    if (!reduce) gsap.fromTo(startupsFlow.querySelectorAll(".p-row"), { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.06, delay: 0.15 });
+    gsap.fromTo(startupsFlow, { opacity: 0 }, { opacity: 1, duration: D(0.4) });
+  }
+  function closeStartups() {
+    startupsFlow.classList.remove("open"); startupsFlow.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = ""; lenis?.start();
+  }
+  document.getElementById("startupsX").addEventListener("click", closeStartups);
+  startupsFlow.querySelector("[data-close-flow]").addEventListener("click", closeStartups);
+
+  // click a row to expand (hover also expands via CSS)
+  startupsFlow.querySelectorAll(".p-row").forEach((row) => {
     row.addEventListener("click", () => {
       const wasOpen = row.classList.contains("open");
-      document.querySelectorAll(".p-row.open").forEach((r) => r.classList.remove("open"));
+      startupsFlow.querySelectorAll(".p-row.open").forEach((r) => r.classList.remove("open"));
       if (!wasOpen) row.classList.add("open");
     });
   });
 
-  // ---- Multi-step wizard ----
-  const STEP_NAMES = ["About you", "Your focus", "The letter"];
-  const stepPanels = Array.from(document.querySelectorAll<HTMLElement>(".step-panel"));
-  const dots = Array.from(document.querySelectorAll<HTMLElement>(".sdot"));
-  const backBtn = document.getElementById("backBtn") as HTMLButtonElement;
-  const nextBtn = document.getElementById("nextBtn") as HTMLButtonElement;
-  const submitBtn = document.getElementById("submitBtn") as HTMLButtonElement;
-  const stepNum = document.getElementById("stepNum")!;
-  const stepName = document.getElementById("stepName")!;
-  const form = document.getElementById("applyForm") as HTMLFormElement;
-  let current = 0;
+  // ====================================================================
+  //  APPLICATION — inline, one step at a time
+  // ====================================================================
+  const STEPS = [
+    { title: "Let's start with you.", fields: [
+      { label: "Full name", name: "name", type: "text", required: true, autocomplete: "name" },
+      { label: "Email", name: "email", type: "email", required: true, autocomplete: "email" },
+      { label: "Phone", name: "phone", type: "tel", required: true, autocomplete: "tel" },
+      { label: "School", name: "school", type: "text", required: true },
+      { label: "Grade / Year", name: "grade", type: "select", required: true, options: ["9th grade","10th grade","11th grade","12th grade","College — Freshman","College — Sophomore","College — Junior","College — Senior","Other"] },
+    ]},
+    { title: "Where do you want to fit?", fields: [
+      { label: "Main interest", name: "interest", type: "select", required: true, options: ["AI","Computer Science","Marketing","Finance","Startups","Other"] },
+      { label: "City / Chapter", name: "chapter", type: "text", required: true, placeholder: "e.g. Bay Area, Online" },
+      { label: "What internship are you looking for?", name: "startup_role", type: "textarea", required: true, placeholder: "e.g. AI engineer at an early-stage startup…" },
+      { label: "Why that, and what's your background?", name: "background", type: "textarea", required: true, placeholder: "What draws you to it, what you've done so far…" },
+      { label: "What fields are you interested in?", name: "fields_interest", type: "textarea", required: true, placeholder: "e.g. AI infra, consumer growth, fintech…" },
+      { label: "Which startups specifically?", name: "startup_picks", type: "textarea", required: true, placeholder: "FinalDose, Stealth, Anvara, Tally, Quarter Life Crisis, Topit AI, TypeOS" },
+    ]},
+    { title: "A little more.", sub: "Optional — but it helps.", fields: [
+      { label: "What do you want to build, and why?", name: "letter", type: "textarea", placeholder: "A few sentences is plenty." },
+      { label: "Instagram", name: "instagram", type: "text", placeholder: "@handle" },
+      { label: "LinkedIn", name: "linkedin", type: "text", placeholder: "profile URL" },
+      { label: "GitHub", name: "github", type: "text", placeholder: "@username" },
+      { label: "Other link", name: "other_link", type: "text", placeholder: "portfolio, X, TikTok…" },
+    ]},
+  ];
 
-  function showStep(i: number) {
-    stepPanels.forEach((p, idx) => p.classList.toggle("active", idx === i));
-    dots.forEach((d, idx) => d.classList.toggle("active", idx <= i));
-    stepNum.textContent = String(i + 1);
-    stepName.textContent = STEP_NAMES[i];
-    backBtn.style.display = i === 0 ? "none" : "";
-    nextBtn.style.display = i === stepPanels.length - 1 ? "none" : "";
-    submitBtn.style.display = i === stepPanels.length - 1 ? "" : "none";
-    gsap.fromTo(stepPanels[i], { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
-  }
-
-  function validateStep(i: number): boolean {
-    const fields = stepPanels[i].querySelectorAll<HTMLInputElement | HTMLSelectElement>("input, select, textarea");
-    for (const f of fields) {
-      if (!f.checkValidity()) { f.reportValidity(); return false; }
+  function fieldHTML(f) {
+    const req = f.required ? " required" : "";
+    let control;
+    if (f.type === "select") {
+      const opts = ['<option value="" disabled selected>Select…</option>'].concat(f.options.map((o) => `<option>${o}</option>`)).join("");
+      control = `<select name="${f.name}"${req}>${opts}</select>`;
+    } else if (f.type === "textarea") {
+      control = `<textarea name="${f.name}"${req} placeholder="${f.placeholder || ""}"></textarea>`;
+    } else {
+      control = `<input type="${f.type}" name="${f.name}"${req} placeholder="${f.placeholder || ""}"${f.autocomplete ? ` autocomplete="${f.autocomplete}"` : ""} />`;
     }
-    return true;
+    return `<div class="ifield"><label>${f.label}</label>${control}</div>`;
   }
 
-  // Show "tell us what" only when Main interest = Other
-  const interestSel = document.getElementById("interest") as HTMLSelectElement;
-  const interestOtherField = document.getElementById("interestOtherField") as HTMLElement;
-  const interestOther = document.getElementById("interestOther") as HTMLInputElement;
-  interestSel.addEventListener("change", () => {
-    const isOther = interestSel.value === "Other";
-    interestOtherField.style.display = isOther ? "" : "none";
-    interestOther.required = isOther;
-    if (!isOther) interestOther.value = "";
-  });
+  let formBlock = null, formStep = 0, formData = {};
 
-  nextBtn.addEventListener("click", () => {
-    if (!validateStep(current)) return;
-    if (current < stepPanels.length - 1) { current++; showStep(current); }
-  });
-  backBtn.addEventListener("click", () => {
-    if (current > 0) { current--; showStep(current); }
-  });
+  function renderForm(i) {
+    const s = STEPS[i];
+    const dots = STEPS.map((_, k) => `<span class="ap-dot${k <= i ? " is-on" : ""}"></span>`).join("");
+    const last = i === STEPS.length - 1;
+    formBlock.innerHTML = `
+      <div class="aiform-progress">${dots}</div>
+      <p class="aiform-label">${i + 1} of ${STEPS.length} · ${s.title}</p>
+      ${s.sub ? `<p class="aiform-sub">${s.sub}</p>` : ""}
+      <div class="aiform-fields">${s.fields.map(fieldHTML).join("")}</div>
+      <div class="aiform-nav">
+        ${i > 0 ? `<button type="button" class="aiform-back" data-form-back>← Back</button>` : ""}
+        <button type="button" class="aiform-next" data-form-${last ? "submit" : "next"}>${last ? "Submit →" : "Next →"}</button>
+      </div>`;
+    formBlock.querySelectorAll("input, select, textarea").forEach((f) => { if (f.name && formData[f.name] != null) f.value = formData[f.name]; });
+    if (!reduce) gsap.fromTo(formBlock.querySelectorAll(".ifield, .aiform-nav"), { opacity: 0, x: 18 }, { opacity: 1, x: 0, duration: 0.35, ease: "power3.out", stagger: 0.04 });
+  }
+  function collectForm() { formBlock.querySelectorAll("input, select, textarea").forEach((f) => { if (f.name) formData[f.name] = f.value; }); }
+  function validateForm() { for (const f of formBlock.querySelectorAll("input, select, textarea")) if (!f.checkValidity()) { f.reportValidity(); return false; } return true; }
+  function finishApplication() {
+    formBlock.innerHTML = `
+      <div class="aiform-done">
+        <svg viewBox="0 0 52 52" width="56" height="56"><circle class="dc-circle" cx="26" cy="26" r="24" fill="none"/><path class="dc-check" fill="none" d="M15 27l7 7 15-16"/></svg>
+        <h3 class="done-title">Application sent.</h3>
+        <p class="done-sub">We read every one. Watch your inbox.</p>
+      </div>`;
+    // follow-up below the box: invite them to follow along
+    setTimeout(() => {
+      line("ai",
+        `In the meantime — want to keep up with who we're placing, what we're building, and the startups we're bringing on? Follow Axiom on <a class="ai-link" href="https://www.linkedin.com/company/axiom-pathways" target="_blank" rel="noopener">LinkedIn</a>, or see <a class="ai-link" href="/social">all our socials →</a>`);
+    }, reduce ? 200 : 700);
+  }
 
-  // ---- Submit → Apps Script webhook ----
+  // Live submission → Apps Script webhook (Google Sheet). Same field names as the
+  // sheet HEADERS; no-cors response is opaque, so fire-and-forget.
   const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwxvxSnqkHtXmDmZivo-AW4BllLdT5mWQrQYoV2v1J47hojuEvpf5GPzIGlppkO1K0c/exec";
-  const formWrap = document.getElementById("formWrap") as HTMLElement;
-  const successScreen = document.getElementById("successScreen") as HTMLElement;
-
-  function fileToBase64(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve((reader.result as string).split(",")[1] || "");
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
+  function submitToSheet() {
+    try { fetch(WEBHOOK_URL, { method: "POST", mode: "no-cors", body: new URLSearchParams(formData) }); }
+    catch (_) {}
   }
 
-  // Block all native form submissions — submit only via button click
-  form.addEventListener("submit", (e) => { e.preventDefault(); });
+  async function startApplication(trigger) {
+    if (trigger) trigger.remove();
+    formData = {}; formStep = 0;
+    const think = thinking();
+    await new Promise((r) => setTimeout(r, reduce ? 200 : 1000));
+    think.remove();
+    line("ai", `Perfect — let's do this. One step at a time.`);
+    formBlock = document.createElement("div");
+    formBlock.className = "ai-form";
+    append(formBlock);
+    renderForm(formStep);
+  }
 
-  submitBtn.addEventListener("click", async () => {
-    if (current !== stepPanels.length - 1) return;
-    if (!validateStep(current)) return;
-
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Sending…";
-
-    // Collect text fields
-    const fd = new FormData(form);
-    const data: Record<string, string> = {};
-    fd.forEach((v, k) => { if (typeof v === "string") data[k] = v; });
-    if (data.interest === "Other" && data.interest_other) {
-      data.interest = "Other — " + data.interest_other;
+  thread.addEventListener("click", (e) => {
+    if (e.target.closest("[data-form-next]")) {
+      if (!validateForm()) return;
+      collectForm(); formStep++; renderForm(formStep);
+      formBlock.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+    } else if (e.target.closest("[data-form-back]")) {
+      collectForm(); formStep--; renderForm(formStep);
+    } else if (e.target.closest("[data-form-submit]")) {
+      if (!validateForm()) return;
+      collectForm();
+      submitToSheet();   // → live Google Sheet
+      finishApplication();
     }
-    delete data.interest_other;
+  });
 
-    // Resume file → base64
-    const resumeInput = document.getElementById("resume") as HTMLInputElement;
-    const resumeFile = resumeInput.files && resumeInput.files[0];
-    if (resumeFile) {
-      if (resumeFile.size > 8 * 1024 * 1024) {
-        submitBtn.textContent = "Resume too large (max 8MB).";
-        submitBtn.disabled = false;
-        return;
-      }
-      data.resume_name = resumeFile.name;
-      data.resume_type = resumeFile.type || "application/octet-stream";
-      data.resume_base64 = await fileToBase64(resumeFile);
-    }
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && startupsFlow.classList.contains("open")) closeStartups();
+  });
 
-    // Extra file → base64
-    const extraInput = document.getElementById("extra_file") as HTMLInputElement;
-    const extraFile = extraInput.files && extraInput.files[0];
-    if (extraFile) {
-      if (extraFile.size > 8 * 1024 * 1024) {
-        submitBtn.textContent = "Extra file too large (max 8MB).";
-        submitBtn.disabled = false;
-        return;
-      }
-      data.extra_file_name = extraFile.name;
-      data.extra_file_type = extraFile.type || "application/octet-stream";
-      data.extra_file_base64 = await fileToBase64(extraFile);
-    }
-
-    // Send as URL-encoded (not FormData) — Apps Script e.parameter needs this
-    const submitData = new URLSearchParams(data);
-
-    try {
-      await fetch(WEBHOOK_URL, {
-        method: "POST",
-        mode: "no-cors",
-        body: submitData,
-      });
-    } catch (_) {}
-
-    // Wait a moment for Apps Script to process
-    await new Promise((r) => setTimeout(r, 1500));
-
-    // Hide form, show success screen
-    formWrap.style.display = "none";
-    successScreen.style.display = "";
-    gsap.fromTo(successScreen, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" });
+  // ---- Page transition: fade out before navigating to an internal page ----
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("a[href]");
+    if (!a) return;
+    const url = a.getAttribute("href");
+    if (!url || a.target === "_blank" || /^(https?:|mailto:|#)/.test(url)) return;
+    e.preventDefault();
+    if (reduce) { window.location.href = url; return; }
+    document.body.classList.add("is-leaving");
+    setTimeout(() => { window.location.href = url; }, 280);
   });
 </script>
+
+<style is:global>
+  /* AI prompt — plain text, highlighted inline, no bubbles */
+  .ai-thread { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+  .ai-thread:empty { display: none; margin: 0; }
+  .ai-line { font-family: var(--font-serif); font-size: 1.06rem; line-height: 1.55; color: var(--ink); text-wrap: pretty; }
+  .ai-user { color: var(--muted); font-style: italic; }
+  .ai-user::before { content: "You — "; font-style: normal; font-family: var(--font-sans); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-right: 6px; }
+  .ai-ai strong { color: var(--green); font-weight: 600; }
+  .ai-thinking { color: var(--muted); letter-spacing: 0.05em; }
+
+  .ai-slist { display: flex; flex-direction: column; margin: 14px 0 20px; border-top: 1px solid var(--line); }
+  .ai-srow { display: flex; justify-content: space-between; align-items: baseline; gap: 18px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .ai-sname { font-family: var(--font-serif); color: var(--ink); }
+  .ai-yc { font-family: var(--font-sans); font-size: 0.66rem; font-weight: 600; letter-spacing: 0.06em; color: var(--green); border: 1px solid var(--green); border-radius: 6px; padding: 1px 6px; margin-left: 6px; vertical-align: middle; }
+  .ai-smeta { font-family: var(--font-sans); font-size: 0.78rem; color: var(--muted); text-align: right; }
+  .ai-note { display: block; font-family: var(--font-sans); font-size: 0.86rem; color: var(--muted); margin: 0 0 22px; text-wrap: pretty; }
+  .ai-link { background: none; border: none; padding: 0; cursor: pointer; font: inherit; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+  .ai-link:hover { color: var(--green); }
+  .ai-cta { display: inline-flex; font-family: var(--font-sans); font-size: 0.92rem; font-weight: 600; cursor: pointer; color: #fff; background: var(--ink); border: none; border-radius: 999px; padding: 12px 22px; margin-top: 4px; transition: background .25s, transform .2s; }
+  .ai-cta:hover { background: var(--green); transform: translateY(-1px); }
+  .ai-cta:active { transform: scale(0.96); }
+  @media (max-width: 560px) { .ai-srow { flex-direction: column; gap: 2px; } .ai-smeta { text-align: left; } }
+
+  /* command menu (?) — vertical list, same serif feel as the chat text */
+  .ai-cmds { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 8px; }
+  .ai-chip { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-serif); font-size: 1.06rem; line-height: 1.4; color: var(--ink); background: none; border: none; padding: 2px 0; cursor: pointer; transition: color .2s; }
+  .ai-chip::before { content: "→"; color: var(--muted); transition: transform .2s, color .2s; }
+  .ai-chip:hover { color: var(--green); }
+  .ai-chip:hover::before { color: var(--green); transform: translateX(3px); }
+  .ai-chip:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; border-radius: 4px; }
+  /* contact block in chat */
+  .ai-contact { display: flex; flex-wrap: wrap; gap: 28px 44px; margin-top: 6px; }
+  .ai-cgroup { display: flex; flex-direction: column; gap: 6px; }
+  .ai-cname { font-family: var(--font-serif); color: var(--ink); font-size: 1.05rem; margin-bottom: 2px; }
+
+  /* Inline application form */
+  .ai-form { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: clamp(20px, 4vw, 28px); margin-top: 6px; box-shadow: 0 10px 36px rgba(21,21,15,0.06); }
+  .aiform-progress { display: flex; gap: 6px; margin-bottom: 14px; }
+  .ap-dot { height: 4px; flex: 1; border-radius: 999px; background: var(--line); transition: background .35s; }
+  .ap-dot.is-on { background: var(--green); }
+  .aiform-label { font-family: var(--font-sans); font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; font-variant-numeric: tabular-nums; }
+  .aiform-sub { font-family: var(--font-sans); font-size: 0.88rem; color: var(--muted); margin: -8px 0 16px; text-wrap: pretty; }
+  .aiform-fields { display: flex; flex-direction: column; }
+  .ifield { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+  .ifield label { font-family: var(--font-sans); font-size: 0.85rem; font-weight: 500; color: var(--ink); }
+  .ifield input, .ifield select, .ifield textarea { font-family: var(--font-sans); font-size: 1rem; color: var(--ink); background: var(--page); border: 1px solid transparent; border-radius: 14px; padding: 13px 15px; width: 100%; transition: border-color .2s, background .2s, box-shadow .2s; }
+  .ifield textarea { resize: vertical; min-height: 90px; }
+  .ifield input:focus, .ifield select:focus, .ifield textarea:focus { outline: none; background: var(--card); border-color: var(--green); box-shadow: 0 0 0 4px rgba(47,107,61,0.12); }
+  .ifield select { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%232f6b3d' d='M6 8 0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 15px center; padding-right: 38px; }
+  .aiform-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 18px; }
+  .aiform-back { background: none; border: none; cursor: pointer; font-family: var(--font-sans); font-size: 0.9rem; color: var(--muted); padding: 12px 2px; min-height: 44px; transition: color .2s; }
+  .aiform-back:hover { color: var(--ink); }
+  .aiform-next { margin-left: auto; font-family: var(--font-sans); font-size: 0.95rem; font-weight: 600; cursor: pointer; color: #fff; background: var(--ink); border: none; border-radius: 999px; padding: 13px 26px; transition: background .25s, transform .2s; }
+  .aiform-next:hover { background: var(--green); transform: translateY(-1px); }
+  .aiform-next:active { transform: scale(0.96); }
+  .ai-cta:focus-visible, .aiform-next:focus-visible, .aiform-back:focus-visible, .ai-link:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; border-radius: 10px; }
+  .aiform-done { text-align: center; padding: 16px 0 6px; }
+  .aiform-done svg { display: block; margin: 0 auto 14px; }
+  .dc-circle { stroke: var(--green); stroke-width: 2; stroke-dasharray: 151; stroke-dashoffset: 151; animation: dcCircle .6s ease forwards; }
+  .dc-check { stroke: var(--green); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 44; stroke-dashoffset: 44; animation: dcCheck .4s .45s ease forwards; }
+  @keyframes dcCircle { to { stroke-dashoffset: 0; } }
+  @keyframes dcCheck { to { stroke-dashoffset: 0; } }
+  .done-title { font-family: var(--font-serif); font-weight: 500; font-size: clamp(1.5rem, 4vw, 2rem); margin-bottom: 8px; text-wrap: balance; }
+  .done-sub { font-family: var(--font-sans); color: var(--muted); }
+  @media (prefers-reduced-motion: reduce) { .dc-circle, .dc-check, .aiform-next:active, .ai-cta:active { animation: none; stroke-dashoffset: 0; transform: none; } }
+</style>
+
+<style>
+  /* ---------------- Background field ---------------- */
+  .bg-dots { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  /* lift only the in-flow content above the canvas — must NOT touch .flow/.site-nav
+     (those manage their own fixed positioning + stacking). */
+  .hero, .howuse, .site-footer { position: relative; z-index: 1; }
+
+  /* ---------------- Top nav (links only, no chrome) ---------------- */
+  .site-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 40; display: flex; align-items: center; justify-content: center; gap: clamp(18px, 3vw, 38px); padding: 22px clamp(20px, 4vw, 48px); font-family: var(--font-sans); font-size: 0.92rem; background: transparent; }
+  .site-nav a, .link-btn { color: var(--muted); transition: color .22s; }
+  .site-nav a:hover, .link-btn:hover { color: var(--ink); }
+  .link-btn { background: none; border: none; cursor: pointer; font: inherit; padding: 0; }
+  .site-nav a:focus-visible, .link-btn:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; border-radius: 8px; }
+
+  /* ---------------- Hero ---------------- */
+  /* content-height (no forced 100svh) so there's no blank space when the chat is
+     empty — the hero grows as messages come in. */
+  .hero { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-align: center; padding: clamp(120px, 16vh, 175px) clamp(22px, 5vw, 40px) clamp(56px, 9vh, 96px); gap: clamp(12px, 1.8vh, 20px); }
+  .hero-logo { width: min(38vw, 360px); height: auto; }
+  .hero-tagline { font-family: var(--font-serif); font-size: clamp(1.1rem, 2.2vw, 1.4rem); color: var(--muted); max-width: 34ch; line-height: 1.45; text-wrap: balance; }
+
+  /* ---------------- AI prompt container ---------------- */
+  .ai { width: min(100%, 760px); margin-top: clamp(8px, 1.5vh, 16px); text-align: left; }
+  .ai-hint { font-family: var(--font-serif); font-size: 1.04rem; color: var(--muted); padding: 4px 2px 14px; }
+  .ai-hint strong { color: var(--ink); font-weight: 600; }
+  .ai-input { display: flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 8px 10px 8px 12px; box-shadow: 0 8px 30px rgba(21,21,15,0.06); }
+  .ai-plus { display: grid; place-items: center; width: 30px; height: 30px; flex-shrink: 0; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 1.1rem; }
+  .ai-input input { flex: 1; font-family: var(--font-sans); font-size: 1rem; color: var(--ink); background: none; border: none; padding: 8px 4px; }
+  .ai-input input:focus { outline: none; }
+  .ai-send { display: grid; place-items: center; width: 40px; height: 40px; flex-shrink: 0; border: none; border-radius: 999px; cursor: pointer; background: var(--ink); color: #fff; font-size: 1.05rem; transition: background .25s, transform .2s; }
+  .ai-send:hover { background: var(--green); transform: translateY(-1px); }
+  .ai-send:active { transform: scale(0.96); }
+  .ai-send:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+
+  /* ---------------- Trusted by ---------------- */
+  .trusted { margin-top: clamp(18px, 4vh, 38px); width: min(100%, 920px); }
+  .trusted-label { font-family: var(--font-sans); font-size: 0.8rem; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 16px; }
+  .trusted-marquee { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+  .trusted-track { list-style: none; display: flex; align-items: center; gap: clamp(28px, 5vw, 56px); width: max-content; animation: marqueeLeft 40s linear infinite; }
+  .trusted-track:hover { animation-play-state: paused; }
+  @keyframes marqueeLeft { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .trusted-track { animation: none; flex-wrap: wrap; justify-content: center; width: auto; } }
+  .trusted-logo { font-family: var(--font-serif); font-size: clamp(1rem, 2vw, 1.25rem); color: var(--muted); opacity: 0.7; white-space: nowrap; transition: opacity .25s, color .25s; }
+  .trusted-logo:hover { opacity: 1; color: var(--ink); }
+  .trusted-yc { font-family: var(--font-sans); font-size: 0.58rem; font-weight: 600; letter-spacing: 0.06em; color: var(--green); vertical-align: super; }
+
+  /* ---------------- How can I use ---------------- */
+  .howuse { max-width: var(--maxw); margin: 0 auto; padding: clamp(80px, 14vh, 160px) clamp(22px, 5vw, 56px); }
+  .howuse-title { font-family: var(--font-serif); font-weight: 500; font-size: clamp(2.2rem, 6vw, 4rem); letter-spacing: -0.02em; line-height: 1.02; text-wrap: balance; }
+  .howuse-sub { margin-top: 18px; max-width: 46ch; color: var(--muted); font-family: var(--font-serif); font-size: clamp(1.1rem, 2vw, 1.35rem); line-height: 1.55; text-wrap: pretty; }
+
+  /* ---------------- Full startups overlay ---------------- */
+  .flow { position: fixed; inset: 0; z-index: 60; background: var(--page); padding: clamp(72px, 12vh, 130px) clamp(24px, 6vw, 88px) clamp(80px, 12vh, 120px); display: flex; flex-direction: column; opacity: 0; visibility: hidden; pointer-events: none; overflow-y: auto; }
+  .flow.open { opacity: 1; visibility: visible; pointer-events: auto; }
+  .flow-eyebrow { font-family: var(--font-sans); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+  .flow-title { font-family: var(--font-serif); font-weight: 500; font-size: clamp(2rem, 5vw, 3.4rem); letter-spacing: -0.015em; line-height: 1.05; margin-top: 12px; text-wrap: balance; }
+  .flow-foot { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: clamp(32px, 6vh, 56px); flex-wrap: wrap; }
+  .flow-back { background: none; cursor: pointer; font-family: var(--font-sans); font-size: 0.86rem; letter-spacing: 0.04em; padding: 12px 0; border: none; color: var(--muted); transition: color .25s; }
+  .flow-back:hover { color: var(--ink); }
+  .p-ledger { margin-top: clamp(28px, 5vh, 56px); }
+  .flow-x { position: fixed; top: 22px; right: clamp(20px, 4vw, 48px); z-index: 61; width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--muted); font-size: 1.3rem; line-height: 1; cursor: pointer; display: grid; place-items: center; transition: color .2s, border-color .2s, transform .2s; }
+  .flow-x:hover { color: var(--ink); border-color: var(--ink); }
+  .flow-x:active { transform: scale(0.94); }
+  .flow-x:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+</style>
 
 </body>
 </html>

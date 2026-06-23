@@ -1,23 +1,36 @@
 :root {
-  /* Brand — white card / gray page / green accent */
-  --page:    #e7eae6;   /* gray page behind boxes */
-  --card:    #ffffff;
-  --ink:     #0b130d;   /* near-black text */
-  --muted:   #6a766e;
-  --green:   #16a34a;
-  --green-2: #0f7a37;
-  --green-soft: #1b7a40;
-  --line:    rgba(11, 19, 13, 0.10);
-  --line-2:  rgba(11, 19, 13, 0.06);
+  /* Brand — cream page / soft card / Axiom green accent (Venn-inspired) */
+  --page:    #f2f0e9;   /* warm cream page */
+  --card:    #faf8f2;   /* soft cream card, a touch lighter than page */
+  --ink:     #15150f;   /* warm near-black text */
+  --muted:   #76746a;   /* warm muted gray */
+  --green:   #2f6b3d;   /* Axiom forest green — matches the logo mark */
+  --green-2: #245530;
+  --green-soft: #356f43;
+  --line:    rgba(21, 21, 15, 0.12);
+  --line-2:  rgba(21, 21, 15, 0.06);
   --radius:  26px;
   --gutter:  14px;
-  --glow:    0 18px 50px rgba(22, 163, 74, 0.16);
+  --glow:    0 18px 50px rgba(47, 107, 61, 0.14);
 
-  --font: "DM Sans", system-ui, -apple-system, sans-serif;
+  /* Type system: SF Pro for logo/UI labels, editorial serif for everything else */
+  --font-sans:  -apple-system, "SF Pro Display", "SF Pro Text", system-ui, "Helvetica Neue", sans-serif;
+  --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --font: var(--font-serif);   /* body default = serif (Venn-style prose) */
   --maxw: 1340px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Page transition — opacity-only (never transform the body; it would break the
+   fixed background canvas / nav / overlays by creating a containing block). */
+@keyframes pageIn { from { opacity: 0; } to { opacity: 1; } }
+body { animation: pageIn 0.42s ease both; }
+body.is-leaving { opacity: 0; transition: opacity 0.28s ease; }
+@media (prefers-reduced-motion: reduce) {
+  body { animation: none; }
+  body.is-leaving { transition: none; }
+}
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 
@@ -26,6 +39,7 @@ body {
   background: var(--page);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
   overflow-x: hidden;
 }
@@ -408,3 +422,145 @@ img { max-width: 100%; display: block; }
   .h-desc { max-width: none; }
   .h-mark { display: none; }
 }
+
+/* =====================================================================
+   VENN-INSPIRED REBRAND LAYER
+   Cream + B/W + green. SF Pro for logo/labels, serif for prose.
+   ===================================================================== */
+
+/* --- Sans where legibility/brand wants it (logo, labels, controls) --- */
+.h-center h1,            /* the AXIOM wordmark = the logo, stays SF Pro */
+.h-brand,
+.h-est,
+.h-prog,
+.tag,
+.btn,
+.metric .ml,
+.p-sector,
+.p-status,
+.p-detail-label,
+.stepper-label,
+.field label,
+.field input, .field select, .field textarea,
+.site-nav, .site-footer, .about-eyebrow,
+.success-sub {
+  font-family: var(--font-sans);
+}
+
+/* --- Serif display tuning (relax sans-tuned letter-spacing) --- */
+.sec-title, .hero-body h1, .success-title,
+.partners-lede, .about-copy, .p-name {
+  font-family: var(--font-serif);
+  letter-spacing: -0.01em;
+  font-weight: 500;
+}
+.sec-title em, .hero-body h1 em { font-style: italic; }
+body { line-height: 1.62; }
+
+/* --- Top nav (Venn: small centered "About") --- */
+.site-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+  display: flex; align-items: center; justify-content: center;
+  gap: 36px;
+  padding: 22px clamp(20px, 4vw, 56px);
+  font-size: 0.86rem; letter-spacing: 0.02em; color: var(--muted);
+  pointer-events: none;
+}
+.site-nav a, .site-nav button {
+  pointer-events: auto;
+  background: none; border: none; cursor: pointer;
+  font: inherit; color: var(--muted);
+  transition: color .25s;
+}
+.site-nav a:hover, .site-nav button:hover { color: var(--ink); }
+.nav-spacer { height: 64px; }
+
+/* --- About overlay (Venn: dark veil, serif copy fades up) --- */
+.about-overlay {
+  position: fixed; inset: 0; z-index: 60;
+  display: grid; place-items: center;
+  padding: clamp(28px, 8vw, 120px);
+  background: rgba(17, 17, 12, 0.94);
+  backdrop-filter: blur(6px);
+  opacity: 0; visibility: hidden;
+  transition: opacity .55s ease, visibility .55s ease;
+}
+.about-overlay.open { opacity: 1; visibility: visible; }
+.about-inner { max-width: 760px; text-align: center; }
+.about-eyebrow {
+  font-size: 0.74rem; letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(255,255,255,0.55); margin-bottom: 30px;
+  opacity: 0; transform: translateY(16px);
+}
+.about-copy {
+  color: rgba(255,255,255,0.92);
+  font-size: clamp(1.2rem, 2.5vw, 1.7rem);
+  line-height: 1.7; font-weight: 400;
+}
+.about-copy p { margin-bottom: 1.5em; opacity: 0; transform: translateY(18px); }
+.about-copy p:last-child { margin-bottom: 0; }
+.about-copy em { font-style: italic; color: #fff; }
+.about-overlay.open .about-eyebrow,
+.about-overlay.open .about-copy p {
+  animation: aboutRise .8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.about-overlay.open .about-eyebrow { animation-delay: .1s; }
+.about-overlay.open .about-copy p:nth-child(1) { animation-delay: .25s; }
+.about-overlay.open .about-copy p:nth-child(2) { animation-delay: .42s; }
+.about-overlay.open .about-copy p:nth-child(3) { animation-delay: .59s; }
+.about-overlay.open .about-copy p:nth-child(4) { animation-delay: .76s; }
+@keyframes aboutRise { to { opacity: 1; transform: translateY(0); } }
+.about-close {
+  position: absolute; bottom: clamp(28px, 5vw, 56px); left: 50%;
+  transform: translateX(-50%);
+  width: 44px; height: 44px; border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.3); background: none;
+  color: rgba(255,255,255,0.7); font-size: 1.1rem; cursor: pointer;
+  display: grid; place-items: center; transition: border-color .25s, color .25s;
+}
+.about-close:hover { border-color: #fff; color: #fff; }
+@media (prefers-reduced-motion: reduce) {
+  .about-overlay.open .about-eyebrow,
+  .about-overlay.open .about-copy p { animation: none; opacity: 1; transform: none; }
+}
+
+/* --- Footer (Venn: contact / linkedin left, social bottom-right) --- */
+.site-footer {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 24px; flex-wrap: wrap;
+  padding: clamp(40px, 7vw, 80px) clamp(20px, 4vw, 56px) clamp(28px, 4vw, 44px);
+  border-top: 1px solid var(--line);
+  font-size: 0.9rem; color: var(--muted);
+}
+.footer-left { display: flex; gap: 26px; flex-wrap: wrap; align-items: center; }
+.footer-left a { color: var(--muted); transition: color .25s; }
+.footer-left a:hover { color: var(--ink); }
+.footer-right { margin-left: auto; }
+.footer-social {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: var(--ink); font-weight: 500;
+  border-bottom: 1px solid var(--ink); padding-bottom: 3px;
+  transition: color .25s, border-color .25s;
+}
+.footer-social:hover { color: var(--green); border-color: var(--green); }
+@media (max-width: 560px) {
+  .site-footer { flex-direction: column; align-items: flex-start; }
+  .footer-right { margin-left: 0; }
+}
+
+/* --- Generic page shell for /contact + /social --- */
+.page-wrap {
+  max-width: 720px; margin: 0 auto;
+  padding: clamp(120px, 18vh, 220px) clamp(24px, 5vw, 40px) clamp(60px, 10vw, 120px);
+  min-height: 100svh; display: flex; flex-direction: column;
+}
+.page-back {
+  font-family: var(--font-sans); font-size: 0.85rem; color: var(--muted);
+  margin-bottom: clamp(40px, 8vw, 72px); transition: color .25s;
+}
+.page-back:hover { color: var(--ink); }
+.page-title {
+  font-family: var(--font-serif); font-weight: 500;
+  font-size: clamp(2.4rem, 6vw, 4rem); letter-spacing: -0.015em; line-height: 1.04;
+}
+.page-lede { margin-top: 18px; max-width: 50ch; color: var(--muted); font-size: 1.1rem; }
