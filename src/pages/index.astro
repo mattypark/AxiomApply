@@ -410,6 +410,9 @@ const startups = [
       { label: "LinkedIn", name: "linkedin", type: "text", placeholder: "profile URL" },
       { label: "GitHub", name: "github", type: "text", placeholder: "@username" },
       { label: "Other link", name: "other_link", type: "text", placeholder: "portfolio, X, TikTok…" },
+      { label: "Resume / CV", name: "resume", type: "file", accept: ".pdf,.doc,.docx,application/pdf", hint: "PDF or DOC · max 8MB" },
+      { label: "Additional file", name: "extra_file", type: "file", accept: ".pdf,.doc,.docx,.png,.jpg,.jpeg,.gif,image/*,application/pdf", hint: "Image, PDF, anything · max 8MB" },
+      { label: "Anything else you'd like to share?", name: "comments", type: "textarea", placeholder: "A note to the team — anything goes." },
     ]},
   ];
 
@@ -421,13 +424,21 @@ const startups = [
       control = `<select name="${f.name}"${req}>${opts}</select>`;
     } else if (f.type === "textarea") {
       control = `<textarea name="${f.name}"${req} placeholder="${f.placeholder || ""}"></textarea>`;
+    } else if (f.type === "file") {
+      control = `<label class="dropzone" data-drop="${f.name}">
+        <input type="file" name="${f.name}" accept="${f.accept || ""}" hidden />
+        <span class="dz-icon" aria-hidden="true">↥</span>
+        <span class="dz-text">Click to upload or drag and drop</span>
+        <span class="dz-hint">${f.hint || ""}</span>
+        <span class="dz-file" hidden></span>
+      </label>`;
     } else {
       control = `<input type="${f.type}" name="${f.name}"${req} placeholder="${f.placeholder || ""}"${f.autocomplete ? ` autocomplete="${f.autocomplete}"` : ""} />`;
     }
     return `<div class="ifield"><label>${f.label}</label>${control}</div>`;
   }
 
-  let formBlock = null, formStep = 0, formData = {};
+  let formBlock = null, formStep = 0, formData = {}, formFiles = {};
 
   function renderForm(i) {
     const s = STEPS[i];
@@ -443,10 +454,41 @@ const startups = [
         <button type="button" class="aiform-next" data-form-${last ? "submit" : "next"}>${last ? "Submit →" : "Next →"}</button>
       </div>`;
     formBlock.querySelectorAll("input, select, textarea").forEach((f) => { if (f.name && formData[f.name] != null) f.value = formData[f.name]; });
+    // restore any already-picked files (file inputs can't be re-populated, so we show the name)
+    formBlock.querySelectorAll(".dropzone").forEach((dz) => {
+      const file = formFiles[dz.dataset.drop];
+      if (file) { dz.classList.add("has-file"); const el = dz.querySelector(".dz-file"); el.textContent = "✓ " + file.name; el.hidden = false; }
+    });
     if (!reduce) gsap.fromTo(formBlock.querySelectorAll(".ifield, .aiform-nav"), { opacity: 0, x: 18 }, { opacity: 1, x: 0, duration: 0.35, ease: "power3.out", stagger: 0.04 });
   }
   function collectForm() { formBlock.querySelectorAll("input, select, textarea").forEach((f) => { if (f.name) formData[f.name] = f.value; }); }
   function validateForm() { for (const f of formBlock.querySelectorAll("input, select, textarea")) if (!f.checkValidity()) { f.reportValidity(); return false; } return true; }
+
+  const MAX_FILE = 8 * 1024 * 1024;
+  function setFile(name, file, dz) {
+    const zone = dz || (formBlock && formBlock.querySelector(`[data-drop="${name}"]`));
+    const el = zone && zone.querySelector(".dz-file");
+    if (file && file.size > MAX_FILE) {
+      if (el) { el.textContent = "That file's over 8MB — pick a smaller one."; el.hidden = false; }
+      if (zone) zone.classList.remove("has-file");
+      delete formFiles[name]; return;
+    }
+    if (!file) return;
+    formFiles[name] = file;
+    if (zone && el) { zone.classList.add("has-file"); el.textContent = "✓ " + file.name; el.hidden = false; }
+  }
+  function fileToBase64(file) {
+    return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res((r.result + "").split(",")[1] || ""); r.onerror = rej; r.readAsDataURL(file); });
+  }
+  async function attachFiles() {
+    for (const name of Object.keys(formFiles)) {
+      const file = formFiles[name];
+      if (!file || file.size > MAX_FILE) continue;
+      formData[name + "_name"] = file.name;
+      formData[name + "_type"] = file.type || "application/octet-stream";
+      formData[name + "_base64"] = await fileToBase64(file);
+    }
+  }
   function finishApplication() {
     formBlock.innerHTML = `
       <div class="aiform-done">
@@ -482,7 +524,7 @@ const startups = [
     renderForm(formStep);
   }
 
-  thread.addEventListener("click", (e) => {
+  thread.addEventListener("click", async (e) => {
     if (e.target.closest("[data-form-next]")) {
       if (!validateForm()) return;
       collectForm(); formStep++; renderForm(formStep);
@@ -492,9 +534,30 @@ const startups = [
     } else if (e.target.closest("[data-form-submit]")) {
       if (!validateForm()) return;
       collectForm();
-      submitToSheet();   // → live Google Sheet
+      await attachFiles();   // base64-encode resume + extra file into formData
+      submitToSheet();       // → live Google Sheet
       finishApplication();
     }
+  });
+
+  // ---- File dropzones (resume + extra file): click, change, drag & drop ----
+  thread.addEventListener("change", (e) => {
+    const inp = e.target.closest('input[type="file"]');
+    if (inp) setFile(inp.name, inp.files[0], inp.closest(".dropzone"));
+  });
+  ["dragenter", "dragover"].forEach((ev) => thread.addEventListener(ev, (e) => {
+    const dz = e.target.closest(".dropzone"); if (!dz) return;
+    e.preventDefault(); dz.classList.add("is-drag");
+  }));
+  ["dragleave", "dragend"].forEach((ev) => thread.addEventListener(ev, (e) => {
+    const dz = e.target.closest(".dropzone"); if (dz) dz.classList.remove("is-drag");
+  }));
+  thread.addEventListener("drop", (e) => {
+    const dz = e.target.closest(".dropzone"); if (!dz) return;
+    e.preventDefault(); dz.classList.remove("is-drag");
+    const inp = dz.querySelector('input[type="file"]');
+    const f = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (f) setFile(inp.name, f, dz);
   });
 
   document.addEventListener("keydown", (e) => {
@@ -563,6 +626,16 @@ const startups = [
   .ifield textarea { resize: vertical; min-height: 90px; }
   .ifield input:focus, .ifield select:focus, .ifield textarea:focus { outline: none; background: var(--card); border-color: var(--green); box-shadow: 0 0 0 4px rgba(47,107,61,0.12); }
   .ifield select { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%232f6b3d' d='M6 8 0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 15px center; padding-right: 38px; }
+  /* file dropzone */
+  .dropzone { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; text-align: center; padding: 24px 18px; border: 1.5px dashed var(--line); border-radius: 14px; background: var(--page); cursor: pointer; transition: border-color .2s, background .2s; }
+  .dropzone:hover { border-color: var(--green); }
+  .dropzone.is-drag { border-color: var(--green); background: rgba(47,107,61,0.07); }
+  .dz-icon { font-size: 1.5rem; line-height: 1; color: var(--muted); }
+  .dz-text { font-family: var(--font-sans); font-size: 0.95rem; color: var(--ink); }
+  .dz-hint { font-family: var(--font-sans); font-size: 0.8rem; color: var(--muted); }
+  .dz-file { font-family: var(--font-sans); font-size: 0.92rem; color: var(--green); font-weight: 500; }
+  .dropzone.has-file { border-style: solid; border-color: var(--green); }
+  .dropzone.has-file .dz-icon, .dropzone.has-file .dz-text, .dropzone.has-file .dz-hint { display: none; }
   .aiform-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 18px; }
   .aiform-back { background: none; border: none; cursor: pointer; font-family: var(--font-sans); font-size: 0.9rem; color: var(--muted); padding: 12px 2px; min-height: 44px; transition: color .2s; }
   .aiform-back:hover { color: var(--ink); }
