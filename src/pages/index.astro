@@ -295,12 +295,25 @@ const startups = [
        <button type="button" class="ai-cta" data-continue>Continue to your application →</button>`);
   }
 
+  const FAQ = [
+    { q: "When do we hear back?", a: "The first batch goes out late July — early August. Every applicant hears back, accepted or not." },
+    { q: "How do I get a higher chance?", a: "Follow us and slide into our DMs — @axiompathways on Instagram, or message the founders directly. Real initiative gets noticed." },
+    { q: "Why should I get in?", a: "You get dropped into a real startup building what ships, and you learn straight from founders — not a classroom. Picked for passion, not credentials." },
+    { q: "What if I don't get accepted?", a: "You still walk away ahead. We don't leave anyone with nothing — we'll show you exactly what to learn to land an internship, and you can still learn from top entrepreneurs." },
+    { q: "What do you do with interns?", a: "Way more than busywork. We teach you what the role actually needs and get you ready to do real startup work — the goal is you becoming someone they want to hire." },
+  ];
+  function showQuestions() {
+    line("ai", `Common questions — tap one, or just ask your own:`);
+    line("ai", `<span class="ai-cmds">${FAQ.map((f) => `<button type="button" class="ai-chip" data-cmd="${f.q.replace(/"/g, "&quot;")}">${f.q}</button>`).join("")}</span>`);
+  }
+
   function showMenu() {
     line("ai", `Here's everything you can do — tap one, or just type it:`);
     line("ai",
       `<span class="ai-cmds">
         <button type="button" class="ai-chip" data-cmd="apply">Apply</button>
         <button type="button" class="ai-chip" data-cmd="startups">Startups</button>
+        <button type="button" class="ai-chip" data-cmd="questions">Common questions</button>
         <button type="button" class="ai-chip" data-cmd="contact">Contact us</button>
         <button type="button" class="ai-chip" data-cmd="socials">Socials</button>
         <a class="ai-chip" href="https://www.linkedin.com/company/axiom-pathways/" target="_blank" rel="noopener">LinkedIn</a>
@@ -328,9 +341,18 @@ const startups = [
 
   function respond(text) {
     const t = text.trim().toLowerCase();
+    const faqExact = FAQ.find((f) => f.q.toLowerCase() === t);
+    if (faqExact) return { reply: faqExact.a };
     if (t === "?" || t === "help" || t.includes("option")) return { fn: showMenu };
+    if (t.includes("question") || t === "faq" || t.includes("faqs")) return { fn: showQuestions };
     if (/\bapply\b/.test(t)) return { fn: showStartupsInline };
     if (t.includes("contact")) return { fn: showContact };
+    // FAQ keyword fallbacks (before generic how/who/what + social to avoid collisions)
+    if (t.includes("hear back") || (t.includes("when") && t.includes("back"))) return { reply: FAQ[0].a };
+    if (t.includes("chance") || t.includes("improve") || t.includes("better odds")) return { reply: FAQ[1].a };
+    if (t.includes("why should") || t.includes("why apply") || t.includes("why join") || t.includes("why get in")) return { reply: FAQ[2].a };
+    if (t.includes("not accepted") || t.includes("rejected") || t.includes("don't get") || t.includes("dont get") || t.includes("if i don")) return { reply: FAQ[3].a };
+    if (t.includes("intern") && (t.includes("do with") || t.includes("what do") || t.includes("happen"))) return { reply: FAQ[4].a };
     if (t.includes("startup")) return { fn: showStartupsInline };
     if (t.includes("social") || t.includes("follow") || t.includes("instagram") || t.includes("linkedin")) return { fn: showSocials };
     if (t.includes("how")) return { reply: `To get an internship at a real startup, or to learn directly from top entrepreneurs. Type <strong>Apply</strong> whenever you're ready.` };
