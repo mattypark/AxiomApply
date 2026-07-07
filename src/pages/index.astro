@@ -46,6 +46,12 @@ const startups = [
     roles: ["Marketing", "Research", "Content & growth"],
     details: "Mainly marketing and research. If you're a high schooler who's genuinely ambitious, they'll take anyone driven for their fellowship — show up hungry and prove it.",
   },
+  {
+    name: "Corgi", yc: "YC S24", sector: "Go-to-market", status: "Series B · taking interns",
+    what: "A YC-backed startup that's already raised a Series B and is scaling fast. Bringing on go-to-market talent to power the next stage of growth.",
+    roles: ["Go-to-market", "Sales", "Growth", "Outreach"],
+    details: "Series B and moving quick — looking for GTM (go-to-market) interns to own outreach, sales, and growth experiments. High-ownership role on a proven team.",
+  },
 ];
 ---
 
@@ -174,6 +180,7 @@ const startups = [
     { name: "Quarter Life Crisis", yc: null, meta: "Brand / Lifestyle · taking interns" },
     { name: "Topit AI", yc: null, meta: "AI / Consumer · taking interns" },
     { name: "TypeOS", yc: "YC X25", meta: "AI / Productivity · taking interns" },
+    { name: "Corgi", yc: "YC S24", meta: "Go-to-market · Series B, looking for GTM interns" },
   ];
 
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -424,7 +431,7 @@ const startups = [
       { label: "What internship are you looking for?", name: "startup_role", type: "textarea", required: true, placeholder: "e.g. AI engineer at an early-stage startup…" },
       { label: "Why that, and what's your background?", name: "background", type: "textarea", required: true, placeholder: "What draws you to it, what you've done so far…" },
       { label: "What fields are you interested in?", name: "fields_interest", type: "textarea", required: true, placeholder: "e.g. AI infra, consumer growth, fintech…" },
-      { label: "Which startups specifically?", name: "startup_picks", type: "textarea", required: true, placeholder: "FinalDose, Stealth, Anvara, Tally, Quarter Life Crisis, Topit AI, TypeOS" },
+      { label: "Which startups specifically?", name: "startup_picks", type: "textarea", required: true, placeholder: "FinalDose, Stealth, Anvara, Tally, Quarter Life Crisis, Topit AI, TypeOS, Corgi" },
     ]},
     { title: "A little more.", sub: "Optional — but it helps.", fields: [
       { label: "What do you want to build, and why?", name: "letter", type: "textarea", placeholder: "A few sentences is plenty." },
@@ -457,7 +464,8 @@ const startups = [
     } else {
       control = `<input type="${f.type}" name="${f.name}"${req} placeholder="${f.placeholder || ""}"${f.autocomplete ? ` autocomplete="${f.autocomplete}"` : ""} />`;
     }
-    return `<div class="ifield"><label>${f.label}</label>${control}</div>`;
+    const hint = f.type === "textarea" ? `<p class="ihint">Statistics and numbers will boost your chance of getting in.</p>` : "";
+    return `<div class="ifield"><label>${f.label}</label>${hint}${control}</div>`;
   }
 
   let formBlock = null, formStep = 0, formData = {}, formFiles = {};
@@ -646,6 +654,7 @@ const startups = [
   .ifield label { font-family: var(--font-sans); font-size: 0.85rem; font-weight: 500; color: var(--ink); }
   .ifield input, .ifield select, .ifield textarea { font-family: var(--font-sans); font-size: 1rem; color: var(--ink); background: var(--page); border: 1px solid transparent; border-radius: 14px; padding: 13px 15px; width: 100%; transition: border-color .2s, background .2s, box-shadow .2s; }
   .ifield textarea { resize: vertical; min-height: 90px; }
+  .ifield .ihint { font-family: var(--font-sans); font-size: 0.8rem; color: var(--muted); margin: -2px 0 8px; text-wrap: pretty; }
   .ifield input:focus, .ifield select:focus, .ifield textarea:focus { outline: none; background: var(--card); border-color: var(--green); box-shadow: 0 0 0 4px rgba(47,107,61,0.12); }
   .ifield select { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%232f6b3d' d='M6 8 0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 15px center; padding-right: 38px; }
   /* file dropzone */
