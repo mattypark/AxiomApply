@@ -1,0 +1,13 @@
+{
+  "0": "index.astro",
+  "1": "Connect the form to Google Sheets",
+  "2": "package.json",
+  "3": "dependencies",
+  "4": "line",
+  "5": "start",
+  "6": "startApplication",
+  "7": "../styles/global.css",
+  "8": "attachFiles",
+  "9": "astro.config.mjs",
+  "10": "env.d.ts"
+}

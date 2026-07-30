@@ -1,0 +1,47 @@
+{
+  "astro.config.mjs": {
+    "mtime": 1780768748.0809383,
+    "ast_hash": "1339d012fee1ed1b36987c3d9c7a0c5c",
+    "semantic_hash": ""
+  },
+  "package.json": {
+    "mtime": 1780862207.2850776,
+    "ast_hash": "29f4bf035bf7ed72ff1a62461e3223f4",
+    "semantic_hash": ""
+  },
+  "src/env.d.ts": {
+    "mtime": 1780685909.1826217,
+    "ast_hash": "a34c63603f2fc704c29af63d4a960109",
+    "semantic_hash": ""
+  },
+  "src/pages/contact.astro": {
+    "mtime": 1782173708.3490183,
+    "ast_hash": "f348c598bd5cd7f733c4d34a939023b3",
+    "semantic_hash": ""
+  },
+  "src/pages/index.astro": {
+    "mtime": 1783384505.569261,
+    "ast_hash": "bf08a9eb8737175254471ac6c5849065",
+    "semantic_hash": ""
+  },
+  "src/pages/social.astro": {
+    "mtime": 1782173708.351267,
+    "ast_hash": "0e6eff770507b89886534969e9dc9353",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1780767720.5391712,
+    "ast_hash": "9fe21544a8ef9183c306ce4d3f43362c",
+    "semantic_hash": ""
+  },
+  "public/axiom-logo.png": {
+    "mtime": 1782173708.356213,
+    "ast_hash": "f8eb1738c205e5946a1af17b6f26863e",
+    "semantic_hash": ""
+  },
+  "public/axiom-mark.png": {
+    "mtime": 1780757895.6970875,
+    "ast_hash": "6dafeb3ff6baa6c91f713ffb95fa7394",
+    "semantic_hash": ""
+  }
+}
