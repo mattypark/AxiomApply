@@ -86,18 +86,16 @@ export function WelcomeHeader({
           showLogo ? "flex" : "hidden"
         }`}
       >
+        {/* The real lockup — mark and wordmark as one drawn asset, rather
+            than the mark beside mono type pretending to be a wordmark. */}
         <Image
-          src="/axiom-mark.png"
+          src="/axiom-lockup.png"
           alt="Axiom Pathways"
-          width={46}
-          height={46}
+          width={800}
+          height={400}
           priority
+          className="h-11 w-auto object-contain"
         />
-        <span className="wel-fg hidden font-mono text-[0.78rem] leading-tight tracking-[0.18em] uppercase sm:block">
-          Axiom
-          <br />
-          Pathways
-        </span>
       </Link>
 
       {!isApp && <MenuPill />}

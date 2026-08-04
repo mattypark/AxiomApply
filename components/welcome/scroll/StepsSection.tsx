@@ -134,17 +134,12 @@ export function StepsSection() {
                     </Link>
                   </div>
 
+                  {/* No artwork for now — the lower half is the gradient and
+                      nothing else. The height still comes from this element,
+                      so the pinned-slide maths is unchanged and real imagery
+                      can drop back in without re-tuning the scroll. `art`
+                      below names what belongs in each slide when it does. */}
                   <div className={`list__main__bottom ${slide.order}`}>
-                    {/* Image slot, held open until the real photography
-                        exists. Square and fixed-size on purpose: the pinned
-                        slide maths is measured at setup, so whatever lands
-                        here later must not change the card's height. Swap the
-                        div for an <img> at the same size and nothing moves. */}
-                    <div className="list__main__slot" aria-hidden>
-                      <span className="list__main__slot-label">
-                        {slide.art}
-                      </span>
-                    </div>
                     <div className="list__main__bottom-gradient" />
                   </div>
                 </div>

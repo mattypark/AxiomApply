@@ -1,5 +1,4 @@
 import { AssetRing } from "@/components/welcome/AssetRing";
-import { ResumeDrop } from "@/components/welcome/ResumeDrop";
 import { WelcomeHeader } from "@/components/welcome/WelcomeHeader";
 import { CookieBanner } from "@/components/welcome/CookieBanner";
 import { HeadlineReveal } from "@/components/welcome/HeadlineReveal";
@@ -37,11 +36,12 @@ export function WelcomeHero({
             slightly below geometric centre. */}
         <div className="relative flex flex-1 translate-y-[10px] items-center justify-center">
           <CategoryColumn />
+          {/* The ring orbits empty space. There used to be a "drop your
+              resume" target here, but it did not upload anything — it stashed
+              a filename and pushed to /apply, so it promised more than it did.
+              The header CTA is the honest version of that action. */}
           <div className="relative grid h-[min(64vw,500px)] w-[min(64vw,500px)] place-items-center">
             <AssetRing radius={222} />
-            <div className="relative z-10">
-              <ResumeDrop />
-            </div>
           </div>
         </div>
 
