@@ -10,14 +10,22 @@ import { DotsField } from "@/components/welcome/scroll/DotsField";
  * and wordmark; links point at real routes.
  */
 
+/**
+ * Footer links go to PUBLIC pages, never straight into the workspace.
+ *
+ * `/internships` and `/learn` are signed-in product surfaces; dropping a
+ * signed-out visitor into one from the marketing footer skips the part where
+ * they decide whether they want an account. These point at the explainers
+ * instead, same document shell as /privacy — read first, sign up after.
+ */
 const PRODUCT_LINKS = [
-  { label: "Internships", href: "/internships" },
-  { label: "Learn", href: "/learn" },
+  { label: "Internships", href: "/about/internships" },
+  { label: "Learn", href: "/about/learn" },
 ] as const;
 
 const AUDIENCE_LINKS = [
   { label: "For startups", href: "/for-startups" },
-  { label: "Apply", href: "/apply" },
+  { label: "Get started", href: "/onboarding" },
 ] as const;
 
 const LEGAL_LINKS = [

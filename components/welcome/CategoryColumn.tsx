@@ -20,6 +20,10 @@ const CATEGORIES = [
   "Startups",
 ] as const;
 
+/** Tags land after the ring has started filling, one every fifth of a second. */
+const ENTRANCE_START = 0.9;
+const ENTRANCE_STEP = 0.2;
+
 export function CategoryColumn() {
   // Doubled so the loop can translate a full list height and reset seamlessly.
   const loop = [...CATEGORIES, ...CATEGORIES];
@@ -38,17 +42,37 @@ export function CategoryColumn() {
       <motion.div
         className="flex flex-col items-end gap-3"
         animate={{ y: ["0%", "-50%"] }}
-        transition={{ duration: 26, ease: "linear", repeat: Infinity }}
+        transition={{
+          duration: 26,
+          ease: "linear",
+          repeat: Infinity,
+          // The drift waits for the arrival below to finish, so the tags are
+          // not sliding in and scrolling up at the same time.
+          delay: ENTRANCE_START + CATEGORIES.length * ENTRANCE_STEP,
+        }}
       >
         {loop.map((c, i) => (
-          <span
+          <motion.span
             key={`${c}-${i}`}
+            // Each tag slides in from the right edge, one at a time, top to
+            // bottom. Only the first pass is staggered — the duplicates that
+            // make the loop seamless are already in place behind the mask.
+            initial={{ opacity: 0, x: 48 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{
+              delay:
+                i < CATEGORIES.length
+                  ? ENTRANCE_START + i * ENTRANCE_STEP
+                  : ENTRANCE_START,
+              duration: 0.6,
+              ease: [0.16, 1, 0.3, 1],
+            }}
             // Tag boxes: bordered rounded-rects on the page ground,
             // not floating pills.
             className="wel-fg rounded-[8px] border border-[rgba(21,21,15,0.18)] bg-white px-4 py-1.5 text-[1rem] whitespace-nowrap"
           >
             {c}
-          </span>
+          </motion.span>
         ))}
       </motion.div>
     </div>

@@ -1318,11 +1318,11 @@
 }
 
 /* The image slot.
-   Square, parchment, and identical on every slide — it reads as a frame
-   waiting for a photograph rather than as decoration. The parchment matches
-   the placeholder language already used on /apply (public/apply/slot-*.svg),
-   so it sits inside the brand instead of adding a fifth colour to the four
-   gradients it lies on top of. */
+   Square, and deliberately NOT the cream of the page — a light slot vanished
+   into the warm half of every gradient. Each slide gets a deep colour chosen
+   against its own background: forest where the slide runs warm, oxblood where
+   it runs cool, so the frame separates at every scroll position rather than
+   only at the top of the pin. */
 .list__main__slot {
   position: absolute;
   top: 3rem;
@@ -1331,17 +1331,25 @@
   aspect-ratio: 1;
   width: min(420px, 34vw);
   border-radius: 1.5rem;
-  background-image: linear-gradient(140deg, #efece4, #d6d1c4);
+  background-image: var(--slot-fill);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 60%),
-    0 30px 70px rgb(21 21 15 / 22%);
+    inset 0 1px 0 rgb(255 255 255 / 14%),
+    0 30px 70px rgb(21 21 15 / 32%);
 }
+
+/* 01 and 04 run orange → red, so green separates hardest.
+   02 and 03 open cool (blue, indigo), where green would sit too close to the
+   midpoint — oxblood reads as a distinct object the whole way down. */
+.list__main__bottom.is-first  { --slot-fill: linear-gradient(150deg, #1f5130, #14361f); }
+.list__main__bottom.is-second { --slot-fill: linear-gradient(150deg, #6d1f22, #431316); }
+.list__main__bottom.is-third  { --slot-fill: linear-gradient(150deg, #6d1f22, #431316); }
+.list__main__bottom.is-fourth { --slot-fill: linear-gradient(150deg, #1f5130, #14361f); }
 
 .list__main__slot-label {
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.62rem;
   letter-spacing: 0.22em;
-  color: rgb(21 21 15 / 38%);
+  color: rgb(255 255 255 / 46%);
 }
 
 .list__main__bottom-gradient {

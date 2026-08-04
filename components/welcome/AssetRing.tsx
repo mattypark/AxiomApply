@@ -98,6 +98,53 @@ function spokeTransform(angle: number, radius: number) {
   return `rotate(${angle}deg) translateY(-${radius}px) rotate(${-angle}deg) translate(-50%, -50%)`;
 }
 
+/* ------------------------------------------------------------------ */
+/* arrival order                                                       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Assets land one at a time, left to right across the ring — the arrival in
+ * the reference recording, where the leftmost tile is fully settled before the
+ * next one starts.
+ *
+ * Order is derived from geometry, not hand-numbered: at angle θ a spoke sits
+ * at x = R·sin(θ), so sorting on sin(θ) is sorting on screen position. Move a
+ * founder or retune TAIL_GAP and the sequence re-sorts itself instead of
+ * silently animating in the old order.
+ */
+const ARRIVAL_START = 0.35;
+const ARRIVAL_STEP = 0.22;
+
+function arrivalDelays(): Map<string, number> {
+  const spokes: { key: string; x: number }[] = [];
+
+  FOUNDERS.forEach((founder, founderIndex) => {
+    spokes.push({
+      key: founder.name,
+      x: Math.sin((founder.angle * Math.PI) / 180),
+    });
+
+    TAILS[founderIndex]?.forEach((chip, tailIndex) => {
+      const angle = founder.angle - TAIL_LEAD - TAIL_GAP * tailIndex;
+      spokes.push({
+        key: chip.kind === "logo" ? chip.name : chip.label,
+        x: Math.sin((angle * Math.PI) / 180),
+      });
+    });
+  });
+
+  spokes.sort((a, b) => a.x - b.x);
+
+  return new Map(
+    spokes.map((spoke, index) => [
+      spoke.key,
+      ARRIVAL_START + index * ARRIVAL_STEP,
+    ]),
+  );
+}
+
+const ARRIVAL = arrivalDelays();
+
 /** Rotation in degrees from an element's computed matrix, or null if unset. */
 function angleOf(element: Element): number | null {
   const match = getComputedStyle(element).transform.match(/matrix\(([^)]+)\)/);
@@ -193,11 +240,13 @@ export function AssetRing({ radius = 240 }: { radius?: number }) {
               style={{ ["--orbit-duration" as string]: ORBIT }}
             >
               <motion.div
-                initial={{ opacity: 0, scale: 0.3 }}
-                animate={{ opacity: 1, scale: 1 }}
+                // Blur-in, not a scale pop: the reference resolves each asset
+                // out of focus rather than punching it in.
+                initial={{ opacity: 0, scale: 0.94, filter: "blur(14px)" }}
+                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                 transition={{
-                  delay: 0.3 + founderIndex * 0.14,
-                  duration: 0.9,
+                  delay: ARRIVAL.get(founder.name) ?? 0.35,
+                  duration: 0.75,
                   ease: [0.16, 1, 0.3, 1],
                 }}
                 className="flex flex-col items-center"
@@ -249,11 +298,11 @@ export function AssetRing({ radius = 240 }: { radius?: number }) {
                   style={{ ["--orbit-duration" as string]: ORBIT }}
                 >
                   <motion.span
-                    initial={{ opacity: 0, scale: 0.6 }}
-                    animate={{ opacity, scale: 1 }}
+                    initial={{ opacity: 0, scale: 0.94, filter: "blur(12px)" }}
+                    animate={{ opacity, scale: 1, filter: "blur(0px)" }}
                     transition={{
-                      delay: 0.5 + founderIndex * 0.14 + tailIndex * 0.1,
-                      duration: 0.8,
+                      delay: ARRIVAL.get(key) ?? 0.5,
+                      duration: 0.7,
                       ease: [0.16, 1, 0.3, 1],
                     }}
                     // Bare marks, no bubble — the pill made the logos read

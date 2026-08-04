@@ -124,9 +124,12 @@ only — no error, no lost data.
 ## 5. Before the first deploy
 
 - [x] `npm run build` passes locally (verified 2026-08-03, 28 routes, no env).
-- [ ] Vercel → Settings → Build & Deployment → **Framework Preset: Next.js.**
-      The project is still set to Astro from the old site; the first deploy
-      fails or serves nothing until this is flipped.
+- [x] Framework preset. The project was still set to Astro from the old site,
+      so the first Next deploy built fine and then failed with `No Output
+      Directory named "dist"` — Astro emits `dist`, Next emits `.next`.
+      `vercel.json` now pins `framework`, `buildCommand`, and
+      `outputDirectory`, which override the dashboard. Flip the dashboard
+      preset to Next.js as well so the two agree.
 - [ ] Replace the placeholder imagery in `/public/media/` — none of it is ours
       to publish. Fine while building, not fine live.
 - [ ] Compress `feature-video.mp4` (5.5MB).

@@ -32,8 +32,10 @@ export function WelcomeHero({
       <WelcomeHeader signedIn={signedIn} ctaHref={ctaHref} />
 
       <section className="relative z-10 flex h-dvh flex-col overflow-hidden">
-        {/* stage — ring orbits around the drop target */}
-        <div className="relative flex flex-1 items-center justify-center">
+        {/* stage — ring orbits around the drop target.
+            Nudged down: the header pill sits above it, so optical centre is
+            slightly below geometric centre. */}
+        <div className="relative flex flex-1 translate-y-[10px] items-center justify-center">
           <CategoryColumn />
           <div className="relative grid h-[min(64vw,500px)] w-[min(64vw,500px)] place-items-center">
             <AssetRing radius={222} />
@@ -46,7 +48,10 @@ export function WelcomeHero({
         {/* bottom — slogan left, licence centred, scroll cue right */}
         <footer className="relative z-20 px-6 pb-5 sm:px-9 sm:pb-6">
           <HeadlineReveal
-            className="mt-2 max-w-[18ch] text-[clamp(1.85rem,4.4vw,3.9rem)] leading-[1.08] font-bold tracking-[-0.03em]"
+            // Regular weight, not bold. The reference sets this line in a
+            // grotesque at book weight; SF Pro at 400 with tight tracking is
+            // the same optical read without adding a fourth typeface.
+            className="mt-2 max-w-[18ch] text-[clamp(1.85rem,4.4vw,3.9rem)] leading-[1.08] font-normal tracking-[-0.028em]"
             lines={[
               { text: "Connecting young talent" },
               {
