@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { AssetRing } from "@/components/welcome/AssetRing";
 import { WelcomeHeader } from "@/components/welcome/WelcomeHeader";
 import { CookieBanner } from "@/components/welcome/CookieBanner";
@@ -36,12 +37,22 @@ export function WelcomeHero({
             slightly below geometric centre. */}
         <div className="relative flex flex-1 translate-y-[10px] items-center justify-center">
           <CategoryColumn />
-          {/* The ring orbits empty space. There used to be a "drop your
-              resume" target here, but it did not upload anything — it stashed
-              a filename and pushed to /apply, so it promised more than it did.
-              The header CTA is the honest version of that action. */}
-          <div className="relative grid h-[min(64vw,500px)] w-[min(64vw,500px)] place-items-center">
-            <AssetRing radius={222} />
+          {/* The lockup anchors the ring. It is the identity, so it belongs at
+              the centre of the thing that orbits — and this is the only spot
+              on the page with room to show it at a size worth reading.
+
+              The radius is set well clear of the mark's own width so the
+              nearest logo never crowds it. */}
+          <div className="relative grid h-[min(74vw,600px)] w-[min(74vw,600px)] place-items-center">
+            <AssetRing radius={272} />
+            <Image
+              src="/axiom-lockup.png"
+              alt="Axiom Pathways"
+              width={800}
+              height={400}
+              priority
+              className="relative z-10 w-[clamp(180px,22vw,280px)] object-contain"
+            />
           </div>
         </div>
 

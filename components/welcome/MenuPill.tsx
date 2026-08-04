@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ThemeToggle } from "@/components/welcome/ThemeToggle";
 
 /** Primary nav. "Actual website" is the old marketing landing at /classic. */
 const PRIMARY = [
@@ -24,28 +23,19 @@ const SOCIAL = [
 ] as const;
 
 /**
- * Centre nav from the reference. Closed it is a pill: burger + "Menu" + scroll
- * percentage. Open, the pill stays put but morphs — burger becomes an X,
+ * Primary nav, top left. Closed it is a pill: burger + "Menu". Open, the pill stays put but morphs — burger becomes an X,
  * "Menu" becomes "Close" — and a tall sheet grows downward behind it from the
  * pill's own top edge, so the pill reads as the lid of the sheet rather than a
  * separate control.
+ *
+ * Scroll progress and the theme toggle used to live inside this pill; they are
+ * now their own controls in the header (ScrollPercent, ThemeToggle).
  */
 export function MenuPill({ compact = false }: { compact?: boolean } = {}) {
   // Inside the product the pill is just the burger: the rail already carries
   // navigation and identity, so the label, theme toggle and scroll percentage
   // are noise there.
   const [open, setOpen] = useState(false);
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    const onScroll = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(max > 0 ? Math.round((window.scrollY / max) * 100) : 0);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -66,7 +56,7 @@ export function MenuPill({ compact = false }: { compact?: boolean } = {}) {
             transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
             style={{ transformOrigin: "top center" }}
             className={`absolute top-[-0.7rem] w-[min(88vw,330px)] wel-sheet rounded-[30px] pt-[4.6rem] pb-8 shadow-[0_24px_70px_rgba(21,21,15,0.14)] ${
-              compact ? "right-[-0.5rem]" : "left-1/2 -translate-x-1/2"
+              compact ? "right-[-0.5rem]" : "left-0"
             }`}
           >
             <motion.div
@@ -169,15 +159,6 @@ export function MenuPill({ compact = false }: { compact?: boolean } = {}) {
           </span>
         </button>
 
-        {!compact && (
-          <>
-            <ThemeToggle />
-
-            <span className="rounded-full bg-white/15 px-3.5 py-2 font-mono text-[0.8rem] tabular-nums">
-              {progress}%
-            </span>
-          </>
-        )}
       </div>
     </div>
   );

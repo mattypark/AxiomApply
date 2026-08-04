@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { MenuPill } from "@/components/welcome/MenuPill";
+import { ScrollPercent } from "@/components/welcome/ScrollPercent";
+import { ThemeToggle } from "@/components/welcome/ThemeToggle";
 import { GetStartedButton } from "@/components/welcome/GetStartedButton";
 
 /**
@@ -79,29 +81,46 @@ export function WelcomeHeader({
         isApp ? "grid-cols-[1fr_auto]" : "grid-cols-[1fr_auto_1fr]"
       }`}
     >
-      <Link
-        href="/"
-        aria-label="Axiom Pathways home"
-        className={`w-fit items-center gap-2.5 transition-opacity duration-300 hover:opacity-70 ${
-          showLogo ? "flex" : "hidden"
-        }`}
-      >
-        {/* The real lockup — mark and wordmark as one drawn asset, rather
-            than the mark beside mono type pretending to be a wordmark. */}
-        <Image
-          src="/axiom-lockup.png"
-          alt="Axiom Pathways"
-          width={800}
-          height={400}
-          priority
-          className="h-11 w-auto object-contain"
-        />
-      </Link>
+      {/* Left: the menu. The lockup used to sit here and now anchors the
+          centre of the hero ring, which is the only place on the page big
+          enough to show it at a readable size. */}
+      {isApp ? (
+        <Link
+          href="/"
+          aria-label="Axiom Pathways home"
+          className={`w-fit items-center gap-2.5 transition-opacity duration-300 hover:opacity-70 ${
+            showLogo ? "flex" : "hidden"
+          }`}
+        >
+          <Image
+            src="/axiom-lockup.png"
+            alt="Axiom Pathways"
+            width={800}
+            height={400}
+            priority
+            className="h-11 w-auto object-contain"
+          />
+        </Link>
+      ) : (
+        <div className="w-fit">
+          <MenuPill />
+        </div>
+      )}
 
-      {!isApp && <MenuPill />}
+      {/* Centre: scroll progress, on its own. */}
+      {!isApp && (
+        <div className="justify-self-center">
+          <ScrollPercent />
+        </div>
+      )}
 
       <div className="flex items-center justify-end gap-3">
         {isApp && <MenuPill compact />}
+        {!isApp && (
+          <div className="wel-pill grid h-14 w-14 place-items-center rounded-full shadow-[0_10px_30px_rgba(21,21,15,0.22)]">
+            <ThemeToggle />
+          </div>
+        )}
         {isApp ? null : signedIn ? (
           // Signed in → just the profile icon; the pills are for newcomers.
           <Link
