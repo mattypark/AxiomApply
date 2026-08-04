@@ -43,7 +43,11 @@ export function WelcomeHero({
 
               The radius is set well clear of the mark's own width so the
               nearest logo never crowds it. */}
-          <div className="relative grid h-[min(74vw,600px)] w-[min(74vw,600px)] place-items-center">
+          <div className="relative grid place-items-center"
+            // Inline, not a Tailwind arbitrary value: `w-[min(86vw,600px)]`
+            // silently does not generate, so the box stretched to the full
+            // viewport and the ring had no container to measure.
+            style={{ width: "min(86vw, 600px)", height: "min(86vw, 600px)" }}>
             <AssetRing radius={272} />
             <Image
               src="/axiom-lockup.png"
@@ -51,13 +55,13 @@ export function WelcomeHero({
               width={800}
               height={400}
               priority
-              className="relative z-10 w-[clamp(180px,22vw,280px)] object-contain"
+              className="relative z-10 w-[clamp(112px,26vw,280px)] object-contain"
             />
           </div>
         </div>
 
         {/* bottom — slogan left, licence centred, scroll cue right */}
-        <footer className="relative z-20 px-6 pb-5 sm:px-9 sm:pb-6">
+        <footer className="relative z-20 px-4 pb-5 sm:px-9 sm:pb-6">
           <HeadlineReveal
             // Regular weight, not bold. The reference sets this line in a
             // grotesque at book weight; SF Pro at 400 with tight tracking is

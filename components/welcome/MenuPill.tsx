@@ -6,6 +6,9 @@ import { AnimatePresence, motion } from "framer-motion";
 
 /** Primary nav. "Actual website" is the old marketing landing at /classic. */
 const PRIMARY = [
+  // Sign in lives here too: the header hides its pill below `sm`, so on a
+  // phone this sheet is the only way to reach it.
+  { href: "/onboarding", label: "Sign in" },
   { href: "/learn", label: "Videos" },
   { href: "/articles", label: "Articles" },
   { href: "/classic", label: "Actual website" },
@@ -23,8 +26,9 @@ const SOCIAL = [
 ] as const;
 
 /**
- * Primary nav, top left. Closed it is a pill: burger + "Menu". Open, the pill stays put but morphs — burger becomes an X,
- * "Menu" becomes "Close" — and a tall sheet grows downward behind it from the
+ * Primary nav, top left. Closed it is a circle carrying just the burger —
+ * the word "Menu" said nothing the icon did not. Open, the circle stays put
+ * and the burger becomes an X, while a tall sheet grows downward behind it from the
  * pill's own top edge, so the pill reads as the lid of the sheet rather than a
  * separate control.
  *
@@ -117,18 +121,14 @@ export function MenuPill({ compact = false }: { compact?: boolean } = {}) {
 
       {/* pill — stays above the sheet */}
       <div
-        className={`relative z-10 flex items-center wel-pill rounded-full shadow-[0_10px_30px_rgba(21,21,15,0.22)] ${
-          compact ? "p-1.5" : "gap-1.5 p-2 pr-2.5"
-        }`}
+        className="relative z-10 flex items-center wel-pill rounded-full p-1.5 shadow-[0_10px_30px_rgba(21,21,15,0.22)]"
       >
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
           aria-expanded={open}
           aria-label={open ? "Close menu" : "Open menu"}
-          className={`flex items-center rounded-full transition-opacity duration-200 hover:opacity-80 ${
-            compact ? "gap-0 px-3.5 py-3.5" : "gap-3 px-4 py-2.5"
-          }`}
+          className="flex items-center rounded-full px-3.5 py-3.5 transition-opacity duration-200 hover:opacity-80"
         >
           <span className="relative block h-5 w-5" aria-hidden="true">
             <motion.span
@@ -141,21 +141,6 @@ export function MenuPill({ compact = false }: { compact?: boolean } = {}) {
               transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1] }}
               className="absolute top-1/2 left-0 block h-[1.5px] w-full rounded bg-current"
             />
-          </span>
-          {/* Fixed width so the pill doesn't resize as the word swaps. */}
-          <span
-            className={`relative block h-[1.35em] w-[4rem] overflow-hidden text-left text-[1.05rem] font-medium ${
-              compact ? "hidden" : ""
-            }`}
-          >
-            <motion.span
-              animate={{ y: open ? "-100%" : "0%" }}
-              transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1] }}
-              className="block"
-            >
-              <span className="block leading-[1.35em]">Menu</span>
-              <span className="block leading-[1.35em]">Close</span>
-            </motion.span>
           </span>
         </button>
 

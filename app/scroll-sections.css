@@ -529,6 +529,13 @@
 }
 
 .ai__grid-screen {
+  /* Positioning context for the cross-fading overlays below, which are
+     absolutely positioned with width:110%. Without it their containing block
+     walks up to a distant ancestor: the overlay resolves to ~2600px, escapes
+     this element's overflow:hidden (abs children are only clipped by ancestors
+     in their own containing-block chain), and the whole PAGE gains horizontal
+     scroll at every breakpoint. */
+  position: relative;
   flex: 1;
   display: flex;
   justify-content: flex-start;

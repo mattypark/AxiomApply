@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
 /**
@@ -218,8 +218,46 @@ function useOrbitSync(ringRef: React.RefObject<HTMLDivElement | null>) {
   });
 }
 
-export function AssetRing({ radius = 240 }: { radius?: number }) {
+/**
+ * The ring sizes itself off its container instead of trusting the prop.
+ *
+ * A fixed pixel radius is fine at 1440 and catastrophic at 390: the spokes
+ * push every tile past the viewport edge, which is exactly what the phone was
+ * doing — logos half off-screen and one sitting under the header. The prop is
+ * now a MAXIMUM; the real radius is whatever fits.
+ *
+ * Everything else scales off that measured radius, so tiles and logos shrink
+ * with the ring rather than staying desktop-sized inside a phone-sized circle.
+ */
+function useFittedRadius(
+  ref: React.RefObject<HTMLDivElement | null>,
+  max: number,
+) {
+  const [radius, setRadius] = useState(max);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const measure = () => {
+      const width = element.offsetWidth;
+      if (width > 0) setRadius(Math.min(max, width * 0.46));
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref, max]);
+
+  return radius;
+}
+
+export function AssetRing({ radius: maxRadius = 240 }: { radius?: number }) {
   const ringRef = useRef<HTMLDivElement>(null);
+  const radius = useFittedRadius(ringRef, maxRadius);
+  /** 1 at full size, smaller as the ring shrinks. Drives tile + logo sizing. */
+  const scale = radius / maxRadius;
   useOrbitSync(ringRef);
 
   return (
@@ -256,8 +294,8 @@ export function AssetRing({ radius = 240 }: { radius?: number }) {
                   style={{
                     ["--morph-duration" as string]: `${16 + founderIndex * 2.5}s`,
                     animationDelay: `${founderIndex * -1.7}s`,
-                    width: "clamp(92px, 10.5vw, 136px)",
-                    height: "clamp(115px, 13vw, 170px)",
+                    width: Math.round(radius * 0.5),
+                    height: Math.round(radius * 0.625),
                   }}
                 >
                   <img
@@ -270,10 +308,16 @@ export function AssetRing({ radius = 240 }: { radius?: number }) {
                   />
                 </div>
 
-                <p className="wel-fg mt-3 text-center text-[0.82rem] leading-tight font-medium tracking-tight">
+                <p
+                  className="wel-fg mt-3 text-center leading-tight font-medium tracking-tight"
+                  style={{ fontSize: `${Math.max(0.62, 0.82 * scale)}rem` }}
+                >
                   {founder.name}
                 </p>
-                <p className="wel-fg-soft mt-0.5 text-center font-mono text-[0.6rem] tracking-[0.18em] uppercase">
+                <p
+                  className="wel-fg-soft mt-0.5 text-center font-mono tracking-[0.18em] uppercase"
+                  style={{ fontSize: `${Math.max(0.46, 0.6 * scale)}rem` }}
+                >
                   {founder.role}
                 </p>
               </motion.div>
@@ -315,11 +359,14 @@ export function AssetRing({ radius = 240 }: { radius?: number }) {
                         alt={chip.name}
                         loading="lazy"
                         decoding="async"
-                        style={{ width: chip.width }}
+                        style={{ width: Math.round(chip.width * scale) }}
                         className="h-auto object-contain"
                       />
                     ) : (
-                      <span className="text-[1.9rem] leading-none font-semibold tracking-tight">
+                      <span
+                        className="leading-none font-semibold tracking-tight"
+                        style={{ fontSize: `${Math.max(1, 1.9 * scale)}rem` }}
+                      >
                         {chip.label}
                       </span>
                     )}

@@ -70,7 +70,7 @@ export function GetStartedButton({
     <Link
       ref={rootRef}
       href={href}
-      className="wel-pill inline-flex items-center rounded-full px-8 py-4 text-[1.05rem] font-medium shadow-[0_10px_30px_rgba(21,21,15,0.22)] transition-[transform,box-shadow] duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:text-white hover:shadow-[0_16px_44px_rgba(47,107,61,0.34)]"
+      className="wel-pill inline-flex items-center rounded-full px-5 py-3 text-[0.95rem] font-medium sm:px-8 sm:py-4 sm:text-[1.05rem] shadow-[0_10px_30px_rgba(21,21,15,0.22)] transition-[transform,box-shadow] duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:text-white hover:shadow-[0_16px_44px_rgba(47,107,61,0.34)]"
     >
       <span
         ref={maskRef}

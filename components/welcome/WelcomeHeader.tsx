@@ -77,7 +77,7 @@ export function WelcomeHeader({
   return (
     <header
       data-hidden={isHidden || undefined}
-      className={`fixed inset-x-0 top-0 z-50 grid items-start gap-4 px-6 py-6 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform data-[hidden]:-translate-y-[130%] sm:px-9 sm:py-7 ${
+      className={`fixed inset-x-0 top-0 z-50 grid items-start gap-2 px-4 py-4 sm:gap-4 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform data-[hidden]:-translate-y-[130%] sm:px-9 sm:py-7 ${
         isApp ? "grid-cols-[1fr_auto]" : "grid-cols-[1fr_auto_1fr]"
       }`}
     >
@@ -109,7 +109,7 @@ export function WelcomeHeader({
 
       {/* Centre: scroll progress, on its own. */}
       {!isApp && (
-        <div className="justify-self-center">
+        <div className="hidden justify-self-center sm:block">
           <ScrollPercent />
         </div>
       )}
@@ -117,7 +117,7 @@ export function WelcomeHeader({
       <div className="flex items-center justify-end gap-3">
         {isApp && <MenuPill compact />}
         {!isApp && (
-          <div className="wel-pill grid h-14 w-14 place-items-center rounded-full shadow-[0_10px_30px_rgba(21,21,15,0.22)]">
+          <div className="wel-pill grid h-11 w-11 place-items-center rounded-full shadow-[0_10px_30px_rgba(21,21,15,0.22)] sm:h-14 sm:w-14">
             <ThemeToggle />
           </div>
         )}
@@ -127,7 +127,7 @@ export function WelcomeHeader({
             href="/account"
             aria-label="Your account"
             title="Your account"
-            className="wel-pill grid h-14 w-14 place-items-center rounded-full shadow-[0_10px_30px_rgba(21,21,15,0.22)] transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:opacity-85"
+            className="wel-pill grid h-11 w-11 place-items-center rounded-full shadow-[0_10px_30px_rgba(21,21,15,0.22)] transition-[transform,opacity] sm:h-14 sm:w-14 duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:opacity-85"
           >
             <svg
               width="19"
@@ -144,7 +144,7 @@ export function WelcomeHeader({
           <>
             <Link
               href="/onboarding"
-              className="wel-chip inline-flex items-center rounded-full px-8 py-4 text-[1.05rem] font-medium transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:opacity-80"
+              className="wel-chip hidden items-center rounded-full px-8 py-4 text-[1.05rem] font-medium sm:inline-flex transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:opacity-80"
             >
               Sign in
             </Link>
