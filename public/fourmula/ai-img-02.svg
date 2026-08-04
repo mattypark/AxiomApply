@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="424" viewBox="0 0 280 424" role="img" aria-label="ai-img-02 placeholder">
+  <defs>
+    <pattern id="p3722" width="24" height="24" patternUnits="userSpaceOnUse">
+      <rect width="24" height="24" fill="#ececea"/>
+      <circle cx="12" cy="12" r="1.4" fill="#d7d7d4"/>
+    </pattern>
+  </defs>
+  <rect width="280" height="424" fill="url(#p3722)"/>
+  <rect x="0.5" y="0.5" width="279" height="423" fill="none" stroke="#cfcfcb"/>
+  <g fill="#8a8a84" font-family="-apple-system, Helvetica, Arial, sans-serif" text-anchor="middle">
+    <text x="140" y="212" font-size="22" letter-spacing="0.5">ai-img-02</text>
+    <text x="140" y="240" font-size="17" opacity="0.55">280 x 424</text>
+  </g>
+</svg>

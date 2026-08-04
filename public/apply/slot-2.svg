@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 460" width="600" height="460">
+  <defs>
+    <linearGradient id="g02" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#efece4"/>
+      <stop offset="1" stop-color="#d6d1c4"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="460" fill="url(#g02)"/>
+  <g fill="none" stroke="#15150f" stroke-opacity="0.15" stroke-width="2">
+    <circle cx="228" cy="200" r="42"/><circle cx="352" cy="212" r="34"/><path d="M150 360c14-54 44-82 78-82s64 28 78 82" stroke-linecap="round"/><path d="M312 356c10-40 32-60 56-60s46 20 56 60" stroke-linecap="round"/>
+  </g>
+  <text x="300" y="424" text-anchor="middle" font-family="ui-monospace,Menlo,monospace"
+        font-size="15" letter-spacing="4" fill="#15150f" fill-opacity="0.32">WHO WE ARE</text>
+</svg>

@@ -1,120 +1,115 @@
-# Axiom Pathways — site + application form
+# Axiom Pathways
 
-Astro site. Green/white boxed design. Two boxes: **Home** + **Application** (3-step wizard).
-Form submits straight into a Google Sheet via a Google Apps Script web app — no server, no Zapier, free.
+Nonprofit that places high schoolers and early-college students into real
+startup work. Two things live here: an open **feed** of internship listings,
+and a hand-matched **network** you apply to.
 
-## Run locally
+Next.js 15 (App Router) · Supabase · Resend · Tailwind v4 · GSAP + Framer Motion.
+
+> The Astro build this replaced is preserved in git history. The live site at
+> `axiomapply.com` is still that build — **this rebuild has not been pushed.**
+
+---
+
+## Run it
 
 ```bash
+cp .env.example .env.local      # then paste real values in
 npm install
-npm run dev      # http://localhost:4321
-npm run build    # static output in dist/
+npm run dev                     # http://localhost:3005
 ```
+
+Everything degrades gracefully without keys: no Supabase means anonymous
+browsing only, no Resend means email sends return
+`skipped: email-not-configured` instead of failing.
 
 ---
 
-# Connect the form to Google Sheets
+## Surfaces
 
-The website POSTs each application to a Google Apps Script **web app** URL.
-That script appends one row per applicant to your sheet. Do this once.
-
-## Step 1 — Open the script editor
-
-1. Open your Google Sheet (the intern tracker).
-2. Top menu: **Extensions → Apps Script**.
-
-## Step 2 — Paste the webhook code
-
-1. In Apps Script, delete any starter `function myFunction() {}`.
-2. Open **`APPS_SCRIPT_WEBHOOK.gs`** from this repo, copy the **entire file**.
-3. Paste it into the editor.
-4. Click the **Save** icon.
-
-What the code does:
-- `doPost(e)` — receives a form submission, appends a row.
-- Auto-creates a tab called **`Applications`** with a header row the first time.
-- Sets each new applicant's **Status** to `Applied`.
-- `doGet()` — lets you open the URL in a browser to confirm it's live.
-
-Columns written (in order):
-
-```
-Timestamp | Name | Email | Phone | School | Grade/Year | Track |
-Interest | City/Chapter | Status | Letter | Instagram | LinkedIn |
-GitHub | Other Link
-```
-
-## Step 2.5 — Paste your Sheet ID (IMPORTANT)
-
-The script writes by **Sheet ID**, not "active sheet" (more reliable — works
-even if the script isn't bound to the sheet).
-
-1. Open your **Axiom Interns** sheet.
-2. Copy the ID from the URL — the long part between `/d/` and `/edit`:
-   `https://docs.google.com/spreadsheets/d/`**`THIS_IS_THE_ID`**`/edit`
-3. In the script, paste it here:
-   ```js
-   var SHEET_ID = "THIS_IS_THE_ID";
-   ```
-4. Save.
-
-> If submissions previously errored with "unable to open the file," this is why
-> — the old script tried `getActiveSpreadsheet()` on a sheet it couldn't open.
-
-## Step 3 — Deploy as a web app
-
-1. Top right: **Deploy → New deployment**.
-2. Click the gear → choose **Web app**.
-3. Settings:
-   - **Description:** `axiom apply webhook` (anything)
-   - **Execute as:** **Me**
-   - **Who has access:** **Anyone**  ← required so the website can reach it
-4. Click **Deploy**.
-5. **Authorize access** → pick your Google account → *Advanced* → *Go to project (unsafe)* → **Allow**.
-   (It's your own script editing your own sheet — safe.)
-6. Copy the **Web app URL**. It ends in **`/exec`**.
-
-> Quick test: paste that `/exec` URL in a browser. You should see
-> `{"ok":true,"service":"axiom-pathways-webhook"}`.
-
-## Step 4 — Paste the URL into the website
-
-1. Open **`src/pages/index.astro`**.
-2. Find this line (near the bottom, in the `<script>`):
-
-   ```js
-   const WEBHOOK_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
-   ```
-
-3. Replace the placeholder with your `/exec` URL:
-
-   ```js
-   const WEBHOOK_URL = "https://script.google.com/macros/s/AKfy.../exec";
-   ```
-
-4. Save. Restart dev (`npm run dev`) or rebuild (`npm run build`) and redeploy.
-
-## Step 5 — Test the full flow
-
-1. Open the site, fill the form, submit.
-2. Check the **Applications** tab in your sheet — a new row appears with Status `Applied`.
+| Route | What it is |
+|---|---|
+| `/` | Welcome screen — preloader, orbiting founder ring, then the ported scroll sections (feed / network / Learn, how it works, pinned gradient slides, FAQ, dot-field footer) |
+| `/onboarding` | "Which side are you on?" T-picker → the chosen application, in place |
+| `/apply` | The intern application, inside the workspace shell |
+| `/home` | Intern workspace dashboard — quick actions, profile-strength signals, live feed + reading |
+| `/internships` `/learn` `/articles` `/account` | Intern surfaces, behind the workspace rail |
+| `/startup/*` | Startup dashboard — gated on `profiles.approved`, flipped by hand |
+| `/admin/*` | Article + source management, gated on `is_admin` + `ADMIN_EMAILS` |
 
 ---
 
-## Editing the script later
+## Architecture worth knowing before editing
 
-If you change `APPS_SCRIPT_WEBHOOK.gs` after deploying:
+### The frozen apply contract
+`lib/apply-contract.ts` is the **wire format** the Google Apps Script webhook
+and the Sheet expect. Field names and option strings are frozen.
 
-**Deploy → Manage deployments → edit (pencil) → Version: New version → Deploy.**
+`lib/apply-sections.ts` builds the intern question set *from* that contract via
+a `field()` lookup that **throws at module load** if a name does not exist. So
+the UI can be restructured freely, but a rename breaks the build rather than
+silently breaking the Sheet.
 
-Same URL stays valid — no need to update the website.
+### One engine, two applications
+`components/apply/ApplyEngine.tsx` renders both question sets off data.
 
-## Notes / gotchas
+- `variant="dark"` — the startup side runs on a night surface. Colours come
+  from the `.apply-dark` token scope in `globals.css`; the components
+  themselves are theme-agnostic.
+- `chrome="embedded"` — drops the engine's own rail and scroll containers so it
+  can live inside the workspace shell (`/apply`). `chrome="full"` is the
+  standalone layout used by `/onboarding`.
 
-- **"Who has access" must be "Anyone."** If set to "Only myself," submissions silently fail.
-- The website uses `fetch(..., { mode: "no-cors" })`. The browser can't read the response, so the
-  site always shows success after sending. Real confirmation = a new row in the sheet.
-  (no-cors is needed because Apps Script doesn't send CORS headers.)
-- Add/rename a field? Update **both**: the `HEADERS` + `appendRow` list in the `.gs` file
-  **and** the matching input `name="..."` in `index.astro`.
-- Data lands in the **`Applications`** tab. Add dropdowns / colors there if you want filtering.
+### Dual write on submit
+1. Browser POSTs to the Apps Script webhook — frozen, fire-and-forget,
+   `mode: "no-cors"` (`lib/apply-submit.ts`).
+2. A server action mirrors the same answers into Supabase `applications`
+   (`lib/actions/applications.ts`), using the service-role client because the
+   form works signed-out.
+
+The Sheet is authoritative. A Supabase failure is swallowed so nobody is told
+their application failed when it did not.
+
+### Scroll containers and Lenis
+Lenis intercepts wheel events at the document level. Any nested
+`overflow-y-auto` container **must** carry `data-lenis-prevent` or it will look
+completely broken — programmatic scrolling works, the wheel does nothing.
+
+### Pinned slides
+Each `.list__main__slide` is exactly `100vh`, and the pin length must stay one
+viewport. A longer pin desyncs the spacers and the cards float over the FAQ.
+The zoom-then-lean order and the fade all live inside that one pin timeline.
+
+### Email
+`lib/email/` — `client.ts` (Resend REST, no SDK), `templates.ts` (plain text),
+`send.ts` (suppression → send → log), `unsubscribe.ts` (HMAC-signed links).
+Two sender subdomains: `tx.` transactional, `news.` marketing. Never
+`noreply@` — every email is replyable.
+
+---
+
+## Migrations
+
+`supabase/migrations/`. 0001–0013 applied. **0014_email.sql is written but not
+applied** — apply it before testing email or every send fails its log step.
+
+---
+
+## Conventions
+
+- Pretty code, never minified.
+- Comments explain *why*, not what changed.
+- No secrets in the repo. `.env.local` is gitignored; `.env.example` carries
+  the key names only.
+- No commits or pushes without explicit sign-off.
+
+---
+
+## What is not done
+
+See **`docs/NEXT-SESSION.md`** — account/profile rebuild, live backend
+verification, and the Vercel + DNS setup, with a paste-ready prompt to resume.
+
+Also open: `/public/fourmula/` still holds Fourmula's marketing imagery as
+placeholders (fine while building, not fine in production), the feature video
+needs compressing, and `12,597` is hardcoded copy.

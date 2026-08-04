@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400" role="img" aria-label="image-pre-01 placeholder">
+  <defs>
+    <pattern id="p59427" width="24" height="24" patternUnits="userSpaceOnUse">
+      <rect width="24" height="24" fill="#ececea"/>
+      <circle cx="12" cy="12" r="1.4" fill="#d7d7d4"/>
+    </pattern>
+  </defs>
+  <rect width="400" height="400" fill="url(#p59427)"/>
+  <rect x="0.5" y="0.5" width="399" height="399" fill="none" stroke="#cfcfcb"/>
+  <g fill="#8a8a84" font-family="-apple-system, Helvetica, Arial, sans-serif" text-anchor="middle">
+    <text x="200" y="200" font-size="22" letter-spacing="0.5">image-pre-01</text>
+    <text x="200" y="228" font-size="17" opacity="0.55">400 x 400</text>
+  </g>
+</svg>

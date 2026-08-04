@@ -1,0 +1,1874 @@
+/* ==========================================================================
+   Fourmula scroll sections — ported verbatim from ~/Downloads/current-projects/
+   fourmula-clone (a 1:1 rebuild of fourmula.ai). Layout, grid, type scale and
+   every animation timing are the original's; copy and imagery are Axiom's.
+
+   Scope note: only the design tokens, the u-* type utilities and the section
+   rules come across. The clone's global reset (`*`, `html`, `body`) is
+   deliberately NOT ported — Tailwind owns those here, and importing it would
+   restyle every other route.
+   ========================================================================== */
+
+/* ==========================================================================
+   Design tokens
+   Colour pairs, type scale, motion constants. Everything downstream reads
+   from here — no raw hex or px in the section files.
+   ========================================================================== */
+
+:root {
+  /* --- Surfaces & ink (light is the default theme) --------------------- */
+  --mainbg: #ffffff;
+  --mainbg-gradient: #ffffff00;
+  --secondbg: #f7f7f7;
+
+  --fonts-100: #020108;
+  --fonts-64: #020108a3;
+  --fonts-50: #02010880;
+  --fonts-30: #0201084d;
+  --fonts-20: #02010833;
+
+  --lines: #d7d7d6;
+  --menu: #272727;
+  --menu-colors: #ffffff33;
+  --dots-pattern: #d9d9d9;
+
+  /* --- Accent ramp ----------------------------------------------------- */
+  --accent: #f94a00;
+  --accent-warm: #fd7b03;
+
+  /* --- Slide gradients -------------------------------------------------- */
+  --slide-01: linear-gradient(#f94a00, #fd7b03);
+  --slide-02: linear-gradient(#48a3d1, #fd7b03);
+  --slide-03: linear-gradient(#3a54ff, #7a67c5 23%, #fd7b03);
+  --slide-04: linear-gradient(#9a0101, #fd7b03);
+
+  /* --- Type ------------------------------------------------------------- */
+  --font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  --regular: 400;
+  --medium: 500;
+
+  --h1: 5.5rem;
+  --h2: 7.5rem;
+  --h2-5: 4rem;
+  --h3: 3.25rem;
+  --h4: 2.25rem;
+
+  --body-1: 1.125rem;
+  --body-2: 0.875rem;
+  --body-3: 1.25rem;
+
+  --title-1: 1rem;
+  --title-2: 0.875rem;
+  --title-3: 1.5rem;
+
+  --tag: 1.125rem;
+  --tag-small: 1.125rem;
+  --btn: 1.0625rem;
+  --small-text-1: 0.75rem;
+  --small-text-2: 0.625rem;
+
+  /* --- Layout ----------------------------------------------------------- */
+  --gutter: 2rem;
+  --fx-radius-sm: 0.5rem;
+  --fx-radius-md: 1.5rem;
+  --fx-radius-lg: 2.5rem;
+  --fx-radius-pill: 99rem;
+
+  /* --- Motion ----------------------------------------------------------- */
+  --fx-duration-fast: 0.2s;
+  --fx-duration-normal: 0.4s;
+  --fx-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Set by js/zoom.js, consumed by html { font-size } in base.css */
+  --user-zoom: 1;
+}
+
+/* --- Dark theme ------------------------------------------------------- */
+[data-theme="dark"] {
+  --mainbg: #020108;
+  --mainbg-gradient: #02010800;
+  --secondbg: #111111;
+
+  --fonts-100: #ffffff;
+  --fonts-64: #ffffffa3;
+  --fonts-50: #ffffff80;
+  --fonts-30: #ffffff4d;
+  --fonts-20: #ffffff33;
+
+  --lines: #2a2a30;
+  --menu: #020108;
+  --dots-pattern: #1a1a1a;
+}
+
+/* --- Tablet ------------------------------------------------------------ */
+@media (max-width: 991px) {
+  :root {
+    --h1: 4.5rem;
+    --h2: 5.5rem;
+    --h2-5: 3rem;
+    --h3: 2.5rem;
+    --h4: 2rem;
+    --gutter: 1.5rem;
+  }
+}
+
+/* --- Mobile ------------------------------------------------------------ */
+@media (max-width: 767px) {
+  :root {
+    --h1: 2.5rem;
+    --h2: 2.25rem;
+    --h2-5: 2.25rem;
+    --h3: 1.5rem;
+    --h4: 2rem;
+
+    --body-1: 1rem;
+    --body-2: 1rem;
+    --body-3: 1rem;
+
+    --tag: 1rem;
+    --title-3: 1rem;
+
+    --gutter: 1rem;
+  }
+}
+
+/* --- Type utilities ---------------------------------------------------- */
+
+.u-h1 {
+  font-size: var(--h1);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+
+.u-h2 {
+  font-size: var(--h2);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+}
+
+.u-h2-5 {
+  font-size: var(--h2-5);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+
+.u-h3 {
+  font-size: var(--h3);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.u-h4 {
+  font-size: var(--h4);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.u-body-1 {
+  font-size: var(--body-1);
+  line-height: 1.4;
+}
+
+.u-body-2 {
+  font-size: var(--body-2);
+  line-height: 1.45;
+}
+
+.u-body-3 {
+  font-size: var(--body-3);
+  line-height: 1.35;
+}
+
+.u-title-1 {
+  font-size: var(--title-1);
+  line-height: 1.3;
+}
+
+.u-title-2 {
+  font-size: var(--title-2);
+  line-height: 1.35;
+}
+
+.u-title-3 {
+  font-size: var(--title-3);
+  line-height: 1.25;
+}
+
+.u-tag {
+  font-size: var(--tag);
+  line-height: 1.3;
+}
+
+.u-btn {
+  font-size: var(--btn);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.u-small-text-1 {
+  font-size: var(--small-text-1);
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+}
+
+.u-small-text-2 {
+  font-size: var(--small-text-2);
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* --- Colour utilities -------------------------------------------------- */
+
+.u-fonts-100 { color: var(--fonts-100); }
+.u-fonts-64  { color: var(--fonts-64); }
+.u-fonts-50  { color: var(--fonts-50); }
+.u-fonts-30  { color: var(--fonts-30); }
+.u-fonts-20  { color: var(--fonts-20); }
+
+/* Used on the gradient slides where ink is always white */
+.u-fonts-50-stb { color: #ffffff80; }
+
+.u-indent { text-indent: 1.5rem; }
+
+/* --- Buttons ----------------------------------------------------------- */
+
+.btn-primary {
+  background-color: var(--fonts-100);
+  color: var(--mainbg);
+  border-radius: var(--fx-radius-pill);
+  height: 3rem;
+  padding: 0.875rem 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity var(--fx-duration-fast) ease, transform var(--fx-duration-fast) ease;
+  white-space: nowrap;
+}
+
+.btn-primary:hover {
+  opacity: 0.82;
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+/* White pill used on the coloured slides */
+.btn-primary-stb {
+  background-color: #fff;
+  color: #020108;
+  border-radius: var(--fx-radius-pill);
+  padding: 0.85rem 1.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity var(--fx-duration-fast) ease, transform var(--fx-duration-fast) ease;
+  white-space: nowrap;
+}
+
+.btn-primary-stb:hover {
+  opacity: 0.85;
+}
+
+.btn-primary-stb:active {
+  transform: scale(0.97);
+}
+
+.btn-outline {
+  border: 1px solid var(--fonts-20);
+  color: var(--fonts-100);
+  border-radius: var(--fx-radius-pill);
+  padding: 0.85rem 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color var(--fx-duration-fast) ease;
+}
+
+.btn-outline:hover {
+  border-color: var(--fonts-64);
+}
+
+/* --- Helpers ----------------------------------------------------------- */
+
+.is-absolute { position: absolute; }
+.u-hidden-copy { display: none; }
+
+/* Word spans produced by the hero/flash splitters */
+.hero-flash-word,
+.flash-word {
+  display: inline-block;
+  will-change: opacity, color;
+}
+
+/* --- Shared keyframes -------------------------------------------------- */
+
+@keyframes marquee {
+  0%   { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
+}
+
+@keyframes columnanima {
+  0%   { transform: translateY(0%); }
+  100% { transform: translateY(-100%); }
+}
+
+@keyframes hero-row {
+  0%   { transform: translate(var(--tx, 0%), var(--ty, 0%)); }
+  100% { transform: translate(var(--tx-end, 0%), var(--ty-end, -100%)); }
+}
+
+@keyframes spinStep {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__slider__row,
+  .how__bottom-row,
+  .how__column,
+  .preloader__loader {
+    animation: none !important;
+  }
+}
+
+/* ---------- what.css ---------- */
+
+/* ==========================================================================
+   "What you can do" — small label left, oversized statement right
+   ========================================================================== */
+
+.what {
+  display: flex;
+  width: 100%;
+  border-top: 1px solid var(--lines);
+}
+
+.what__left {
+  flex: none;
+  width: 28.5rem;
+  height: 26rem;
+  padding: 2rem;
+  border-right: 1px solid var(--lines);
+}
+
+.what__right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100%;
+  padding: 2rem;
+}
+
+@media (max-width: 991px) {
+  .what {
+    flex-flow: column;
+  }
+
+  .what__left {
+    width: 100%;
+    height: auto;
+    padding-bottom: 1rem;
+    border-right-width: 0;
+  }
+
+  .what__right {
+    padding-top: 0;
+    padding-bottom: 6rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .what__left {
+    padding-bottom: 0.75rem;
+    padding-inline: 1rem;
+  }
+
+  .what__right {
+    padding-bottom: 3rem;
+    padding-inline: 1rem;
+  }
+}
+
+/* ---------- ai.css ---------- */
+
+/* ==========================================================================
+   AI feature blocks
+
+   Each block is a tall rounded panel. Flow children are spread with
+   space-between so the tag sits at the top and the headline at the bottom;
+   the image grid is absolutely positioned in the space between them.
+   ========================================================================== */
+
+.ai {
+  display: flex;
+  flex-flow: column;
+  gap: 0.5rem;
+  padding: 0 0.5rem;
+}
+
+.ai__top,
+.ai__left,
+.ai__right {
+  position: relative;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  background-color: var(--secondbg);
+  border-radius: 3rem;
+  height: 70rem;
+  padding: 5rem;
+  overflow: hidden;
+}
+
+.ai__top {
+  width: 100%;
+}
+
+.ai__bottom {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.ai__left,
+.ai__right {
+  flex: 1;
+}
+
+/* --- Tag + headline ------------------------------------------------------ */
+
+.ai__tag {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ai__dot {
+  flex: none;
+  width: 0.25rem;
+  height: 0.25rem;
+  background-color: var(--fonts-30);
+  border-radius: 9rem;
+}
+
+.ai__title {
+  display: flex;
+  flex-flow: column;
+  gap: 1rem;
+  width: 36rem;
+}
+
+.ai__subtitle {
+  width: 88%;
+}
+
+.ai__title p {
+  width: 80%;
+}
+
+/* Circular action button, bottom-right of each panel */
+.ai__btn {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 4rem;
+  height: 4rem;
+  background-color: #fff;
+  color: #000;
+  border-radius: var(--fx-radius-pill);
+  transition: all var(--fx-duration-fast) ease;
+}
+
+.ai__btn:hover {
+  transform: scale(1.06);
+}
+
+.ai__btn-icon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+/* --- Desktop grid (block 1) --------------------------------------------- */
+
+.ai__grid {
+  position: absolute;
+  top: 5rem;
+  left: 5rem;
+  right: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 3.5rem;
+  height: 45rem;
+  pointer-events: none;
+}
+
+.ai__grid-card {
+  flex: none;
+  width: 17.5rem;
+  height: 26.5rem;
+  border-radius: 2rem;
+  overflow: hidden;
+}
+
+.ai__grid-arrow {
+  flex: none;
+  display: block;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--fonts-30);
+}
+
+.ai__grid-arrow svg {
+  width: 100%;
+  height: 100%;
+}
+
+.ai__grid-screen {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 45rem;
+  border-radius: 0.5rem 0 0 0.5rem;
+  overflow: hidden;
+}
+
+.ai__grid-asset {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ai__grid-asset.is-right { object-position: 0% 50%; }
+.ai__grid-asset.is-left  { object-position: 100% 50%; }
+
+.ai__grid-asset.theme-dark,
+.ai__grid-asset.theme-light {
+  border: 1px solid var(--mainbg);
+  border-radius: 2rem;
+}
+
+.ai__grid-asset.is-right.theme-dark,
+.ai__grid-asset.is-right.theme-light {
+  border-width: 1px 0 1px 1px;
+  border-radius: 2rem 0 0 2rem;
+}
+
+/* Paired assets: .theme-light is the light-mode artwork and shows by default;
+   js/theme.js swaps to .theme-dark when the dark theme is active. */
+.ai__grid-asset.theme-dark { display: none; }
+
+/* Cross-fading overlays */
+.ai__grid-asset.is-img-anima-3,
+.ai__grid-asset.is-img-anima-4,
+.ai__grid-asset.is-img-anima-5,
+.ai__grid-asset.is-left.is-img-anima-1 {
+  z-index: 2;
+  position: absolute;
+  inset: 0;
+}
+
+.ai__grid-asset.is-right.is-img-anima-2 {
+  z-index: 2;
+  position: absolute;
+  left: -5%;
+  width: 110%;
+  max-width: 110%;
+}
+
+/* --- Alt grid (tablet/mobile for block 1) -------------------------------- */
+
+.ai__grid-alt {
+  display: none;
+  position: absolute;
+  top: 11.5rem;
+  left: 0;
+  right: 0;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  height: 37.5rem;
+}
+
+.ai__grid-alt__side {
+  display: flex;
+  flex-flow: column;
+  gap: 1rem;
+  padding-top: 2.5rem;
+}
+
+.ai__grid-alt__md {
+  flex: 1;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+.ai__grid-alt__img,
+.ai__grid-alt__img-2,
+.ai__grid-alt__img-main {
+  background-color: var(--mainbg);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.ai__grid-alt__img      { width: 13rem; height: 13rem; }
+.ai__grid-alt__img-2    { width: 13rem; height: 18rem; }
+.ai__grid-alt__img-main { width: 100%;  height: 24rem; }
+
+.ai__grid-alt img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* --- Small grid (blocks 2/3) --------------------------------------------- */
+
+.ai__grid-small {
+  position: absolute;
+  top: 11.5rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  height: 37.5rem;
+}
+
+.ai__grid-small-left,
+.ai__grid-small-right {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  height: 20rem;
+  background-color: var(--mainbg);
+  overflow: hidden;
+}
+
+.ai__grid-small-left {
+  justify-content: flex-end;
+  border-top-right-radius: var(--fx-radius-md);
+  border-bottom-right-radius: var(--fx-radius-md);
+}
+
+.ai__grid-small-right {
+  justify-content: flex-start;
+  border-top-left-radius: var(--fx-radius-md);
+  border-bottom-left-radius: var(--fx-radius-md);
+}
+
+.ai__grid-small-collage {
+  display: flex;
+  flex-flow: column;
+  gap: 1rem;
+  width: 25rem;
+  height: 100%;
+}
+
+.ai__grid-small-md {
+  position: relative;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 25rem;
+  background-color: var(--mainbg);
+  border-radius: var(--fx-radius-md);
+  overflow: hidden;
+}
+
+.ai__grid-small-bottom {
+  flex: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  height: 15rem;
+}
+
+.ai__grid-small-lg {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 25rem;
+  height: 100%;
+  background-color: var(--mainbg);
+  border-radius: var(--fx-radius-md);
+  overflow: hidden;
+}
+
+/* --- Video block --------------------------------------------------------- */
+
+.video__asset {
+  position: absolute;
+  top: 11.5rem;
+  left: 5rem;
+  right: 5rem;
+  height: 37.5rem;
+  border-radius: var(--fx-radius-md);
+  overflow: hidden;
+  background-color: var(--mainbg);
+}
+
+.video-poster {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: opacity 0.5s ease;
+}
+
+.video-poster.video-faded {
+  opacity: 0;
+}
+
+.bg-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* --- Tablet -------------------------------------------------------------- */
+
+@media (max-width: 991px) {
+  .ai__top {
+    height: 66rem;
+  }
+
+  .ai__bottom {
+    flex-flow: column;
+  }
+
+  .ai__left,
+  .ai__right {
+    flex: none;
+    height: 66rem;
+  }
+
+  .ai__subtitle {
+    width: 80%;
+  }
+
+  .ai__grid {
+    display: none;
+  }
+
+  .ai__grid-alt {
+    display: flex;
+    align-items: flex-start;
+    height: auto;
+    top: 9rem;
+    padding-inline: 2rem;
+  }
+
+  .ai__grid-small {
+    top: 9.5rem;
+  }
+}
+
+/* --- Mobile -------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+  .ai__top,
+  .ai__left,
+  .ai__right {
+    border-radius: 1.5rem;
+    padding: 2rem;
+  }
+
+  .ai__top {
+    height: 36.5rem;
+  }
+
+  .ai__left,
+  .ai__right {
+    height: 35rem;
+  }
+
+  .ai__btn {
+    top: 1.35rem;
+    right: 2rem;
+    bottom: auto;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .ai__btn-icon svg {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+
+  .ai__title,
+  .ai__title p {
+    width: 100%;
+  }
+
+  .ai__grid-alt {
+    top: 5.25rem;
+    gap: 0.25rem;
+    padding-inline: 1rem;
+  }
+
+  .ai__grid-alt__md {
+    gap: 1rem;
+  }
+
+  .ai__grid-alt__img      { width: 6rem; height: 6rem; }
+  .ai__grid-alt__img-2    { width: 6rem; height: 8rem; }
+  .ai__grid-alt__img-main { height: 11rem; }
+
+  .ai__grid-small {
+    top: 5.25rem;
+    gap: 0.5rem;
+    height: 18rem;
+  }
+
+  .ai__grid-small-lg,
+  .ai__grid-small-md,
+  .ai__grid-small-collage {
+    width: 12rem;
+    border-radius: 0.75rem;
+  }
+
+  .ai__grid-small-collage {
+    gap: 0.5rem;
+  }
+
+  .ai__grid-small-left,
+  .ai__grid-small-right {
+    height: 10rem;
+  }
+
+  .ai__grid-small-left {
+    border-top-right-radius: 0.75rem;
+    border-bottom-right-radius: 0.75rem;
+  }
+
+  .ai__grid-small-right {
+    border-top-left-radius: 0.75rem;
+    border-bottom-left-radius: 0.75rem;
+  }
+
+  .ai__grid-small-bottom {
+    gap: 0.5rem;
+    height: 8rem;
+  }
+
+  .video__asset {
+    top: 5.25rem;
+    left: 2rem;
+    right: 2rem;
+    height: 18rem;
+  }
+}
+
+/* ---------- how.css ---------- */
+
+/* ==========================================================================
+   How it works — sticky left title, endlessly scrolling right column,
+   logo marquee underneath
+   ========================================================================== */
+
+.how {
+  position: relative;
+  display: flex;
+  flex-flow: column;
+  padding-top: 10rem;
+  padding-bottom: 10rem;
+}
+
+.how__title {
+  padding-bottom: 2rem;
+  padding-left: 30.5rem;
+}
+
+.how__main {
+  display: flex;
+  border-top: 1px solid var(--lines);
+  border-bottom: 1px solid var(--lines);
+}
+
+.how__left {
+  position: relative;
+  flex: none;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 28.5rem;
+  padding: 2rem 2rem 4rem;
+  border-right: 1px solid var(--lines);
+}
+
+/* Sits under the headline rather than in flow, so the headline keeps the
+   column's full height to itself. */
+.btn-primary.is-how {
+  position: absolute;
+  left: 2rem;
+  bottom: 4rem;
+  cursor: pointer;
+}
+
+.how__right {
+  flex: 1;
+  display: flex;
+  flex-flow: column;
+  height: 38rem;
+  overflow: hidden;
+}
+
+.how__column {
+  animation: columnanima 24s linear infinite;
+  flex: none;
+}
+
+.how__item {
+  padding: 2rem 2rem 2.5rem;
+  border-bottom: 1px solid var(--lines);
+}
+
+.how__right-title {
+  opacity: 0.2;
+  will-change: opacity;
+}
+
+/* --- Trusted-by marquee -------------------------------------------------- */
+
+.how__bottom {
+  display: flex;
+}
+
+.how__bottom-left {
+  flex: none;
+  width: 28.5rem;
+  padding: 2rem;
+}
+
+.how__bottom-right {
+  position: relative;
+  flex: none;
+  width: calc(100% - 28.5rem);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 2rem;
+  overflow: hidden;
+}
+
+.how__bottom-row {
+  display: flex;
+  flex-flow: row;
+  gap: 1.5rem;
+  padding-right: 1.5rem;
+  animation: marquee 24s linear infinite;
+}
+
+.how__bottom-item {
+  flex: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 16rem;
+  height: 12.5rem;
+  background-color: var(--secondbg);
+  border-radius: var(--fx-radius-sm);
+}
+
+.how__bottom-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 6.5rem;
+  height: 1.5rem;
+  color: var(--fonts-64);
+}
+
+.how__bottom-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.how__bottom-gr-left,
+.how__bottom-gr-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6.5rem;
+  pointer-events: none;
+}
+
+.how__bottom-gr-left {
+  left: 0;
+  background-image: linear-gradient(90deg, var(--mainbg), var(--mainbg-gradient));
+}
+
+.how__bottom-gr-right {
+  right: 0;
+  background-image: linear-gradient(-90deg, var(--mainbg), var(--mainbg-gradient));
+}
+
+/* --- Tablet -------------------------------------------------------------- */
+
+@media (max-width: 991px) {
+  .how__title {
+    padding-bottom: 1rem;
+    padding-left: 2rem;
+  }
+
+  .how__main {
+    flex-flow: column;
+    border-top-width: 0;
+    border-bottom-width: 0;
+  }
+
+  .how__left {
+    width: 100%;
+    height: auto;
+    padding-top: 0;
+    padding-bottom: 3rem;
+    border-right-width: 0;
+  }
+
+  .how__right {
+    flex: none;
+    height: 32rem;
+    border-top: 1px solid var(--lines);
+    border-bottom: 1px solid var(--lines);
+  }
+
+  .btn-primary.is-how {
+    left: 1rem;
+    bottom: 1rem;
+  }
+
+  .how__bottom {
+    flex-flow: column;
+  }
+
+  .how__bottom-left {
+    width: 100%;
+    padding-top: 10rem;
+    padding-bottom: 1rem;
+  }
+
+  .how__bottom-right {
+    width: 100%;
+    padding-top: 1rem;
+  }
+}
+
+/* --- Mobile -------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+  .how {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+
+  .how__title {
+    padding-bottom: 0.75rem;
+    padding-left: 1rem;
+  }
+
+  .how__left {
+    padding-bottom: 3rem;
+    padding-inline: 1rem;
+  }
+
+  .how__right {
+    height: 17.5rem;
+  }
+
+  .how__item {
+    padding: 1.5rem 1rem 2rem;
+  }
+
+  .how__bottom-left {
+    padding-bottom: 0.75rem;
+    padding-inline: 1rem;
+  }
+
+  .how__bottom-right {
+    padding-top: 0.75rem;
+  }
+
+  .how__bottom-item {
+    width: 10rem;
+    height: 7.5rem;
+  }
+
+  .how__bottom-logo {
+    width: 6rem;
+    height: 1.2rem;
+  }
+
+  .how__bottom-row {
+    gap: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* ---------- list.css ---------- */
+
+/* ==========================================================================
+   Pinned gradient slides
+   Each slide is 100vh and gets pinned by ScrollTrigger, then tips and fades as
+   the next one arrives.
+
+   Deliberately NO perspective and NO preserve-3d: the outgoing card is meant to
+   compress vertically (a flat rotateX squash) while rotateZ skews its edge, not
+   to swing back in true 3D. Transform origin stays centred — anchoring it to the
+   top makes the card shrink upward and opens a gap under it.
+   ========================================================================== */
+
+.list {
+  position: relative;
+  margin-top: 10rem;
+}
+
+/* Pulled up under the header so the first slide's pin starts flush */
+.list__wrap {
+  position: relative;
+  display: flex;
+  flex-flow: column;
+  margin-top: -6.5rem;
+  padding-top: 6.5rem;
+}
+
+.list__title {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2rem;
+  padding: 2rem 2rem 6rem;
+  border-top: 1px solid var(--lines);
+}
+
+.list__title-copy {
+  text-align: right;
+  flex: none;
+}
+
+.list__main__wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.list__main__slide {
+  height: 100vh;
+}
+
+.list__main__content__wrap {
+  height: 100vh;
+}
+
+/* overflow:hidden is load-bearing. The slide artwork is far wider and taller
+   than the viewport; without clipping here it grows the content past 100vh,
+   which corrupts the pin heights of every slide after it. */
+.list__main__content {
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  will-change: transform, opacity;
+}
+
+.list__main__content.is-first  { background-image: var(--slide-01); }
+.list__main__content.is-second { background-image: var(--slide-02); }
+.list__main__content.is-third  { background-image: var(--slide-03); }
+.list__main__content.is-fourth { background-image: var(--slide-04); }
+
+/* --- Upper half ---------------------------------------------------------- */
+
+.list__main__top {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: auto;
+  padding: 7.5rem 2rem 0;
+}
+
+.list__main__title {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  padding-bottom: 1.5rem;
+}
+
+.list__main__tag {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: -5rem;
+  opacity: 0.4;
+  color: #fff;
+}
+
+.list__main__h2 {
+  flex: 1;
+  text-align: left;
+  color: #fff;
+}
+
+.list__main__h1 {
+  flex: 1;
+  text-align: right;
+  color: #fff;
+  line-height: 0.85;
+}
+
+.list__main__info {
+  display: flex;
+  width: 100%;
+}
+
+.list__main__info-left {
+  flex: none;
+  width: 50%;
+  display: flex;
+  flex-flow: column;
+}
+
+.list__main__info-left-top {
+  height: 5.25rem;
+  padding: 1.5rem;
+  border-top: 1px solid #fff3;
+  border-left: 1px solid #fff3;
+}
+
+.list__main__info-left-bottom {
+  padding-top: 1.75rem;
+}
+
+.list__main__info-right {
+  flex: none;
+  width: 50%;
+  height: 14rem;
+  padding: 1.5rem;
+  border-top: 1px solid #fff3;
+  border-left: 1px solid #fff3;
+  border-right: 1px solid #fff3;
+}
+
+.list__main__info-tag {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.list__main__info-tag-icon {
+  flex: none;
+  width: 0.44rem;
+  height: 0.44rem;
+  background-color: #fff;
+  border-radius: 0.1rem;
+}
+
+.list__main__info-tag-text {
+  color: #fff;
+}
+
+.list__main__info-copy {
+  color: #fff;
+  line-height: 1.15;
+}
+
+.btn-primary-stb {
+  margin-top: -6.5rem;
+}
+
+/* --- Lower half (artwork) ------------------------------------------------ */
+
+.list__main__bottom {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+.list__main__bottom.is-first,
+.list__main__bottom.is-third,
+.list__main__bottom.is-fourth {
+  justify-content: flex-start;
+}
+
+.list__main__bottom.is-second {
+  justify-content: center;
+}
+
+/* The image slot.
+   Square, parchment, and identical on every slide — it reads as a frame
+   waiting for a photograph rather than as decoration. The parchment matches
+   the placeholder language already used on /apply (public/apply/slot-*.svg),
+   so it sits inside the brand instead of adding a fifth colour to the four
+   gradients it lies on top of. */
+.list__main__slot {
+  position: absolute;
+  top: 3rem;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  width: min(420px, 34vw);
+  border-radius: 1.5rem;
+  background-image: linear-gradient(140deg, #efece4, #d6d1c4);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 60%),
+    0 30px 70px rgb(21 21 15 / 22%);
+}
+
+.list__main__slot-label {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  color: rgb(21 21 15 / 38%);
+}
+
+.list__main__bottom-gradient {
+  z-index: 2;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 10rem;
+  background-image: linear-gradient(#fc730300, #fc7303);
+  pointer-events: none;
+}
+
+/* --- Tablet -------------------------------------------------------------- */
+
+@media (max-width: 991px) {
+  .list {
+    margin-top: 5rem;
+  }
+
+  .list__title {
+    flex-flow: column;
+    align-items: flex-start;
+    gap: 5rem;
+    padding-bottom: 2rem;
+  }
+
+  .list__title-copy {
+    text-align: left;
+  }
+
+  .list__main__top {
+    padding: 6.5rem 1rem 1rem;
+    position: relative;
+  }
+
+  .list__main__tag {
+    margin-top: -4.5rem;
+    font-size: 1rem;
+  }
+
+  .list__main__h1 {
+    flex: 0 auto;
+  }
+
+  .list__main__slot {
+    width: min(360px, 46vw);
+  }
+
+  .btn-primary-stb {
+    margin-top: -4rem;
+  }
+}
+
+/* --- Mobile -------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+  .list__title {
+    padding-inline: 1rem;
+  }
+
+  .list__title-copy {
+    text-align: left;
+  }
+
+  .list__main__top {
+    padding: 5.5rem 1rem 1rem;
+  }
+
+  .list__main__title {
+    flex-flow: column;
+    gap: 0.5rem;
+  }
+
+  .list__main__h1 {
+    text-align: left;
+  }
+
+  .list__main__info-left-top,
+  .list__main__info-right {
+    padding: 1rem;
+  }
+
+  .list__main__info-right {
+    height: 10rem;
+  }
+
+  .list__main__info-left-top {
+    height: 4.5rem;
+  }
+
+  .btn-primary-stb {
+    margin-top: 1rem;
+  }
+
+  .list__main__slot {
+    width: min(240px, 58vw);
+    top: 2rem;
+    border-radius: 1.1rem;
+  }
+}
+
+/* ---------- faq.css ---------- */
+
+/* ==========================================================================
+   FAQ — label left, single-open accordion right
+   ========================================================================== */
+
+.faq {
+  display: flex;
+  margin-top: 10rem;
+  border-top: 1px solid var(--lines);
+  border-bottom: 1px solid var(--lines);
+}
+
+.faq__left {
+  flex: none;
+  width: 28.5rem;
+  padding: 2rem;
+  border-right: 1px solid var(--lines);
+}
+
+.faq__right {
+  flex: 1;
+}
+
+.faq__title {
+  padding: 2rem;
+}
+
+.faq__wrap {
+  margin-bottom: -1px;
+}
+
+.faq__list {
+  display: flex;
+  flex-flow: column;
+}
+
+.faq__item {
+  display: flex;
+  flex-flow: column;
+  padding: 2rem;
+  border-bottom: 1px solid var(--lines);
+}
+
+.faq__item-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  text-align: left;
+  transition: opacity var(--fx-duration-fast) ease;
+}
+
+.faq__item-title:hover {
+  opacity: 0.64;
+}
+
+.faq__label {
+  color: var(--fonts-100);
+  text-wrap: balance;
+}
+
+.faq__icon {
+  flex: none;
+  font-size: 2rem;
+  line-height: 1.25rem;
+  font-weight: var(--regular);
+  color: var(--fonts-100);
+}
+
+/* height/opacity are driven inline by js/faq.js */
+.faq__content {
+  overflow: hidden;
+  transition: height 0.35s var(--fx-ease-out), opacity 0.35s ease;
+}
+
+.faq__content-txt {
+  padding-top: 1.25rem;
+  max-width: 52ch;
+}
+
+@media (max-width: 991px) {
+  .faq {
+    flex-flow: column;
+    margin-top: 5rem;
+    border-top-width: 0;
+    border-bottom-width: 0;
+  }
+
+  .faq__left {
+    width: 100%;
+    height: auto;
+    padding-top: 0;
+    padding-bottom: 1rem;
+    border-right-width: 0;
+  }
+
+  .faq__title {
+    padding-top: 0;
+    padding-bottom: 3rem;
+  }
+
+  .faq__list {
+    padding-inline: 2rem;
+  }
+
+  .faq__item {
+    margin-top: -1px;
+    padding-inline: 0;
+    border-top: 1px solid var(--lines);
+  }
+}
+
+@media (max-width: 767px) {
+  .faq__left {
+    padding-bottom: 0.75rem;
+    padding-inline: 1rem;
+  }
+
+  .faq__title {
+    padding-bottom: 3rem;
+    padding-inline: 1rem;
+  }
+
+  .faq__list {
+    padding-inline: 1rem;
+  }
+
+  .faq__item {
+    padding-top: 1.25rem;
+  }
+
+  .faq__item-title {
+    gap: 1rem;
+  }
+
+  .faq__icon {
+    font-size: 1.25rem;
+  }
+}
+
+/* ---------- footer.css ---------- */
+
+/* ==========================================================================
+   Footer card + interactive dots field
+   The card is a near-full-viewport panel; the dots field is deliberately wider
+   than the viewport and clipped, so the pattern runs off both edges.
+   ========================================================================== */
+
+.footer {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  margin-top: 10rem;
+  padding: 0.5rem;
+  overflow: hidden;
+}
+
+.footer__wrap {
+  display: flex;
+  flex-flow: column;
+  gap: 2rem;
+  width: 100%;
+  height: calc(100svh - 1rem);
+  max-height: 60rem;
+  padding: 2rem;
+  background-color: var(--secondbg);
+  border-radius: 3rem;
+  overflow: hidden;
+}
+
+.footer__main {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  min-height: 0;
+}
+
+.footer__logo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--fonts-100);
+  transition: opacity var(--fx-duration-fast) ease;
+}
+
+.footer__logo:hover {
+  opacity: 0.7;
+}
+
+.footer__logo-in {
+  display: block;
+  flex: none;
+  width: 3.25rem;
+  height: 3.25rem;
+}
+
+.footer__logo-in svg {
+  width: 100%;
+  height: 100%;
+}
+
+.footer__logo-txt {
+  font-size: 3.25rem;
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.footer__main__wrap {
+  flex: none;
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  min-width: 28rem;
+}
+
+.footer__main__top {
+  display: flex;
+  gap: 3.5rem;
+}
+
+.footer__main__left,
+.footer__main__right {
+  flex: 1;
+  display: flex;
+  flex-flow: column;
+  gap: 3.5rem;
+}
+
+.footer__main__list {
+  display: flex;
+  flex-flow: column;
+  gap: 0.35rem;
+}
+
+.footer__main__link,
+.footer__main__link-small {
+  transition: opacity var(--fx-duration-fast) ease;
+}
+
+.footer__main__link:hover,
+.footer__main__link-small:hover {
+  opacity: 0.64;
+}
+
+.footer__main__bottom {
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  width: 100%;
+}
+
+/* --- Dots field ----------------------------------------------------------
+   Deliberately wider than the card and clipped by it, so the pattern runs off
+   both edges rather than ending in a visible column.
+   ------------------------------------------------------------------------- */
+
+.dots-field {
+  flex: none;
+  align-self: center;
+  display: grid;
+  gap: 16px;
+  width: 103rem;
+  height: 29rem;
+  align-content: end;
+  justify-content: center;
+  margin-bottom: -2rem;
+  pointer-events: none;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--dots-pattern);
+  will-change: transform, opacity, background-color;
+}
+
+.dot.is-on {
+  background-color: var(--fonts-100);
+}
+
+@media (max-width: 991px) {
+  .footer {
+    margin-top: 5rem;
+  }
+
+  .footer__wrap {
+    gap: 1.5rem;
+    max-height: 72rem;
+    padding: 1rem;
+    border-radius: 2rem;
+  }
+
+  .footer__main {
+    flex-flow: column;
+    gap: 2.5rem;
+  }
+
+  .footer__main__wrap {
+    min-width: 0;
+    width: 100%;
+    gap: 4rem;
+  }
+
+  .footer__logo-txt {
+    font-size: 2.5rem;
+  }
+
+  .footer__logo-in {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .dots-field {
+    width: 21.5rem;
+    height: 14.5rem;
+    gap: 10px;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+  }
+}
+
+@media (max-width: 767px) {
+  .footer__main__top {
+    gap: 2rem;
+  }
+
+  .footer__main__left,
+  .footer__main__right {
+    gap: 2rem;
+  }
+
+  .footer__main__bottom {
+    flex-flow: column;
+    gap: 0.5rem;
+  }
+}
+
+
+/* ---------- axiom: FAQ panel + page wrapper ----------
+   The clone drove the accordion by writing a measured pixel height from JS.
+   React owns the open state here, so the panel animates grid-template-rows
+   instead — an answer that reflows can never end up clipped at a stale height. */
+
+.faq__content {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 0.42s var(--fx-ease-out),
+    opacity 0.32s ease;
+}
+
+.faq__content[data-open] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.faq__content-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ---------- axiom: wrapper ----------
+   The clone's global `body` rules are not ported, so the scroll stack sets its
+   own ground and type here. Scoped to .fx-scroll — every other route is
+   untouched. */
+
+.fx-scroll {
+  background-color: var(--mainbg);
+  color: var(--fonts-100);
+  font-family: var(--font-family);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.fx-scroll img,
+.fx-scroll svg,
+.fx-scroll video {
+  display: block;
+  max-width: 100%;
+}
+
+.fx-scroll img {
+  height: auto;
+}
+
+/* Tailwind's preflight leaves headings at inherit; the u-* type utilities own
+   size and leading, so this only resets weight. Never set font-size here — a
+   class+element selector would outrank .u-h2 and flatten the whole scale. */
+.fx-scroll h2,
+.fx-scroll h3 {
+  font-weight: var(--regular);
+}
+
+/* The footer logo carries the Axiom mark rather than the clone's glyph. */
+.footer__logo-mark {
+  width: 3.75rem;
+  height: 3.75rem;
+  object-fit: contain;
+}
+
+/* Axiom forest, for the words that carry the brand inside a headline. */
+.fx-forest {
+  color: #2f6b3d;
+}
+
+/* The section label is a caption, not a headline: body size, normal weight,
+   no emphasis inside it. The statement on the right carries the section. */
+.what__txt {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
