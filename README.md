@@ -110,6 +110,6 @@ applied** — apply it before testing email or every send fails its log step.
 See **`docs/NEXT-SESSION.md`** — account/profile rebuild, live backend
 verification, and the Vercel + DNS setup, with a paste-ready prompt to resume.
 
-Also open: `/public/fourmula/` still holds Fourmula's marketing imagery as
-placeholders (fine while building, not fine in production), the feature video
+Also open: `/public/media/` still holds placeholder imagery that is not ours
+to publish (fine while building, not fine in production), the feature video
 needs compressing, and `12,597` is hardcoded copy.

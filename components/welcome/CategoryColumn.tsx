@@ -43,7 +43,7 @@ export function CategoryColumn() {
         {loop.map((c, i) => (
           <span
             key={`${c}-${i}`}
-            // fourmula's tag boxes: bordered rounded-rects on the page ground,
+            // Tag boxes: bordered rounded-rects on the page ground,
             // not floating pills.
             className="wel-fg rounded-[8px] border border-[rgba(21,21,15,0.18)] bg-white px-4 py-1.5 text-[1rem] whitespace-nowrap"
           >

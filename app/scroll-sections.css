@@ -1,12 +1,9 @@
 /* ==========================================================================
-   Fourmula scroll sections — ported verbatim from ~/Downloads/current-projects/
-   fourmula-clone (a 1:1 rebuild of fourmula.ai). Layout, grid, type scale and
-   every animation timing are the original's; copy and imagery are Axiom's.
+   Scroll sections — the editorial long-scroll below the welcome hero.
 
-   Scope note: only the design tokens, the u-* type utilities and the section
-   rules come across. The clone's global reset (`*`, `html`, `body`) is
-   deliberately NOT ported — Tailwind owns those here, and importing it would
-   restyle every other route.
+   Self-contained by design: design tokens, the u-* type utilities and the
+   section rules only. No global reset (`*`, `html`, `body`) lives here —
+   Tailwind owns those, and adding them would restyle every other route.
    ========================================================================== */
 
 /* ==========================================================================
@@ -1797,7 +1794,7 @@
 
 
 /* ---------- axiom: FAQ panel + page wrapper ----------
-   The clone drove the accordion by writing a measured pixel height from JS.
+   An earlier build drove the accordion by writing a measured pixel height from JS.
    React owns the open state here, so the panel animates grid-template-rows
    instead — an answer that reflows can never end up clipped at a stale height. */
 
@@ -1821,7 +1818,7 @@
 }
 
 /* ---------- axiom: wrapper ----------
-   The clone's global `body` rules are not ported, so the scroll stack sets its
+   No global `body` rules live in this file, so the scroll stack sets its
    own ground and type here. Scoped to .fx-scroll — every other route is
    untouched. */
 
@@ -1852,7 +1849,7 @@
   font-weight: var(--regular);
 }
 
-/* The footer logo carries the Axiom mark rather than the clone's glyph. */
+/* The footer logo carries the Axiom mark. */
 .footer__logo-mark {
   width: 3.75rem;
   height: 3.75rem;

@@ -6,13 +6,13 @@ import gsap from "gsap";
 
 /**
  * Pill CTA with the reference's hover: the label rolls UP character by
- * character while a duplicate rolls in from below — fourmula-clone's
+ * character while a duplicate rolls in from below — the
  * hover-stagger effect (js/hover-stagger.js), not a scramble. The pill fills
  * with the accent colour at the same time.
  *
  * Two stacked copies of the label live inside an overflow mask; on hover both
  * translate up one line with a per-character stagger, so the original leaves
- * exactly as the clone arrives.
+ * exactly as the label arrives.
  */
 
 const ACCENT = "#2f6b3d";

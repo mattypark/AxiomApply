@@ -5,7 +5,7 @@ import { useState } from "react";
 /**
  * Section 10 — FAQs.
  *
- * Ported from fourmula-clone/index.html (`.faq`) with its accordion behaviour
+ * The accordion behaviour
  * rewritten as React state rather than the original's class toggling: one item
  * open at a time, the panel animating to its measured height.
  *

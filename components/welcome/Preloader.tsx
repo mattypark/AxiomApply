@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
 /**
- * Welcome preloader, ported from fourmula-clone (css/preloader.css +
+ * Welcome preloader, built against the reference frames in (
  * js/preloader.js) against the reference frames in
  * ~/Documents/Reference images/axiom-preloader-frames:
  *

@@ -14,7 +14,7 @@ import type { ApplyPrefill } from "@/components/apply/ApplyEngine";
  * later inside the application's own gate (name + email + Google). The only
  * job of this screen is the side pick.
  *
- * Layout is the fourmula T: a title band with a hairline under it, then a
+ * Layout is a T: a title band with a hairline under it, then a
  * vertical hairline splitting the viewport into two halves — HIRING on the
  * left, LOOKING on the right — each with oversized type and a description
  * pinned to the bottom. Hovering a half draws the forest outline; choosing one

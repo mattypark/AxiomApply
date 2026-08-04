@@ -3,9 +3,9 @@
 import { useEffect } from "react";
 
 /**
- * The motion layer for the ported scroll sections.
+ * The motion layer for the scroll sections.
  *
- * Straight port of fourmula-clone's js/flash-text.js, js/how.js,
+ * Drives the flash-in headlines, the how section,
  * js/list-pin.js and js/ai-anima.js — same triggers, same easings, same
  * numbers. It runs once on mount against the DOM the sections render, which is
  * how the original works: the markup is static and the script wires it after
@@ -20,7 +20,7 @@ import { useEffect } from "react";
 const HOT = "#2f6b3d";
 const WARM = "#3f8f52";
 
-/* list-pin tuning knobs. The clone leaned harder and faster; Axiom's slides
+/* list-pin tuning knobs. An earlier pass leaned harder and faster; Axiom's slides
    hold flat for most of the pin and then lean slowly. */
 const PERSPECTIVE = 1800;
 const TILT = 15;

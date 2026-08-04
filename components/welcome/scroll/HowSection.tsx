@@ -3,7 +3,7 @@ import Link from "next/link";
 /**
  * Section 8 — "How it works".
  *
- * Ported from fourmula-clone/index.html (`.how`), minus the trusted-by logo
+ * Minus the trusted-by logo
  * band (cut on request). The right column is a CSS marquee duplicated for a
  * seamless loop; ScrollMotion re-measures each line every frame and fades it
  * by how far it has travelled up the column. The duplicate column is

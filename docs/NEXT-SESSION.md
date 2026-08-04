@@ -150,9 +150,8 @@ Copy the names exactly from `.env.example`. Set for **Production** and
 
 ### Before the first deploy
 - `npm run build` locally — the dev server has been the only check so far.
-- Swap the Fourmula placeholder imagery in `/public/fourmula/` for Axiom's own
-  assets. Those are someone else's marketing images; fine while building, not
-  fine in production.
+- Swap the placeholder imagery in `/public/media/` for Axiom's own assets.
+  None of it is ours to publish; fine while building, not fine in production.
 - The 5.5MB `feature-video.mp4` needs compression.
 - `12,597` is hardcoded copy in two places — either update it or read it from
   the internships table.

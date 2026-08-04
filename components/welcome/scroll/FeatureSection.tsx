@@ -3,13 +3,12 @@ import Link from "next/link";
 /**
  * Section 7 — the three feature blocks.
  *
- * Ported 1:1 from fourmula-clone/index.html (`.ai`): one full-width block over
- * a two-up row, each with a dotted tag, a flashing headline, and an image grid
- * whose overlay renders cross-fade on a loop (`is-img-anima-*`, driven by
- * ScrollMotion).
+ * One full-width block over a two-up row, each with a dotted tag, a flashing
+ * headline, and an image grid whose overlay renders cross-fade on a loop
+ * (`is-img-anima-*`, driven by ScrollMotion).
  *
- * Imagery is the clone's placeholder set at /public/fourmula — same intrinsic
- * dimensions, so dropping real photography in does not reflow anything.
+ * Imagery under /public/media is placeholder — real photography at the same
+ * intrinsic dimensions drops in without reflowing anything.
  */
 
 function Arrow() {
@@ -75,12 +74,12 @@ export function FeatureSection() {
             <div className="ai__grid-card">
               <img
                 className="ai__grid-asset theme-dark"
-                src="/fourmula/grid-01-dark.avif"
+                src="/media/grid-01-dark.avif"
                 alt=""
               />
               <img
                 className="ai__grid-asset theme-light"
-                src="/fourmula/grid-01.avif"
+                src="/media/grid-01.avif"
                 alt=""
               />
             </div>
@@ -88,12 +87,12 @@ export function FeatureSection() {
             <div className="ai__grid-screen">
               <img
                 className="ai__grid-asset is-right theme-dark"
-                src="/fourmula/grid-02-dark.avif"
+                src="/media/grid-02-dark.avif"
                 alt=""
               />
               <img
                 className="ai__grid-asset is-right theme-light"
-                src="/fourmula/grid-02-light.avif"
+                src="/media/grid-02-light.avif"
                 alt=""
               />
             </div>
@@ -103,23 +102,23 @@ export function FeatureSection() {
           <div className="ai__grid-alt">
             <div className="ai__grid-alt__side">
               <div className="ai__grid-alt__img">
-                <img src="/fourmula/grid-mob-01.avif" alt="" />
+                <img src="/media/grid-mob-01.avif" alt="" />
               </div>
               <div className="ai__grid-alt__img-2">
-                <img src="/fourmula/grid-mob-02.avif" alt="" />
+                <img src="/media/grid-mob-02.avif" alt="" />
               </div>
             </div>
             <div className="ai__grid-alt__md">
               <div className="ai__grid-alt__img-main">
-                <img src="/fourmula/grid-mob-03.avif" alt="" />
+                <img src="/media/grid-mob-03.avif" alt="" />
               </div>
             </div>
             <div className="ai__grid-alt__side">
               <div className="ai__grid-alt__img-2">
-                <img src="/fourmula/grid-mob-04.avif" alt="" />
+                <img src="/media/grid-mob-04.avif" alt="" />
               </div>
               <div className="ai__grid-alt__img">
-                <img src="/fourmula/grid-mob-05.avif" alt="" />
+                <img src="/media/grid-mob-05.avif" alt="" />
               </div>
             </div>
           </div>
@@ -148,21 +147,21 @@ export function FeatureSection() {
             <div className="ai__grid-small-left">
               <img
                 className="ai__grid-asset is-left is-img-anima-1"
-                src="/fourmula/ai-img-01-upd.avif"
+                src="/media/ai-img-01-upd.avif"
                 alt=""
               />
               <img
                 className="ai__grid-asset is-left"
-                src="/fourmula/ai-img-01.avif"
+                src="/media/ai-img-01.avif"
                 alt=""
               />
             </div>
             <div className="ai__grid-small-collage">
               <div className="ai__grid-small-md">
-                <img className="ai__grid-asset" src="/fourmula/ai-img-02.avif" alt="" />
+                <img className="ai__grid-asset" src="/media/ai-img-02.avif" alt="" />
                 <img
                   className="ai__grid-asset is-img-anima-4"
-                  src="/fourmula/ai-img-02-upd.avif"
+                  src="/media/ai-img-02-upd.avif"
                   alt=""
                 />
               </div>
@@ -170,12 +169,12 @@ export function FeatureSection() {
                 <div className="ai__grid-small-lg">
                   <img
                     className="ai__grid-asset"
-                    src="/fourmula/ai-img-03.avif"
+                    src="/media/ai-img-03.avif"
                     alt=""
                   />
                   <img
                     className="ai__grid-asset is-img-anima-3"
-                    src="/fourmula/ai-img-03-upd.avif"
+                    src="/media/ai-img-03-upd.avif"
                     alt=""
                   />
                 </div>
@@ -184,12 +183,12 @@ export function FeatureSection() {
             <div className="ai__grid-small-right">
               <img
                 className="ai__grid-asset is-right is-img-anima-2"
-                src="/fourmula/ai-img-05-upd.avif"
+                src="/media/ai-img-05-upd.avif"
                 alt=""
               />
               <img
                 className="ai__grid-asset is-right"
-                src="/fourmula/ai-img-05.avif"
+                src="/media/ai-img-05.avif"
                 alt=""
               />
             </div>
@@ -217,7 +216,7 @@ export function FeatureSection() {
           <div className="video__asset">
             <video
               className="bg-video"
-              src="/fourmula/feature-video.mp4"
+              src="/media/feature-video.mp4"
               autoPlay
               muted
               playsInline

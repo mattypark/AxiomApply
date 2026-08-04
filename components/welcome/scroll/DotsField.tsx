@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 /**
- * The footer dot field, ported from fourmula-clone/js/dots.js.
+ * The footer dot field.
  *
  * Two behaviours on one grid:
  *   · an idle cycle that scatters the dots' opacity, resolves them into a

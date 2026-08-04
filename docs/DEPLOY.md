@@ -127,8 +127,8 @@ only — no error, no lost data.
 - [ ] Vercel → Settings → Build & Deployment → **Framework Preset: Next.js.**
       The project is still set to Astro from the old site; the first deploy
       fails or serves nothing until this is flipped.
-- [ ] Replace the Fourmula placeholder imagery in `/public/fourmula/` — that is
-      another company's marketing art. Fine while building, not fine live.
+- [ ] Replace the placeholder imagery in `/public/media/` — none of it is ours
+      to publish. Fine while building, not fine live.
 - [ ] Compress `feature-video.mp4` (5.5MB).
 - [ ] `12,597` is hardcoded copy in two places — update it or read it from the
       internships table.

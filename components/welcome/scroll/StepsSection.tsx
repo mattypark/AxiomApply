@@ -3,10 +3,9 @@ import Link from "next/link";
 /**
  * Section 9 — the pinned gradient slides.
  *
- * Ported 1:1 from fourmula-clone/index.html (`.list`). Each slide pins for one
- * viewport height while the outgoing card shrinks, tilts back into 3D and
- * picks up a small random Z rotation — see ScrollMotion. The four gradients
- * come from the ported tokens (`--slide-01`…`--slide-04`).
+ * Each slide pins for one viewport height while the outgoing card shrinks,
+ * tilts back into 3D and picks up a small random Z rotation — see ScrollMotion.
+ * The four gradients come from the section tokens (`--slide-01`…`--slide-04`).
  */
 
 type Slide = {

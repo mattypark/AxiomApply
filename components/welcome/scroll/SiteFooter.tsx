@@ -4,9 +4,9 @@ import { DotsField } from "@/components/welcome/scroll/DotsField";
 /**
  * Section 11 — the footer.
  *
- * Ported from fourmula-clone/index.html (`.footer`): brand block top-left, two
+ * Brand block top-left, two
  * link columns right, legal row underneath, and the interactive dot field
- * filling the base. The clone's placeholder glyph is replaced by the Axiom mark
+ * filling the base. The glyph is the Axiom mark
  * and wordmark; links point at real routes.
  */
 
