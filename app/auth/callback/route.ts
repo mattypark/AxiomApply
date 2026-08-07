@@ -1,19 +1,32 @@
 import { NextResponse } from "next/server";
 import { getServerSupabase } from "@/lib/supabase/server";
+import { getSiteUrl } from "@/lib/site-url";
 
+/**
+ * OAuth / magic-link landing.
+ *
+ * Every redirect below is built from `getSiteUrl()`, never from
+ * `new URL(request.url).origin`. Behind Vercel's proxy that origin is the one
+ * the server process sees, which can be an internal host or `localhost:3000` —
+ * redirecting to it is what sent signed-in users to localhost in production.
+ */
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
+  const site = await getSiteUrl(origin);
+
   const code = searchParams.get("code");
   const nextParam = searchParams.get("next");
   const next = nextParam && nextParam.startsWith("/") ? nextParam : "/home";
 
   const supabase = await getServerSupabase();
-  if (!supabase) return NextResponse.redirect(`${origin}/`);
+  if (!supabase) return NextResponse.redirect(`${site}/`);
 
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) {
-      return NextResponse.redirect(`${origin}/auth?error=auth`);
+      // /auth redirects to the welcome page now, so send them there directly
+      // with the error visible rather than through a bounce.
+      return NextResponse.redirect(`${site}/?error=auth`);
     }
   }
 
@@ -36,13 +49,13 @@ export async function GET(request: Request) {
       // next=/onboarding?side=..., and dropping it dumped people back on
       // the picker they had already answered.
       return NextResponse.redirect(
-        `${origin}${nextParam?.startsWith("/") ? nextParam : "/onboarding"}`,
+        `${site}${nextParam?.startsWith("/") ? nextParam : "/onboarding"}`,
       );
     }
     if (role === "startup") {
-      return NextResponse.redirect(`${origin}/startup/home`);
+      return NextResponse.redirect(`${site}/startup/home`);
     }
   }
 
-  return NextResponse.redirect(`${origin}${next}`);
+  return NextResponse.redirect(`${site}${next}`);
 }

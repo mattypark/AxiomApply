@@ -89,6 +89,21 @@ function SkipButton({ role, next }: { role: QuestionSet["key"]; next: string }) 
   );
 }
 
+/**
+ * Absolute callback URL for Supabase auth.
+ *
+ * Prefers NEXT_PUBLIC_SITE_URL: Supabase only honours a `redirect_to` that
+ * matches its Redirect URLs allowlist, and silently falls back to the
+ * dashboard's Site URL otherwise — which is how people ended up on localhost.
+ * Pinning the origin keeps the value predictable and easy to allowlist.
+ */
+function callbackUrl(next: string): string {
+  const origin =
+    process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, "") ||
+    window.location.origin;
+  return `${origin}/auth/callback?next=${encodeURIComponent(next)}`;
+}
+
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function ApplyEngine({
@@ -244,9 +259,9 @@ export function ApplyEngine({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(
+          emailRedirectTo: callbackUrl(
             `${window.location.pathname}?side=${set.key}`,
-          )}`,
+          ),
         },
       });
 
@@ -657,7 +672,7 @@ function GoogleButton({ side }: { side: QuestionSet["key"] }) {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+        redirectTo: callbackUrl(next),
       },
     });
   };

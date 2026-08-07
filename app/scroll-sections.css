@@ -389,493 +389,104 @@
   }
 }
 
-/* ---------- ai.css ---------- */
+/* ---------- feature.css ---------- */
 
 /* ==========================================================================
-   AI feature blocks
-
-   Each block is a tall rounded panel. Flow children are spread with
-   space-between so the tag sits at the top and the headline at the bottom;
-   the image grid is absolutely positioned in the space between them.
+   The offer, as type. No imagery — the photo grids that used to live here
+   were another company's product shots. Everything below is layout for text.
    ========================================================================== */
 
-.ai {
+.feature {
+  border-top: 1px solid var(--lines);
+}
+
+.feature__tag {
   display: flex;
-  flex-flow: column;
-  gap: 0.5rem;
-  padding: 0 0.5rem;
-}
-
-.ai__top,
-.ai__left,
-.ai__right {
-  position: relative;
-  display: flex;
-  flex-flow: column;
-  justify-content: space-between;
-  align-items: flex-start;
-  background-color: var(--secondbg);
-  border-radius: 3rem;
-  height: 70rem;
-  padding: 5rem;
-  overflow: hidden;
-}
-
-.ai__top {
-  width: 100%;
-}
-
-.ai__bottom {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.ai__left,
-.ai__right {
-  flex: 1;
-}
-
-/* --- Tag + headline ------------------------------------------------------ */
-
-.ai__tag {
-  display: flex;
-  justify-content: flex-start;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
 }
 
-.ai__dot {
-  flex: none;
-  width: 0.25rem;
-  height: 0.25rem;
+.feature__dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 99rem;
   background-color: var(--fonts-30);
-  border-radius: 9rem;
 }
 
-.ai__title {
+/* --- Lead: the count --------------------------------------------------- */
+
+.feature__lead {
+  padding: clamp(4rem, 9vw, 9rem) var(--gutter) clamp(3.5rem, 7vw, 7rem);
+  border-bottom: 1px solid var(--lines);
+}
+
+/* Tabular figures so the comma sits where it should, and a tight negative
+   tracking that only reads correctly at display size. */
+.feature__count {
+  margin-top: clamp(1.5rem, 3vw, 3rem);
+  font-size: clamp(4.5rem, 15vw, 15rem);
+  font-variant-numeric: tabular-nums;
+  line-height: 0.86;
+  letter-spacing: -0.045em;
+  color: var(--fonts-100);
+}
+
+.feature__lead-title {
+  margin-top: clamp(0.5rem, 1.5vw, 1.25rem);
+  max-width: 20ch;
+  color: var(--fonts-100);
+}
+
+.feature__lead-copy {
   display: flex;
-  flex-flow: column;
+  flex-direction: column;
   gap: 1rem;
-  width: 36rem;
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+  max-width: 62ch;
 }
 
-.ai__subtitle {
-  width: 88%;
+/* --- Two-up: network + learn ------------------------------------------- */
+
+.feature__split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
-.ai__title p {
-  width: 80%;
-}
-
-/* Circular action button, bottom-right of each panel */
-.ai__btn {
-  position: absolute;
-  right: 1rem;
-  bottom: 1rem;
+.feature__panel {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 4rem;
-  height: 4rem;
-  background-color: #fff;
-  color: #000;
-  border-radius: var(--fx-radius-pill);
-  transition: all var(--fx-duration-fast) ease;
-}
-
-.ai__btn:hover {
-  transform: scale(1.06);
-}
-
-.ai__btn-icon svg {
-  width: 1.15rem;
-  height: 1.15rem;
-}
-
-/* --- Desktop grid (block 1) --------------------------------------------- */
-
-.ai__grid {
-  position: absolute;
-  top: 5rem;
-  left: 5rem;
-  right: 0;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 3.5rem;
-  height: 45rem;
-  pointer-events: none;
-}
-
-.ai__grid-card {
-  flex: none;
-  width: 17.5rem;
-  height: 26.5rem;
-  border-radius: 2rem;
-  overflow: hidden;
-}
-
-.ai__grid-arrow {
-  flex: none;
-  display: block;
-  width: 1.5rem;
-  height: 1.5rem;
-  color: var(--fonts-30);
-}
-
-.ai__grid-arrow svg {
-  width: 100%;
-  height: 100%;
-}
-
-.ai__grid-screen {
-  /* Positioning context for the cross-fading overlays below, which are
-     absolutely positioned with width:110%. Without it their containing block
-     walks up to a distant ancestor: the overlay resolves to ~2600px, escapes
-     this element's overflow:hidden (abs children are only clipped by ancestors
-     in their own containing-block chain), and the whole PAGE gains horizontal
-     scroll at every breakpoint. */
-  position: relative;
-  flex: 1;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  height: 45rem;
-  border-radius: 0.5rem 0 0 0.5rem;
-  overflow: hidden;
-}
-
-.ai__grid-asset {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.ai__grid-asset.is-right { object-position: 0% 50%; }
-.ai__grid-asset.is-left  { object-position: 100% 50%; }
-
-.ai__grid-asset.theme-dark,
-.ai__grid-asset.theme-light {
-  border: 1px solid var(--mainbg);
-  border-radius: 2rem;
-}
-
-.ai__grid-asset.is-right.theme-dark,
-.ai__grid-asset.is-right.theme-light {
-  border-width: 1px 0 1px 1px;
-  border-radius: 2rem 0 0 2rem;
-}
-
-/* Paired assets: .theme-light is the light-mode artwork and shows by default;
-   js/theme.js swaps to .theme-dark when the dark theme is active. */
-.ai__grid-asset.theme-dark { display: none; }
-
-/* Cross-fading overlays */
-.ai__grid-asset.is-img-anima-3,
-.ai__grid-asset.is-img-anima-4,
-.ai__grid-asset.is-img-anima-5,
-.ai__grid-asset.is-left.is-img-anima-1 {
-  z-index: 2;
-  position: absolute;
-  inset: 0;
-}
-
-.ai__grid-asset.is-right.is-img-anima-2 {
-  z-index: 2;
-  position: absolute;
-  left: -5%;
-  width: 110%;
-  max-width: 110%;
-}
-
-/* --- Alt grid (tablet/mobile for block 1) -------------------------------- */
-
-.ai__grid-alt {
-  display: none;
-  position: absolute;
-  top: 11.5rem;
-  left: 0;
-  right: 0;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
   gap: 1rem;
-  height: 37.5rem;
+  padding: clamp(2.5rem, 5vw, 5rem) var(--gutter);
 }
 
-.ai__grid-alt__side {
-  display: flex;
-  flex-flow: column;
-  gap: 1rem;
-  padding-top: 2.5rem;
+.feature__panel + .feature__panel {
+  border-left: 1px solid var(--lines);
 }
 
-.ai__grid-alt__md {
-  flex: 1;
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
+.feature__panel-title {
+  max-width: 16ch;
+  color: var(--fonts-100);
 }
 
-.ai__grid-alt__img,
-.ai__grid-alt__img-2,
-.ai__grid-alt__img-main {
-  background-color: var(--mainbg);
-  border-radius: 0.5rem;
-  overflow: hidden;
+.feature__link {
+  width: fit-content;
+  margin-top: 0.5rem;
+  color: var(--fonts-100);
+  transition: opacity var(--fx-duration-fast) ease;
 }
 
-.ai__grid-alt__img      { width: 13rem; height: 13rem; }
-.ai__grid-alt__img-2    { width: 13rem; height: 18rem; }
-.ai__grid-alt__img-main { width: 100%;  height: 24rem; }
-
-.ai__grid-alt img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.feature__link:hover {
+  opacity: 0.6;
 }
-
-/* --- Small grid (blocks 2/3) --------------------------------------------- */
-
-.ai__grid-small {
-  position: absolute;
-  top: 11.5rem;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  height: 37.5rem;
-}
-
-.ai__grid-small-left,
-.ai__grid-small-right {
-  position: relative;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  height: 20rem;
-  background-color: var(--mainbg);
-  overflow: hidden;
-}
-
-.ai__grid-small-left {
-  justify-content: flex-end;
-  border-top-right-radius: var(--fx-radius-md);
-  border-bottom-right-radius: var(--fx-radius-md);
-}
-
-.ai__grid-small-right {
-  justify-content: flex-start;
-  border-top-left-radius: var(--fx-radius-md);
-  border-bottom-left-radius: var(--fx-radius-md);
-}
-
-.ai__grid-small-collage {
-  display: flex;
-  flex-flow: column;
-  gap: 1rem;
-  width: 25rem;
-  height: 100%;
-}
-
-.ai__grid-small-md {
-  position: relative;
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 25rem;
-  background-color: var(--mainbg);
-  border-radius: var(--fx-radius-md);
-  overflow: hidden;
-}
-
-.ai__grid-small-bottom {
-  flex: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  height: 15rem;
-}
-
-.ai__grid-small-lg {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 25rem;
-  height: 100%;
-  background-color: var(--mainbg);
-  border-radius: var(--fx-radius-md);
-  overflow: hidden;
-}
-
-/* --- Video block --------------------------------------------------------- */
-
-.video__asset {
-  position: absolute;
-  top: 11.5rem;
-  left: 5rem;
-  right: 5rem;
-  height: 37.5rem;
-  border-radius: var(--fx-radius-md);
-  overflow: hidden;
-  background-color: var(--mainbg);
-}
-
-.video-poster {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  transition: opacity 0.5s ease;
-}
-
-.video-poster.video-faded {
-  opacity: 0;
-}
-
-.bg-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* --- Tablet -------------------------------------------------------------- */
-
-@media (max-width: 991px) {
-  .ai__top {
-    height: 66rem;
-  }
-
-  .ai__bottom {
-    flex-flow: column;
-  }
-
-  .ai__left,
-  .ai__right {
-    flex: none;
-    height: 66rem;
-  }
-
-  .ai__subtitle {
-    width: 80%;
-  }
-
-  .ai__grid {
-    display: none;
-  }
-
-  .ai__grid-alt {
-    display: flex;
-    align-items: flex-start;
-    height: auto;
-    top: 9rem;
-    padding-inline: 2rem;
-  }
-
-  .ai__grid-small {
-    top: 9.5rem;
-  }
-}
-
-/* --- Mobile -------------------------------------------------------------- */
 
 @media (max-width: 767px) {
-  .ai__top,
-  .ai__left,
-  .ai__right {
-    border-radius: 1.5rem;
-    padding: 2rem;
+  .feature__split {
+    grid-template-columns: 1fr;
   }
 
-  .ai__top {
-    height: 36.5rem;
-  }
-
-  .ai__left,
-  .ai__right {
-    height: 35rem;
-  }
-
-  .ai__btn {
-    top: 1.35rem;
-    right: 2rem;
-    bottom: auto;
-    width: 2.5rem;
-    height: 2.5rem;
-  }
-
-  .ai__btn-icon svg {
-    width: 0.9rem;
-    height: 0.9rem;
-  }
-
-  .ai__title,
-  .ai__title p {
-    width: 100%;
-  }
-
-  .ai__grid-alt {
-    top: 5.25rem;
-    gap: 0.25rem;
-    padding-inline: 1rem;
-  }
-
-  .ai__grid-alt__md {
-    gap: 1rem;
-  }
-
-  .ai__grid-alt__img      { width: 6rem; height: 6rem; }
-  .ai__grid-alt__img-2    { width: 6rem; height: 8rem; }
-  .ai__grid-alt__img-main { height: 11rem; }
-
-  .ai__grid-small {
-    top: 5.25rem;
-    gap: 0.5rem;
-    height: 18rem;
-  }
-
-  .ai__grid-small-lg,
-  .ai__grid-small-md,
-  .ai__grid-small-collage {
-    width: 12rem;
-    border-radius: 0.75rem;
-  }
-
-  .ai__grid-small-collage {
-    gap: 0.5rem;
-  }
-
-  .ai__grid-small-left,
-  .ai__grid-small-right {
-    height: 10rem;
-  }
-
-  .ai__grid-small-left {
-    border-top-right-radius: 0.75rem;
-    border-bottom-right-radius: 0.75rem;
-  }
-
-  .ai__grid-small-right {
-    border-top-left-radius: 0.75rem;
-    border-bottom-left-radius: 0.75rem;
-  }
-
-  .ai__grid-small-bottom {
-    gap: 0.5rem;
-    height: 8rem;
-  }
-
-  .video__asset {
-    top: 5.25rem;
-    left: 2rem;
-    right: 2rem;
-    height: 18rem;
+  .feature__panel + .feature__panel {
+    border-left-width: 0;
+    border-top: 1px solid var(--lines);
   }
 }
 
