@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { DotsField } from "@/components/welcome/scroll/DotsField";
+import { einLine } from "@/lib/org";
 
 /**
  * Section 11 — the footer.
@@ -120,6 +121,7 @@ export function SiteFooter() {
         <div className="footer__main__bottom">
           <p className="footer__main__txt u-title-2 u-fonts-50">
             © 2026, Axiom Pathways. All rights reserved.
+            {einLine() ? ` · ${einLine()}` : ""}
           </p>
           <p className="footer__main__txt u-title-2 u-fonts-50">
             A nonprofit placing students into real startup work.

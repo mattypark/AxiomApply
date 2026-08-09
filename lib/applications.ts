@@ -1,4 +1,5 @@
 import { getServerSupabase } from "@/lib/supabase/server";
+import { getAdminSupabase } from "@/lib/supabase/admin";
 import { getUser } from "@/lib/auth";
 
 /**
@@ -37,15 +38,22 @@ const MY_APPLICATION_COLUMNS =
 
 /**
  * The signed-in user's most recent application, or null if they have never
- * applied (or aren't signed in). Drives the Apply tab in the dock and the
- * prefill on /account.
+ * applied (or aren't signed in). Drives the Apply tab, the rail status and the
+ * "what gets you matched" progress.
  *
- * No `.eq("user_id", …)` filter: RLS already scopes this to rows the caller
- * owns, and it matches on the verified JWT email too — so an application filed
- * before the account existed still comes back.
+ * Matches on user_id OR email, explicitly.
+ *
+ * Most applications are filed signed-out — the form works without an account —
+ * so the row carries an email and a null user_id. Relying on RLS alone to
+ * connect the two was fragile: anything that changed the JWT email claim, or
+ * any row inserted with a differently-cased address, left the applicant
+ * looking at 0% progress and "no application yet" after signing in.
+ *
+ * When a row is found by email, its user_id is claimed so the link is
+ * permanent and later reads are a straight index hit.
  *
  * Returns null rather than throwing when the table hasn't been migrated yet,
- * so the dock keeps rendering on a database that predates 0013.
+ * so the rail keeps rendering on a database that predates 0013.
  */
 export async function getMyApplication(): Promise<MyApplication | null> {
   const user = await getUser();
@@ -54,15 +62,52 @@ export async function getMyApplication(): Promise<MyApplication | null> {
   const supabase = await getServerSupabase();
   if (!supabase) return null;
 
+  const email = user.email?.toLowerCase().trim();
+  const filter = email
+    ? `user_id.eq.${user.id},email.ilike.${email}`
+    : `user_id.eq.${user.id}`;
+
   const { data, error } = await supabase
     .from("applications")
-    .select(MY_APPLICATION_COLUMNS)
+    .select(`id, user_id, ${MY_APPLICATION_COLUMNS}`)
+    .or(filter)
     .order("submitted_at", { ascending: false })
     .limit(1)
     .maybeSingle();
 
-  if (error) return null;
-  return (data as MyApplication | null) ?? null;
+  if (error || !data) return null;
+
+  const row = data as MyApplication & { id: string; user_id: string | null };
+
+  // Claim an application that was filed before this account existed. Fire and
+  // forget: the read already succeeded, and a failed claim just means the next
+  // read matches by email again.
+  if (!row.user_id) {
+    void claimApplication(row.id, user.id);
+  }
+
+  return row;
+}
+
+/**
+ * Attach an orphaned application to the account that owns its email address.
+ *
+ * Needs the service-role client: the table deliberately has no UPDATE policy
+ * for anon/authenticated (status is Axiom's to set, never the applicant's), so
+ * a scoped client cannot write user_id even on its own row.
+ */
+async function claimApplication(
+  applicationId: string,
+  userId: string,
+): Promise<void> {
+  const admin = getAdminSupabase();
+  if (!admin) return;
+
+  await admin
+    .from("applications")
+    .update({ user_id: userId })
+    .eq("id", applicationId)
+    .is("user_id", null);
 }
 
 /** Just the status — what the rail and the tab bar need. */

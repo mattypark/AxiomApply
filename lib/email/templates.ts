@@ -27,7 +27,12 @@ export type Footer = {
 };
 
 function footer({ unsubscribeUrl }: Footer): string {
-  const lines = [`Axiom Pathways · ${POSTAL_ADDRESS}`];
+  // EIN sits with the postal address: both are the "this is a real registered
+  // organisation" signals a recipient (or a spam filter) looks for.
+  const ein = process.env.NEXT_PUBLIC_ORG_EIN?.trim();
+  const lines = [
+    `Axiom Pathways${ein ? ` · EIN ${ein}` : ""} · ${POSTAL_ADDRESS}`,
+  ];
   if (unsubscribeUrl) {
     lines.push(
       `${unsubscribeUrl} — stops network updates. You'll still get emails about your own application.`,

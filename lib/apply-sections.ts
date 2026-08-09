@@ -12,6 +12,7 @@
  */
 
 import { APPLY_STEPS, type ApplyField } from "@/lib/apply-contract";
+import { startups } from "@/lib/site-data";
 
 export type QuestionType =
   | "short_text"
@@ -127,9 +128,15 @@ function field(
   };
 }
 
-/** The hint the Astro build showed under every textarea. Kept verbatim. */
+/** Cap on the scannable short answers. The letter is deliberately uncapped. */
+export const SHORT_ANSWER_LIMIT = 150;
+
+/**
+ * Shown under every long-form answer. Numbers are the single strongest signal
+ * in an application, so the hint says so plainly rather than hedging.
+ */
 export const TEXTAREA_HINT =
-  "Statistics and numbers will boost your chance of getting in.";
+  "Numbers help — a lot. Statistics, users, revenue, views: real figures beat adjectives every time.";
 
 const INTERN_SECTIONS: Section[] = [
   {
@@ -164,12 +171,25 @@ const INTERN_SECTIONS: Section[] = [
     blurb:
       "This is the part we actually read. Links beat adjectives — a repo, a deployed site, an app in a store, a video with views.",
     questions: [
-      field("startup_role"),
-      field("background"),
-      field("fields_interest"),
+      // 150 characters on the short answers. The Sheet was drowning in
+      // multi-paragraph entries nobody could scan; the letter below is where
+      // long-form still belongs.
+      field("startup_role", { maxLength: SHORT_ANSWER_LIMIT }),
+      field("background", { maxLength: SHORT_ANSWER_LIMIT }),
+      field("fields_interest", { maxLength: SHORT_ANSWER_LIMIT }),
+      // Was free text, which produced answers nobody could sort. Same wire
+      // name, same comma-joined string on the way out — the Sheet and the
+      // Supabase column keep working untouched — but the applicant now picks
+      // from the real roster instead of typing names from memory.
       field("startup_picks", {
+        type: "multi_checkbox",
+        label: "Which of these would you want to work at?",
         helpText:
-          "FinalDose (YC P26), TypeOS (YC X25), Corgi (YC S24), Anvara, Tally, Topit AI, Quarter Life Crisis — and a couple still stealth.",
+          "Pick every one you would genuinely take. This is what we match on first.",
+        options: startups.map((startup) => ({
+          value: startup.name,
+          label: startup.yc ? `${startup.name} · ${startup.yc}` : startup.name,
+        })),
       }),
     ],
   },

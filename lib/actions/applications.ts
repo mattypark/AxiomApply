@@ -44,6 +44,16 @@ export async function recordApplication(
   const email = answers.email?.trim();
   if (!email) return { ok: false };
 
+  // The confirmation email is sent FIRST and unconditionally.
+  //
+  // It used to hang off a successful Supabase insert, which meant a missing
+  // service-role key — or any insert error — silently swallowed it. The Sheet
+  // is the authoritative destination, so an applicant who submitted has earned
+  // their receipt whether or not the mirror worked.
+  await sendApplicationReceived(email, { firstName: answers.name }).catch(
+    () => undefined,
+  );
+
   const supabase = getAdminSupabase();
   if (!supabase) return { ok: false };
 
@@ -64,15 +74,6 @@ export async function recordApplication(
   row.sheet_row = answers;
 
   const { error } = await supabase.from("applications").insert(row);
-
-  // "Got it." — the one email that must never wait on a human. Failure here is
-  // logged to email_log and swallowed; the application is already recorded.
-  if (!error) {
-    await sendApplicationReceived(email, { firstName: answers.name }).catch(
-      () => undefined,
-    );
-  }
-
   return { ok: !error };
 }
 

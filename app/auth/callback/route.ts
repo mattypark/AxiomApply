@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSupabase } from "@/lib/supabase/server";
+import { getAdminSupabase } from "@/lib/supabase/admin";
 import { getSiteUrl } from "@/lib/site-url";
 
 /**
@@ -42,7 +43,32 @@ export async function GET(request: Request) {
       .eq("id", user.id)
       .single();
 
-    const role = profile?.role as "intern" | "startup" | null | undefined;
+    let role = profile?.role as "intern" | "startup" | null | undefined;
+
+    // Someone who already applied should never be asked "which side are you
+    // on?" again. Most applications are filed signed-out, so the account can
+    // exist with no role while an application sits against the same email —
+    // which sent returning applicants back to the picker instead of home.
+    if (!role && user.email) {
+      const admin = getAdminSupabase();
+      if (admin) {
+        const { data: application } = await admin
+          .from("applications")
+          .select("id")
+          .ilike("email", user.email.toLowerCase())
+          .limit(1)
+          .maybeSingle();
+
+        if (application) {
+          await admin
+            .from("profiles")
+            .update({ role: "intern" })
+            .eq("id", user.id);
+          role = "intern";
+        }
+      }
+    }
+
     if (!role) {
       // No role yet — send them back to wherever they came from, query
       // string intact. OAuth started inside an application gate arrives as

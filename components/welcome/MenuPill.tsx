@@ -10,7 +10,8 @@ const PRIMARY = [
   // phone this sheet is the only way to reach it.
   { href: "/onboarding", label: "Sign in" },
   { href: "/learn", label: "Videos" },
-  { href: "/articles", label: "Articles" },
+  // The published writing lives on the org site, not in this app.
+  { href: "https://www.axiompathways.org/articles", label: "Articles" },
   { href: "/classic", label: "Actual website" },
   { href: "/apply", label: "Our features" },
 ] as const;
@@ -72,16 +73,35 @@ export function MenuPill({ compact = false }: { compact?: boolean } = {}) {
             >
               <SectionLabel>Menu</SectionLabel>
               <div className="mt-2 flex flex-col gap-0.5">
-                {PRIMARY.map((l) => (
-                  <Link
-                    key={l.href}
-                    href={l.href}
-                    onClick={() => setOpen(false)}
-                    className="w-fit wel-fg text-[1.4rem] font-medium tracking-[-0.02em] transition-opacity duration-200 hover:opacity-55"
-                  >
-                    {l.label}
-                  </Link>
-                ))}
+                {PRIMARY.map((l) => {
+                  const isExternal = l.href.startsWith("http");
+                  const className =
+                    "w-fit wel-fg text-[1.4rem] font-medium tracking-[-0.02em] transition-opacity duration-200 hover:opacity-55";
+
+                  // Off-site entries open in a new tab so the app keeps its
+                  // place — next/link would navigate away from the session.
+                  return isExternal ? (
+                    <a
+                      key={l.href}
+                      href={l.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setOpen(false)}
+                      className={className}
+                    >
+                      {l.label}
+                    </a>
+                  ) : (
+                    <Link
+                      key={l.href}
+                      href={l.href}
+                      onClick={() => setOpen(false)}
+                      className={className}
+                    >
+                      {l.label}
+                    </Link>
+                  );
+                })}
               </div>
 
               <hr className="my-7 border-0 border-t border-current/10" />

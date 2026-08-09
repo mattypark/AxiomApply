@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { GlassPanel } from "@/components/glass/GlassPanel";
+import { einLine, ORG_LEGAL_NAME } from "@/lib/org";
 import { Reveal } from "@/components/motion/Reveal";
 
 export type LegalSection = {
@@ -88,6 +89,13 @@ export function LegalDoc({ title, updated, intro, sections }: Props) {
           >
             matthew@axiompathways.org
           </a>
+        </p>
+
+        {/* Entity identification. Legal documents should say which legal
+            entity is making the promises. */}
+        <p className="mt-4 font-mono text-[0.7rem] leading-relaxed tracking-[0.08em] text-faint uppercase">
+          {ORG_LEGAL_NAME}
+          {einLine() ? ` · ${einLine()}` : ""}
         </p>
       </Reveal>
     </main>
