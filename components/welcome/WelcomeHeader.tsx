@@ -129,8 +129,12 @@ export function WelcomeHeader({
           </Link>
         ) : (
           <>
+            {/* Sign in is for people who already have an account: straight to
+                Google / email. Get started is for newcomers and goes to the
+                side picker. Both pointed at /onboarding, which asked returning
+                users a question they had already answered. */}
             <Link
-              href="/onboarding"
+              href="/auth"
               className="wel-chip hidden items-center rounded-full px-8 py-4 text-[1.05rem] font-medium sm:inline-flex transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:opacity-80"
             >
               Sign in

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { INTRO_MS } from "@/components/welcome/Preloader";
 
 /**
  * The orbiting ring around the drop target.
@@ -31,6 +32,9 @@ import { motion } from "framer-motion";
  */
 
 const ORBIT = "72s";
+
+/** The welcome intro, in seconds — everything here enters after it. */
+const INTRO_S = INTRO_MS / 1000;
 
 /** Degrees from a founder to the first chip behind them. Wide enough that the
     chip clears the photo AND the two-line caption under it. */
@@ -283,7 +287,9 @@ export function AssetRing({ radius: maxRadius = 240 }: { radius?: number }) {
                 initial={{ opacity: 0, scale: 0.94, filter: "blur(14px)" }}
                 animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                 transition={{
-                  delay: ARRIVAL.get(founder.name) ?? 0.35,
+                  // Offset by the intro so the ring appears to come out of
+                  // the logo rather than animating behind it.
+                  delay: INTRO_S + (ARRIVAL.get(founder.name) ?? 0.35),
                   duration: 0.75,
                   ease: [0.16, 1, 0.3, 1],
                 }}
@@ -345,7 +351,7 @@ export function AssetRing({ radius: maxRadius = 240 }: { radius?: number }) {
                     initial={{ opacity: 0, scale: 0.94, filter: "blur(12px)" }}
                     animate={{ opacity, scale: 1, filter: "blur(0px)" }}
                     transition={{
-                      delay: ARRIVAL.get(key) ?? 0.5,
+                      delay: INTRO_S + (ARRIVAL.get(key) ?? 0.5),
                       duration: 0.7,
                       ease: [0.16, 1, 0.3, 1],
                     }}

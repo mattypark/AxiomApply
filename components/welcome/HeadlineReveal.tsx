@@ -2,6 +2,10 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { INTRO_MS } from "@/components/welcome/Preloader";
+
+/** Matches the opening intro so the headline arrives with the bloom. */
+const INTRO_S = INTRO_MS / 1000;
 import { SplitText } from "gsap/SplitText";
 
 gsap.registerPlugin(SplitText);
@@ -74,7 +78,7 @@ export function HeadlineReveal({
         duration: 1.05,
         ease: "expo.out",
         stagger: 0.11,
-        delay: 0.16,
+        delay: INTRO_S + 0.16,
       });
 
       return () => split.revert();
