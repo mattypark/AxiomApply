@@ -109,34 +109,15 @@ export function WelcomeHeader({
       <div className="flex items-center justify-end gap-3">
         {isApp && <MenuPill compact />}
         {isApp ? null : signedIn ? (
-          // Signed in → just the profile icon; the pills are for newcomers.
-          <>
-            {/* Signed in on the marketing page — the way back into the
-                product should be obvious, not hidden behind the avatar. */}
-            <Link
-              href="/home"
-              className="wel-chip hidden items-center rounded-full px-5 py-3 text-[0.95rem] font-medium transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:opacity-80 sm:inline-flex sm:px-8 sm:py-4 sm:text-[1.05rem]"
-            >
-              Home
-            </Link>
+          // Signed in: one destination, not two. The avatar led to /account,
+          // which reads as "settings" when what someone wants from the
+          // marketing page is the way back into the product.
           <Link
-            href="/account"
-            aria-label="Your account"
-            title="Your account"
-            className="wel-pill grid h-11 w-11 place-items-center rounded-full shadow-[0_10px_30px_rgba(21,21,15,0.22)] transition-[transform,opacity] sm:h-14 sm:w-14 duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:opacity-85"
+            href="/home"
+            className="wel-pill inline-flex items-center rounded-full px-6 py-3 text-[0.95rem] font-medium shadow-[0_10px_30px_rgba(21,21,15,0.22)] transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:opacity-85 sm:px-8 sm:py-4 sm:text-[1.05rem]"
           >
-            <svg
-              width="19"
-              height="19"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4 21a8 8 0 0 1 16 0z" />
-            </svg>
+            Home
           </Link>
-          </>
         ) : (
           <>
             {/* Sign in is for people who already have an account: straight to
