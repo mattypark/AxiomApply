@@ -46,7 +46,10 @@ export type Question = {
   inputType?: "text" | "email" | "tel";
   conditional?: {
     dependsOn: string;
-    showWhen: string;
+    /** Exact match. */
+    showWhen?: string;
+    /** For multi_checkbox parents, whose value is a comma-joined list. */
+    showWhenIncludes?: string;
   };
 };
 
@@ -196,6 +199,17 @@ const INTERN_SECTIONS: Section[] = [
           { value: "Other", label: "Other / open to anything" },
         ],
       }),
+      {
+        // Not a contract field. InternApplication folds this into
+        // startup_picks before posting, so the wire payload — and the Sheet
+        // column — stay exactly as they are.
+        id: "startup_picks_other",
+        label: "Which one?",
+        type: "short_text",
+        maxLength: SHORT_ANSWER_LIMIT,
+        placeholder: "Name the startup, or what kind of team you want",
+        conditional: { dependsOn: "startup_picks", showWhenIncludes: "Other" },
+      },
     ],
   },
   {
@@ -492,8 +506,20 @@ export const QUESTION_SETS: Record<QuestionSet["key"], QuestionSet> = {
 export type Answers = Record<string, string>;
 
 export function isVisible(question: Question, answers: Answers): boolean {
-  if (!question.conditional) return true;
-  return answers[question.conditional.dependsOn] === question.conditional.showWhen;
+  const rule = question.conditional;
+  if (!rule) return true;
+
+  const value = answers[rule.dependsOn] ?? "";
+
+  if (rule.showWhenIncludes) {
+    // multi_checkbox stores a comma-joined list, so membership is the test.
+    return value
+      .split(",")
+      .map((entry) => entry.trim())
+      .includes(rule.showWhenIncludes);
+  }
+
+  return value === rule.showWhen;
 }
 
 /** Required ids in one section, skipping questions hidden by a conditional. */

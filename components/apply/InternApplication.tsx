@@ -33,11 +33,24 @@ export function InternApplication({
     answers: Record<string, string>,
     files: Record<string, File>,
   ): Promise<SubmitResult> {
-    await postToWebhook(answers, files);
+    // Fold the "Other" free-text answer into startup_picks and drop the
+    // helper key. The contract has one field for this, and the Sheet has one
+    // column — adding a second would be silently dropped on arrival.
+    const { startup_picks_other: other, ...rest } = answers;
+    const outgoing = other?.trim()
+      ? {
+          ...rest,
+          startup_picks: [rest.startup_picks, `Other: ${other.trim()}`]
+            .filter(Boolean)
+            .join(", "),
+        }
+      : rest;
+
+    await postToWebhook(outgoing, files);
 
     // Best-effort mirror. Failures are invisible to the applicant by design.
-    void recordApplication(answers).catch(() => {});
-    void syncInternProfile(answers).catch(() => {});
+    void recordApplication(outgoing).catch(() => {});
+    void syncInternProfile(outgoing).catch(() => {});
 
     return { ok: true };
   }
