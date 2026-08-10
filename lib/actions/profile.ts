@@ -149,3 +149,22 @@ export async function signOut() {
   if (supabase) await supabase.auth.signOut();
   redirect("/");
 }
+
+/**
+ * Mark an account as an intern.
+ *
+ * Landing on /home is itself the answer to "which side are you on?", so a
+ * signed-in visitor with no role gets one rather than being bounced back to
+ * the picker. Only ever fills a blank — an existing role, including startup,
+ * is never overwritten.
+ */
+export async function claimInternRole(userId: string): Promise<void> {
+  const supabase = await getServerSupabase();
+  if (!supabase) return;
+
+  await supabase
+    .from("profiles")
+    .update({ role: "intern" })
+    .eq("id", userId)
+    .is("role", null);
+}
