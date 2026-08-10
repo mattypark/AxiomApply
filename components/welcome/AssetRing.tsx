@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { INTRO_MS } from "@/components/welcome/Preloader";
+import { INTRO_MS } from "@/components/welcome/HeroLockup";
 
 /**
  * The orbiting ring around the drop target.

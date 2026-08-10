@@ -2,7 +2,6 @@ import Link from "next/link";
 import { GlassPanel } from "@/components/glass/GlassPanel";
 import { GlassInput, GlassTextarea } from "@/components/glass/GlassInput";
 import { GlassButton } from "@/components/glass/GlassButton";
-import { AvatarUploader } from "@/components/account/AvatarUploader";
 import { Reveal } from "@/components/motion/Reveal";
 import { getProfile } from "@/lib/auth";
 import { getMyApplication } from "@/lib/applications";
@@ -131,15 +130,6 @@ export default async function AccountPage() {
       )}
 
       <form action={updateProfile} className="flex flex-col gap-5">
-        <GlassPanel variant="deep" className="flex flex-col gap-5 p-7">
-          <span className="kicker">Photo</span>
-          <AvatarUploader
-            userId={profile.id}
-            avatarUrl={profile.avatar_url}
-            fallback={(filled.display_name || "A").charAt(0).toUpperCase()}
-          />
-        </GlassPanel>
-
         <GlassPanel variant="deep" className="flex flex-col gap-5 p-7">
           <span className="kicker">Profile</span>
           <div className="grid gap-4 sm:grid-cols-2">

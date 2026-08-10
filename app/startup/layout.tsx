@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { StartupTabBar } from "@/components/startup/StartupTabBar";
-import { WelcomeHeader } from "@/components/welcome/WelcomeHeader";
 import { GlassPanel } from "@/components/glass/GlassPanel";
 import { getProfile } from "@/lib/auth";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
@@ -55,8 +54,7 @@ export default async function StartupLayout({
   }
 
   return (
-    <div className="min-h-dvh px-5 pt-28 pb-36 sm:px-8">
-      <WelcomeHeader signedIn ctaHref="/onboarding" showLogo={false} variant="app" />
+    <div className="min-h-dvh px-5 pt-10 pb-36 sm:px-8">
       {children}
       <StartupTabBar />
     </div>

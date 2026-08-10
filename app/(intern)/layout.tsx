@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { Sidebar } from "@/components/intern/Sidebar";
 import { TabBar } from "@/components/intern/TabBar";
-import { WelcomeHeader } from "@/components/welcome/WelcomeHeader";
 import { getMyApplicationStatus } from "@/lib/applications";
 import { getProfile, getUser } from "@/lib/auth";
 
@@ -25,7 +24,6 @@ export default async function InternLayout({
 
   return (
     <div className="min-h-dvh">
-      <WelcomeHeader signedIn={Boolean(user)} ctaHref="/onboarding" showLogo={false} variant="app" />
 
       <Sidebar
         displayName={
@@ -39,7 +37,7 @@ export default async function InternLayout({
       />
 
       {/* Offset matches the rail's collapsed / expanded widths. */}
-      <div className="px-5 pt-28 pb-36 sm:px-8 md:pl-[92px] xl:pl-[272px]">
+      <div className="px-5 pt-10 pb-36 sm:px-8 md:pl-[92px] xl:pl-[272px]">
         <div className="mx-auto w-full max-w-[1180px]">{children}</div>
       </div>
 

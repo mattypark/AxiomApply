@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { AssetRing } from "@/components/welcome/AssetRing";
+import { HeroLockup } from "@/components/welcome/HeroLockup";
 import { WelcomeHeader } from "@/components/welcome/WelcomeHeader";
 import { CookieBanner } from "@/components/welcome/CookieBanner";
 import { HeadlineReveal } from "@/components/welcome/HeadlineReveal";
@@ -49,14 +50,7 @@ export function WelcomeHero({
             // viewport and the ring had no container to measure.
             style={{ width: "min(86vw, 600px)", height: "min(86vw, 600px)" }}>
             <AssetRing radius={272} />
-            <Image
-              src="/axiom-lockup.png"
-              alt="Axiom Pathways"
-              width={800}
-              height={400}
-              priority
-              className="relative z-10 w-[clamp(112px,26vw,280px)] object-contain"
-            />
+            <HeroLockup />
           </div>
         </div>
 

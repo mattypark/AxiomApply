@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { INTRO_MS } from "@/components/welcome/Preloader";
+import { INTRO_MS } from "@/components/welcome/HeroLockup";
 
 /** Matches the opening intro so the headline arrives with the bloom. */
 const INTRO_S = INTRO_MS / 1000;

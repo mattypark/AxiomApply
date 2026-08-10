@@ -62,7 +62,9 @@ const INTERN_PANELS: Panel[] = [
     body: "A nonprofit that places high schoolers and early-college students into real startup work. Chapters, a learning track, and a network we match by hand.",
   },
   {
-    slot: 4,
+    // Text only: the placeholder tile said nothing the copy did not, and a
+    // grey box reads as a broken image.
+    kind: "statement",
     eyebrow: "who gets in",
     title: "Numbers get you in.",
     body: "The applications that win attach metrics to what they made: users, views, revenue, downloads, members. Tip — put a number on every project you list. “40 people used it” moves you up the pile more than any adjective.",

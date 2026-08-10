@@ -24,6 +24,8 @@ type ProfileSignal = {
   label: string;
   done: boolean;
   hint: string;
+  /** Where this gets fixed. Every signal is actionable, so every one links. */
+  href: string;
 };
 
 export function HomeDashboard({
@@ -158,7 +160,11 @@ export function HomeDashboard({
 
           <ul className="mt-6 grid gap-x-8 gap-y-3 sm:grid-cols-2">
             {signals.map((signal) => (
-              <li key={signal.label} className="flex items-start gap-3">
+              <li key={signal.label}>
+                <Link
+                  href={signal.href}
+                  className="group flex items-start gap-3 rounded-xl py-1 transition-colors duration-200 hover:bg-ink/[0.03]"
+                >
                 <span
                   aria-hidden
                   className={`mt-0.5 grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full text-[0.6rem] ${
@@ -171,8 +177,10 @@ export function HomeDashboard({
                 </span>
                 <span className="min-w-0">
                   <span
-                    className={`block text-[0.9rem] ${
-                      signal.done ? "text-muted line-through" : "text-ink"
+                    className={`block text-[0.9rem] transition-colors duration-200 ${
+                      signal.done
+                        ? "text-muted line-through"
+                        : "text-ink group-hover:text-forest"
                     }`}
                   >
                     {signal.label}
@@ -183,6 +191,7 @@ export function HomeDashboard({
                     </span>
                   )}
                 </span>
+                </Link>
               </li>
             ))}
           </ul>

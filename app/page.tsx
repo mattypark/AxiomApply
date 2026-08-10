@@ -1,4 +1,3 @@
-import { Preloader } from "@/components/welcome/Preloader";
 import { WelcomeHero } from "@/components/welcome/WelcomeHero";
 import { WelcomeSections } from "@/components/welcome/WelcomeSections";
 import { getProfile, getUser } from "@/lib/auth";
@@ -19,7 +18,6 @@ export default async function WelcomePage() {
 
   return (
     <>
-      <Preloader />
       <WelcomeHero signedIn={Boolean(user)} ctaHref={ctaHref} />
       <WelcomeSections />
     </>
