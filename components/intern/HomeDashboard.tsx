@@ -20,14 +20,6 @@ import { LocalApplicationBadge } from "@/components/intern/LocalApplicationBadge
  *   4. fresh internships / latest articles — the live feed, two columns
  */
 
-type ProfileSignal = {
-  label: string;
-  done: boolean;
-  hint: string;
-  /** Where this gets fixed. Every signal is actionable, so every one links. */
-  href: string;
-};
-
 export function HomeDashboard({
   displayName,
   avatarUrl,
@@ -36,7 +28,6 @@ export function HomeDashboard({
   articles,
   videos,
   savedCount,
-  signals,
 }: {
   displayName: string | null;
   avatarUrl: string | null;
@@ -45,13 +36,8 @@ export function HomeDashboard({
   articles: Article[];
   videos: Video[];
   savedCount: number;
-  signals: ProfileSignal[];
 }) {
   const firstName = displayName?.trim().split(/\s+/)[0];
-  const completed = signals.filter((signal) => signal.done).length;
-  const strength = signals.length
-    ? Math.round((completed / signals.length) * 100)
-    : 0;
 
   return (
     <div className="flex flex-col gap-10">
@@ -120,82 +106,6 @@ export function HomeDashboard({
           title="Read up"
           body="How students actually land internships, and what startups look for."
         />
-      </section>
-
-      {/* profile strength — the LinkedIn-style "what improves your odds" */}
-      <section aria-label="Profile strength">
-        <Card>
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <h2 className="text-[1.05rem] font-semibold tracking-tight text-ink">
-                What gets you matched
-              </h2>
-              <p className="mt-1 text-[0.88rem] text-muted">
-                Applications with numbers attached move up the pile. These are
-                the signals we actually read.
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="font-mono text-[1.6rem] leading-none text-ink">
-                {strength}%
-              </p>
-              <p className="mt-1 font-mono text-[0.62rem] tracking-[0.16em] text-faint uppercase">
-                {completed} of {signals.length} done
-              </p>
-            </div>
-          </div>
-
-          <div
-            className="mt-5 h-1.5 w-full overflow-hidden rounded-full bg-ink/8"
-            role="progressbar"
-            aria-valuenow={strength}
-            aria-valuemin={0}
-            aria-valuemax={100}
-          >
-            <div
-              className="h-full rounded-full bg-forest transition-[width] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
-              style={{ width: `${strength}%` }}
-            />
-          </div>
-
-          <ul className="mt-6 grid gap-x-8 gap-y-3 sm:grid-cols-2">
-            {signals.map((signal) => (
-              <li key={signal.label}>
-                <Link
-                  href={signal.href}
-                  className="group flex items-start gap-3 rounded-xl py-1 transition-colors duration-200 hover:bg-ink/[0.03]"
-                >
-                <span
-                  aria-hidden
-                  className={`mt-0.5 grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full text-[0.6rem] ${
-                    signal.done
-                      ? "bg-forest text-white"
-                      : "text-faint shadow-[inset_0_0_0_1px_rgba(21,21,15,0.18)]"
-                  }`}
-                >
-                  {signal.done ? "✓" : ""}
-                </span>
-                <span className="min-w-0">
-                  <span
-                    className={`block text-[0.9rem] transition-colors duration-200 ${
-                      signal.done
-                        ? "text-muted line-through"
-                        : "text-ink group-hover:text-forest"
-                    }`}
-                  >
-                    {signal.label}
-                  </span>
-                  {!signal.done && (
-                    <span className="mt-0.5 block text-[0.8rem] text-faint">
-                      {signal.hint}
-                    </span>
-                  )}
-                </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </Card>
       </section>
 
       {/* two columns of live content */}

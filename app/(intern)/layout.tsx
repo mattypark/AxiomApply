@@ -2,6 +2,8 @@ import { Sidebar } from "@/components/intern/Sidebar";
 import { TabBar } from "@/components/intern/TabBar";
 import { getMyApplicationStatus } from "@/lib/applications";
 import { getProfile, getUser } from "@/lib/auth";
+import { MatchChecklist } from "@/components/intern/MatchChecklist";
+import { getMatchSignals } from "@/lib/signals";
 import { claimInternRole } from "@/lib/actions/profile";
 
 // Intern-side shell: the site header up top (menu pill + profile icon, same
@@ -17,6 +19,7 @@ export default async function InternLayout({
   ]);
 
   const profile = user ? await getProfile() : null;
+  const signals = await getMatchSignals();
 
   // A signed-in visitor with no role used to be bounced to the picker, which
   // made Home on the welcome screen a round trip back to "which side are you
@@ -47,6 +50,8 @@ export default async function InternLayout({
       <div className="px-5 pt-10 pb-36 sm:px-8 md:pl-[92px] xl:pl-[272px]">
         <div className="mx-auto w-full max-w-[1180px]">{children}</div>
       </div>
+
+      {signals && <MatchChecklist signals={signals} />}
 
       {/* The dock stays for phones, where the rail is hidden. */}
       <div className="md:hidden">
