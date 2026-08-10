@@ -9,14 +9,18 @@
  * ── INSTALL ───────────────────────────────────────────────────────────────
  * 1. In the Apps Script editor, Files → + → Script. Name it `Startups`.
  * 2. Paste this whole file into it.
- * 3. Open the file that already has doPost (Untitled.gs) and add these three
+ * 3. Open the file that already has doPost (Untitled.gs) and add these two
  *    lines as the FIRST thing inside doPost, before anything else runs:
  *
  *        var p = (e && e.parameter) || {};
  *        if (p.form_type === 'startup') return handleStartupSubmission_(p);
  *
- *    That is the only edit to the existing file. Intern submissions carry no
- *    form_type, so they fall straight through to the code that already works.
+ *    That is the only edit to the existing file — everything already in
+ *    doPost stays below it, untouched. Intern submissions carry no form_type,
+ *    so they fall straight through to the code that already works.
+ *
+ *    Pasting this file WITHOUT that edit does nothing: it defines the handler
+ *    but nothing calls it.
  * 4. Deploy → Manage deployments → pencil on the EXISTING deployment →
  *    Version: New version → Deploy.
  *
