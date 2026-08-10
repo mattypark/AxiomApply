@@ -3,6 +3,7 @@ import Image from "next/image";
 import type { ReactNode } from "react";
 import type { Article, Internship, Video } from "@/types/database";
 import type { ApplicationStatus } from "@/lib/applications";
+import { LocalApplicationBadge } from "@/components/intern/LocalApplicationBadge";
 
 /**
  * The intern workspace home.
@@ -80,7 +81,10 @@ export function HomeDashboard({
             </h1>
           </div>
         </div>
-        <ApplicationPill status={applicationStatus} />
+        <span className="flex flex-wrap items-center gap-3">
+          <LocalApplicationBadge serverKnows={Boolean(applicationStatus)} />
+          <ApplicationPill status={applicationStatus} />
+        </span>
       </header>
 
       {/* quick actions */}

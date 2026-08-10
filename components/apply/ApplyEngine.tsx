@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   isSectionComplete,
   isVisible,
@@ -106,6 +107,17 @@ function callbackUrl(next: string): string {
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+/**
+ * Local record that this browser submitted an application.
+ *
+ * The server row is the truth, but it is not always reachable: the mirror can
+ * fail, or the applicant may not be signed in at all. Without this, someone
+ * who just submitted lands on a home page that says "no application yet" —
+ * which is exactly what an applicant reported. Read alongside the server
+ * status, never instead of it.
+ */
+export const submittedKey = (setKey: string) => `axiom_submitted_${setKey}`;
+
 export function ApplyEngine({
   set,
   prefill,
@@ -115,6 +127,7 @@ export function ApplyEngine({
   onSubmit,
 }: ApplyEngineProps) {
   const isEmbedded = chrome === "embedded";
+  const router = useRouter();
   const columnRef = useRef<HTMLDivElement>(null);
 
   const [answers, setAnswers] = useState<Answers>({});
@@ -328,17 +341,33 @@ export function ApplyEngine({
 
     try {
       localStorage.removeItem(set.storageKey);
+      localStorage.setItem(
+        submittedKey(set.key),
+        JSON.stringify({
+          at: new Date().toISOString(),
+          email: answers[emailId] ?? "",
+        }),
+      );
     } catch {
       // Nothing to clean up if storage was unavailable in the first place.
     }
     setIsConfirming(false);
     setIsSubmitted(true);
+
+    // Hand off to the workspace. The confirmation screen holds long enough to
+    // be read, then the applicant lands somewhere they can actually do
+    // something — with their status showing — rather than on a dead end.
+    const home = set.key === "startup" ? "/startup/home" : "/home";
+    window.setTimeout(() => router.push(home), 2600);
   }
 
   if (isSubmitted) {
     return (
       <div className={`apply-${variant}`}>
-        <Submitted name={answers[nameId] ?? ""} backHref={backHref} />
+        <Submitted
+          name={answers[nameId] ?? ""}
+          homeHref={set.key === "startup" ? "/startup/home" : "/home"}
+        />
       </div>
     );
   }
@@ -855,7 +884,13 @@ function ConfirmDialog({
   );
 }
 
-function Submitted({ name, backHref }: { name: string; backHref: string }) {
+function Submitted({
+  name,
+  homeHref,
+}: {
+  name: string;
+  homeHref: string;
+}) {
   const firstName = name.trim().split(/\s+/)[0];
 
   return (
@@ -879,13 +914,16 @@ function Submitted({ name, backHref }: { name: string; backHref: string }) {
         live — reply to the confirmation email and it gets attached to your file.
         Do not submit a second application; duplicates slow your own review down.
       </p>
-      <div className="mt-10">
+      <div className="mt-10 flex flex-wrap items-center gap-5">
         <Link
-          href={backHref}
-          className="font-mono text-[0.72rem] tracking-[0.16em] text-forest uppercase transition-colors hover:text-forest-deep"
+          href={homeHref}
+          className="rounded-full bg-forest px-7 py-3.5 font-mono text-[0.72rem] tracking-[0.16em] text-white uppercase shadow-[0_10px_30px_rgba(47,107,61,0.3)] transition-transform duration-300 hover:-translate-y-0.5"
         >
-          ← back to Axiom
+          Go to your home →
         </Link>
+        <span className="font-mono text-[0.68rem] tracking-[0.14em] text-faint uppercase">
+          Taking you there…
+        </span>
       </div>
     </main>
   );

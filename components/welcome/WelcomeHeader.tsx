@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { MenuPill } from "@/components/welcome/MenuPill";
-import { ScrollPercent } from "@/components/welcome/ScrollPercent";
 import { ThemeToggle } from "@/components/welcome/ThemeToggle";
 import { GetStartedButton } from "@/components/welcome/GetStartedButton";
 
@@ -104,13 +103,6 @@ export function WelcomeHeader({
       ) : (
         <div className="w-fit">
           <MenuPill />
-        </div>
-      )}
-
-      {/* Centre: scroll progress, on its own. */}
-      {!isApp && (
-        <div className="hidden justify-self-center sm:block">
-          <ScrollPercent />
         </div>
       )}
 

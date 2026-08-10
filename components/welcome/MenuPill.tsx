@@ -9,7 +9,10 @@ const PRIMARY = [
   // Sign in lives here too: the header hides its pill below `sm`, so on a
   // phone this sheet is the only way to reach it.
   { href: "/onboarding", label: "Sign in" },
-  { href: "/learn", label: "Videos" },
+  // /learn is a signed-in workspace surface. From the marketing menu this
+  // must land on the public explainer instead — dropping a signed-out visitor
+  // straight into the product skips the part where they decide to sign up.
+  { href: "/about/learn", label: "Videos" },
   // The published writing lives on the org site, not in this app.
   { href: "https://www.axiompathways.org/articles", label: "Articles" },
   { href: "/classic", label: "Actual website" },

@@ -69,7 +69,10 @@ export function CategoryColumn() {
             }}
             // Tag boxes: bordered rounded-rects on the page ground,
             // not floating pills.
-            className="wel-fg rounded-[8px] border border-[rgba(21,21,15,0.18)] bg-white px-4 py-1.5 text-[1rem] whitespace-nowrap"
+            // Ground and border come from the theme tokens, never a literal.
+            // `bg-white` under `wel-fg` meant light text on a white box in
+            // dark mode — the chips vanished.
+            className="wel-tile wel-fg rounded-[8px] border border-current/15 px-4 py-1.5 text-[1rem] whitespace-nowrap"
           >
             {c}
           </motion.span>
