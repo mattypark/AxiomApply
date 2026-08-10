@@ -25,8 +25,15 @@ function fileToBase64(file: File): Promise<string> {
 export async function postToWebhook(
   answers: Record<string, string>,
   files: Record<string, File>,
+  /**
+   * Which application this is. The intern side omits it, so its payload stays
+   * byte-identical to the frozen contract; the startup side sends "startup"
+   * and the Apps Script routes those rows to their own tab.
+   */
+  formType?: "startup",
 ): Promise<void> {
   const payload: Record<string, string> = {};
+  if (formType) payload.form_type = formType;
 
   for (const [key, value] of Object.entries(answers)) {
     const trimmed = value?.trim();

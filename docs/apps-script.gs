@@ -24,8 +24,11 @@
  *   files arrive as <name>_name, <name>_type, <name>_base64
  */
 
-/** Tab that receives submissions. Change if your sheet tab is named differently. */
+/** Tab that receives intern submissions. */
 var SHEET_NAME = 'Applications';
+
+/** Tab that receives startup submissions. Created automatically if missing. */
+var STARTUP_SHEET_NAME = 'Startups';
 
 /** Drive folder for resumes/attachments. Leave '' to skip file saving. */
 var UPLOAD_FOLDER_ID = '';
@@ -35,6 +38,33 @@ var UPLOAD_FOLDER_ID = '';
  * The left value is the header text in the Sheet; the right is the form field
  * name the site posts.
  */
+var STARTUP_COLUMNS = [
+  { header: 'Timestamp',      field: null },
+  { header: 'Company',        field: 'company' },
+  { header: 'Website',        field: 'website' },
+  { header: 'One-liner',      field: 'one_liner' },
+  { header: 'Stage',          field: 'stage' },
+  { header: 'Team size',      field: 'team_size' },
+  { header: 'Location',       field: 'location' },
+  { header: 'Contact name',   field: 'contact_name' },
+  { header: 'Contact role',   field: 'contact_role' },
+  { header: 'Contact email',  field: 'contact_email' },
+  { header: 'LinkedIn',       field: 'linkedin' },
+  { header: 'Socials',        field: 'socials' },
+  { header: 'Fields needed',  field: 'fields_needed' },
+  { header: 'Role need',      field: 'role_need' },
+  { header: 'Week one',       field: 'week_one' },
+  { header: 'Hours',          field: 'hours' },
+  { header: 'Location mode',  field: 'location_mode' },
+  { header: 'Paid',           field: 'paid' },
+  { header: 'Comp',           field: 'comp' },
+  { header: 'Start window',   field: 'start_window' },
+  { header: 'Minors OK',      field: 'minors_ok' },
+  { header: 'Mentor',         field: 'mentor' },
+  { header: 'Anything else',  field: 'anything_else' },
+  { header: 'Status',         field: null },
+];
+
 var COLUMNS = [
   { header: 'Timestamp',        field: null },
   { header: 'Name',             field: 'name' },
@@ -65,12 +95,18 @@ function doPost(e) {
 
   try {
     var params = (e && e.parameter) || {};
-    var sheet = getSheet_();
-    var headers = ensureHeaders_(sheet);
+
+    // The startup application tags itself; the intern payload is unchanged and
+    // has no form_type at all, so it keeps falling through to the same tab it
+    // always used.
+    var isStartup = params.form_type === 'startup';
+    var columns = isStartup ? STARTUP_COLUMNS : COLUMNS;
+    var sheet = getSheet_(isStartup ? STARTUP_SHEET_NAME : SHEET_NAME);
+    var headers = ensureHeaders_(sheet, columns);
 
     var row = new Array(headers.length).fill('');
 
-    COLUMNS.forEach(function (column) {
+    columns.forEach(function (column) {
       if (!column.field) return;
       var index = headers.indexOf(column.header);
       if (index === -1) return;
@@ -101,10 +137,10 @@ function doGet() {
   return json_({ ok: true, service: 'axiom-application-intake' });
 }
 
-function getSheet_() {
+function getSheet_(name) {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = spreadsheet.getSheetByName(SHEET_NAME);
-  if (!sheet) sheet = spreadsheet.insertSheet(SHEET_NAME);
+  var sheet = spreadsheet.getSheetByName(name);
+  if (!sheet) sheet = spreadsheet.insertSheet(name);
   return sheet;
 }
 
@@ -112,14 +148,14 @@ function getSheet_() {
  * Return the header row, appending any column this script knows about that the
  * sheet does not have yet. Existing columns keep their position.
  */
-function ensureHeaders_(sheet) {
+function ensureHeaders_(sheet, columns) {
   var lastColumn = sheet.getLastColumn();
   var headers =
     lastColumn > 0
       ? sheet.getRange(1, 1, 1, lastColumn).getValues()[0].map(String)
       : [];
 
-  var missing = COLUMNS
+  var missing = columns
     .map(function (column) { return column.header; })
     .filter(function (header) { return headers.indexOf(header) === -1; });
 

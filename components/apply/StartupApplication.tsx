@@ -7,6 +7,7 @@ import {
 } from "@/components/apply/ApplyEngine";
 import { STARTUP_SET } from "@/lib/apply-sections";
 import { submitStartupApplication } from "@/lib/actions/applications";
+import { postToWebhook } from "@/lib/apply-submit";
 
 /**
  * The startup application. No frozen webhook on this side — it lands in
@@ -24,6 +25,11 @@ export function StartupApplication({
   async function handleSubmit(
     answers: Record<string, string>,
   ): Promise<SubmitResult> {
+    // Startup applications used to land in Supabase only, so they never
+    // appeared in the Sheet Matthew actually works from. Same webhook as the
+    // intern side, tagged so the script can file them separately.
+    await postToWebhook(answers, {}, "startup");
+
     const result = await submitStartupApplication(answers);
     return { ok: result.ok, error: result.error };
   }

@@ -186,10 +186,15 @@ const INTERN_SECTIONS: Section[] = [
         label: "Which of these would you want to work at?",
         helpText:
           "Pick every one you would genuinely take. This is what we match on first.",
-        options: startups.map((startup) => ({
-          value: startup.name,
-          label: startup.yc ? `${startup.name} · ${startup.yc}` : startup.name,
-        })),
+        options: [
+          ...startups.map((startup) => ({
+            value: startup.name,
+            label: startup.yc ? `${startup.name} · ${startup.yc}` : startup.name,
+          })),
+          // Not everyone wants a name off this list — some want the network
+          // rather than a specific company, and saying so is useful signal.
+          { value: "Other", label: "Other / open to anything" },
+        ],
       }),
     ],
   },

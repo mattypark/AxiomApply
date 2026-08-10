@@ -110,6 +110,15 @@ export function WelcomeHeader({
         {isApp && <MenuPill compact />}
         {isApp ? null : signedIn ? (
           // Signed in → just the profile icon; the pills are for newcomers.
+          <>
+            {/* Signed in on the marketing page — the way back into the
+                product should be obvious, not hidden behind the avatar. */}
+            <Link
+              href="/home"
+              className="wel-chip hidden items-center rounded-full px-5 py-3 text-[0.95rem] font-medium transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:opacity-80 sm:inline-flex sm:px-8 sm:py-4 sm:text-[1.05rem]"
+            >
+              Home
+            </Link>
           <Link
             href="/account"
             aria-label="Your account"
@@ -127,6 +136,7 @@ export function WelcomeHeader({
               <path d="M4 21a8 8 0 0 1 16 0z" />
             </svg>
           </Link>
+          </>
         ) : (
           <>
             {/* Sign in is for people who already have an account: straight to
@@ -134,7 +144,7 @@ export function WelcomeHeader({
                 side picker. Both pointed at /onboarding, which asked returning
                 users a question they had already answered. */}
             <Link
-              href="/auth"
+              href="/auth?next=/home"
               className="wel-chip hidden items-center rounded-full px-8 py-4 text-[1.05rem] font-medium sm:inline-flex transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:opacity-80"
             >
               Sign in
