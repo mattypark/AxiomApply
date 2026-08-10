@@ -17,7 +17,14 @@ export async function GET(request: Request) {
 
   const code = searchParams.get("code");
   const nextParam = searchParams.get("next");
-  const next = nextParam && nextParam.startsWith("/") ? nextParam : "/home";
+
+  // An explicit `next` is where the person actually was — mid-application,
+  // usually. It wins over every role-based default below; those are only for
+  // arrivals with nowhere particular to return to. Overriding it is what sent
+  // people who signed in from inside the form back to the home page.
+  const requested =
+    nextParam && nextParam.startsWith("/") ? nextParam : null;
+  const next = requested ?? "/home";
 
   const supabase = await getServerSupabase();
   if (!supabase) return NextResponse.redirect(`${site}/`);
@@ -69,14 +76,11 @@ export async function GET(request: Request) {
       }
     }
 
+    if (requested) {
+      return NextResponse.redirect(`${site}${requested}`);
+    }
     if (!role) {
-      // No role yet — send them back to wherever they came from, query
-      // string intact. OAuth started inside an application gate arrives as
-      // next=/onboarding?side=..., and dropping it dumped people back on
-      // the picker they had already answered.
-      return NextResponse.redirect(
-        `${site}${nextParam?.startsWith("/") ? nextParam : "/onboarding"}`,
-      );
+      return NextResponse.redirect(`${site}/onboarding`);
     }
     if (role === "startup") {
       return NextResponse.redirect(`${site}/startup/home`);

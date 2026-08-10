@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from "framer-motion";
 const PRIMARY = [
   // Sign in lives here too: the header hides its pill below `sm`, so on a
   // phone this sheet is the only way to reach it.
-  { href: "/onboarding", label: "Sign in" },
+  { href: "/auth", label: "Sign in" },
   // /learn is a signed-in workspace surface. From the marketing menu this
   // must land on the public explainer instead — dropping a signed-out visitor
   // straight into the product skips the part where they decide to sign up.
@@ -37,7 +37,8 @@ const SOCIAL = [
  * separate control.
  *
  * Scroll progress and the theme toggle used to live inside this pill; they are
- * now their own controls in the header (ScrollPercent, ThemeToggle).
+ * removed entirely — the site is light only, and scroll position is legible
+ * from the page itself.
  */
 export function MenuPill({ compact = false }: { compact?: boolean } = {}) {
   // Inside the product the pill is just the burger: the rail already carries

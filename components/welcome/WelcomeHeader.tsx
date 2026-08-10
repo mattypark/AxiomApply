@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { MenuPill } from "@/components/welcome/MenuPill";
-import { ThemeToggle } from "@/components/welcome/ThemeToggle";
 import { GetStartedButton } from "@/components/welcome/GetStartedButton";
 
 /**
@@ -76,9 +75,10 @@ export function WelcomeHeader({
   return (
     <header
       data-hidden={isHidden || undefined}
-      className={`fixed inset-x-0 top-0 z-50 grid items-start gap-2 px-4 py-4 sm:gap-4 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform data-[hidden]:-translate-y-[130%] sm:px-9 sm:py-7 ${
-        isApp ? "grid-cols-[1fr_auto]" : "grid-cols-[1fr_auto_1fr]"
-      }`}
+      // flex, not grid: with the scroll percentage gone the middle grid
+      // column had nothing in it, so the auth pills fell into it and sat
+      // centred. Menu hard left, actions hard right, at every width.
+      className="fixed inset-x-0 top-0 z-50 flex items-start justify-between gap-3 px-4 py-4 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform data-[hidden]:-translate-y-[130%] sm:gap-4 sm:px-9 sm:py-7"
     >
       {/* Left: the menu. The lockup used to sit here and now anchors the
           centre of the hero ring, which is the only place on the page big
@@ -108,11 +108,6 @@ export function WelcomeHeader({
 
       <div className="flex items-center justify-end gap-3">
         {isApp && <MenuPill compact />}
-        {!isApp && (
-          <div className="wel-pill grid h-11 w-11 place-items-center rounded-full shadow-[0_10px_30px_rgba(21,21,15,0.22)] sm:h-14 sm:w-14">
-            <ThemeToggle />
-          </div>
-        )}
         {isApp ? null : signedIn ? (
           // Signed in → just the profile icon; the pills are for newcomers.
           <Link

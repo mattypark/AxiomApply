@@ -38,13 +38,6 @@ export default function RootLayout({
       className={`${inter.variable} ${jetbrains.variable}`}
     >
       <head>
-        {/* Applies the stored theme before first paint so the welcome screen
-            never flashes light before switching to dark. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem("ax_theme");if(t)document.documentElement.dataset.theme=t}catch(e){}`,
-          }}
-        />
       </head>
       <body>
         {/* AmbientBackdrop + ShapeField (the dot field) removed site-wide —

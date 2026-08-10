@@ -81,21 +81,6 @@
 }
 
 /* --- Dark theme ------------------------------------------------------- */
-[data-theme="dark"] {
-  --mainbg: #020108;
-  --mainbg-gradient: #02010800;
-  --secondbg: #111111;
-
-  --fonts-100: #ffffff;
-  --fonts-64: #ffffffa3;
-  --fonts-50: #ffffff80;
-  --fonts-30: #ffffff4d;
-  --fonts-20: #ffffff33;
-
-  --lines: #2a2a30;
-  --menu: #020108;
-  --dots-pattern: #1a1a1a;
-}
 
 /* --- Tablet ------------------------------------------------------------ */
 @media (max-width: 991px) {
