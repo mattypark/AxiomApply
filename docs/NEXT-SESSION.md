@@ -158,6 +158,23 @@ Copy the names exactly from `.env.example`. Set for **Production** and
 
 ---
 
+## Apps Script — do NOT replace it
+
+The live Apps Script project is richer than anything in this repo: it has the
+Decision column + dropdown (`addDecisionColumn`), a resume Drive folder, an
+`onOpen` menu and several other .gs files. An earlier draft of
+`docs/apps-script.gs` told Matthew to paste over the whole thing — that would
+have deleted all of it. That file has been removed.
+
+`docs/apps-script-startups.gs` is the correct shape: a standalone add-on that
+handles `form_type=startup` only, plus a two-line insert at the top of the
+existing `doPost`. Intern submissions carry no `form_type`, so their path is
+untouched.
+
+Re-deploy rule, every time: **Deploy → Manage deployments → pencil on the
+existing deployment → New version.** Never "New deployment" — that mints a new
+/exec URL and the current one is baked into `lib/apply-contract.ts`.
+
 ## 5. Deliberately deferred
 
 - **DM feature** between interns — own tables, own RLS, own session.
