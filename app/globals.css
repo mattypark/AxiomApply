@@ -522,11 +522,15 @@ body {
   }
 }
 
-/* ---------- apply engine: light / dark variants ----------
+/* ---------- apply engine: light / dark / grey variants ----------
    The engine (components/apply/*) reads every colour through tokens so the
-   startup application can run the same components on a night surface. The
-   --ap-* group covers the few places a literal used to live: hairline borders
-   drawn as inset shadows, the white dropdown/dialog surfaces, the overlay. */
+   startup and chapter applications can run the same components on darker
+   surfaces. The --ap-* group covers the few places a literal used to live:
+   hairline borders drawn as inset shadows, the white dropdown/dialog surfaces,
+   the overlay.
+
+   Three surfaces, one per application: intern white, startup near-black,
+   chapter charcoal grey. */
 
 .apply-light {
   --ap-line: rgba(21, 21, 15, 0.14);
@@ -570,6 +574,45 @@ body {
 .apply-dark img[src^="/apply/slot-"] {
   opacity: 0.85;
   filter: brightness(0.92);
+}
+
+/* Chapter: the same remap on charcoal. Lifted far enough off the startup's
+   #0e0f0d that the two read as different surfaces side by side, and the
+   accents are brightened a step to hold contrast against the lighter ground. */
+.apply-grey {
+  --color-ink: #ecebe6;
+  --color-muted: #b5b4ac;
+  /* Lighter than the dark scope's faint: this ground is #2e302c, not #0e0f0d,
+     so the same grey would sit almost on top of it. */
+  --color-faint: #918f87;
+  --color-forest: #4f9d63;
+  --color-forest-deep: #b6d9c0;
+  --color-error: #ff6b5e;
+
+  --ap-line: rgba(236, 235, 230, 0.18);
+  --ap-line-strong: rgba(236, 235, 230, 0.46);
+  --ap-surface: #3a3c37;
+  --ap-overlay: rgba(0, 0, 0, 0.5);
+
+  background: #2e302c;
+  color: var(--color-ink);
+}
+
+.apply-grey .apply-rule {
+  background: rgba(236, 235, 230, 0.16);
+}
+
+.apply-grey .apply-rule[data-active] {
+  background: var(--color-forest);
+}
+
+.apply-grey .apply-rule-divider {
+  background: rgba(236, 235, 230, 0.1);
+}
+
+.apply-grey img[src^="/apply/slot-"] {
+  opacity: 0.86;
+  filter: brightness(0.94);
 }
 
 /* ---------- hero: "passions" underline ----------

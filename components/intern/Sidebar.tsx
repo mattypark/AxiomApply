@@ -49,11 +49,18 @@ export function Sidebar({
   email,
   avatarUrl,
   applicationStatus,
+  hasChapter = false,
 }: {
   displayName: string | null;
   email: string | null;
   avatarUrl: string | null;
   applicationStatus: ApplicationStatus | null;
+  /**
+   * True when this person also runs a chapter. Chapters are additive, so the
+   * rail has to carry a way across to Chapter HQ — the layout fetches it,
+   * because this component fetches nothing itself.
+   */
+  hasChapter?: boolean;
 }) {
   const pathname = usePathname();
 
@@ -107,6 +114,12 @@ export function Sidebar({
           {SECONDARY.map((item) => (
             <RailLink key={item.href} item={item} active={isActive(item.href)} />
           ))}
+          {hasChapter && (
+            <RailLink
+              item={{ href: "/chapter/home", label: "Chapter HQ", icon: "▲" }}
+              active={isActive("/chapter/home")}
+            />
+          )}
         </nav>
       </div>
 

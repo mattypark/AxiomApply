@@ -315,7 +315,69 @@ Founder, Axiom Pathways${footer({})}`,
 }
 
 /* ------------------------------------------------------------------ */
-/* 5. startup approved                                                 */
+/* 5. waitlisted                                                       */
+/* ------------------------------------------------------------------ */
+
+export type WaitlistedVars = {
+  firstName?: string;
+  /** Real number from the Sheet. Never a rounded guess — people compare notes. */
+  applicantCount: string;
+};
+
+/**
+ * The one everybody gets who isn't a yes and isn't a no.
+ *
+ * The failure mode this copy is written against is the soft-no: an email that
+ * sounds encouraging, promises a date nobody controls, and leaves someone
+ * checking their inbox for a month. So it says what a waitlist actually is —
+ * read, wanted, no seat — refuses to name a date, and points at the two things
+ * that stay open regardless of us.
+ */
+export function waitlisted(vars: WaitlistedVars): Email {
+  return {
+    subject: "You're on the waitlist.",
+    text: `${greeting(vars.firstName)}
+
+You're on the waitlist. Not a no, not a yes: we read your
+application, we'd work with you, and there is no seat to hand you
+right now.
+
+What that's worth, plainly. We had ${vars.applicantCount} applications
+this round against a much smaller number of open roles. The
+waitlist is where someone sits when the only missing piece is a
+startup asking for what they do. When one asks, we come here
+first — nobody has to reapply to be considered.
+
+What I won't do is give you a date. It depends on startups I don't
+control, and a made-up timeline is worse than none.
+
+So don't wait on us:
+
+  The feed stays open. Thousands of listings, refreshed daily, and
+  people get placed off it every week with no help from us. That
+  counts exactly as much as anything we hand-match.
+  → ${SITE}/internships
+
+  Learn stays open. Finish a track and it shows on your file the
+  next time your name comes up.
+  → ${SITE}/learn
+
+The thing that moves people off this list is one public link. A
+tool, a site, a bot, a newsletter someone actually reads. It does
+not have to be impressive — it has to exist and be reachable by
+someone who isn't you. When you have one, reply with it and I'll
+put it on your file myself.
+
+Reply if anything changes: new project, new deadline, a field
+you've moved into. I read them.
+
+— Matthew
+Founder, Axiom Pathways${footer({})}`,
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/* 6. startup approved                                                 */
 /* ------------------------------------------------------------------ */
 
 export function startupApproved(vars: {
@@ -367,7 +429,7 @@ Founder, Axiom Pathways${footer({})}`,
 }
 
 /* ------------------------------------------------------------------ */
-/* 6. startup application received                                     */
+/* 7. startup application received                                     */
 /* ------------------------------------------------------------------ */
 
 export function startupReceived(vars: {
@@ -387,6 +449,38 @@ few days.
 If something changes before then — you close a round, the role
 shifts, you need someone sooner — reply to this and it gets attached
 to your file.
+
+— Matthew
+Founder, Axiom Pathways${footer({})}`,
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/* 8. chapter application received                                     */
+/* ------------------------------------------------------------------ */
+
+export function chapterReceived(vars: {
+  firstName?: string;
+  school: string;
+}): Email {
+  return {
+    subject: "Your chapter application is in.",
+    text: `${greeting(vars.firstName)}
+
+Your application to start a chapter at ${vars.school} is in.
+
+Chapters take longer to answer than the other two applications, and
+that is on purpose. Handing a school's chapter to the wrong person is
+worse than that school not having one, so I read these one at a time.
+Give it about a week.
+
+Two things worth doing while you wait, because they are the answers I
+weigh most: find out how clubs actually get approved at your school,
+and ask one teacher whether they would advise it. Reply here with
+either and it gets attached to your file.
+
+Starting a chapter does not use up your other options — you can still
+apply for a placement, or bring a startup in, at any point.
 
 — Matthew
 Founder, Axiom Pathways${footer({})}`,

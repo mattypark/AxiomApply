@@ -10,6 +10,10 @@ export async function setRole(formData: FormData) {
   const nextRaw = formData.get("next");
   const next =
     typeof nextRaw === "string" && nextRaw.startsWith("/") ? nextRaw : "/home";
+  // Chapter is deliberately not a role — a chapter founder can also be an
+  // intern or a startup. Skipping that application writes nothing to the
+  // profile and simply heads where they were going.
+  if (role === "chapter") redirect(next);
   if (role !== "intern" && role !== "startup") redirect("/");
 
   const supabase = await getServerSupabase();

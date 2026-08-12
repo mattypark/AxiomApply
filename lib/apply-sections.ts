@@ -1,9 +1,10 @@
 /**
  * Schema-driven question sets.
  *
- * One engine (components/apply/ApplyEngine.tsx) renders both applications:
- * the intern side and the startup side. Everything the engine needs to draw a
- * question lives here as data — labels, help text, options, conditionals.
+ * One engine (components/apply/ApplyEngine.tsx) renders all three applications:
+ * the intern side, the startup side and the chapter side. Everything the engine
+ * needs to draw a question lives here as data — labels, help text, options,
+ * conditionals.
  *
  * The intern set is BUILT FROM lib/apply-contract.ts rather than retyped.
  * That file is the frozen wire contract the Apps Script webhook and the Sheet
@@ -48,6 +49,8 @@ export type Question = {
     dependsOn: string;
     /** Exact match. */
     showWhen?: string;
+    /** Exact match against any one of several parent answers. */
+    showWhenOneOf?: string[];
     /** For multi_checkbox parents, whose value is a comma-joined list. */
     showWhenIncludes?: string;
   };
@@ -63,8 +66,8 @@ export type Section = {
 };
 
 export type QuestionSet = {
-  key: "intern" | "startup";
-  /** Storage namespace for autosave — the two sets never share answers. */
+  key: "intern" | "startup" | "chapter";
+  /** Storage namespace for autosave — the sets never share answers. */
   storageKey: string;
   heading: string;
   dates: string;
@@ -494,9 +497,338 @@ export const STARTUP_SET: QuestionSet = {
   sections: STARTUP_SECTIONS,
 };
 
+/* ------------------------------------------------------------------ */
+/* chapter — new, not wire-frozen                                      */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Starting a chapter is not a third role — a chapter founder can also be an
+ * intern or a startup. So this set asks nothing about placement; it asks
+ * whether the person can actually run something at their school, and ends by
+ * asking which of the other two they also want.
+ */
+
+const CHAPTER_SECTIONS: Section[] = [
+  {
+    id: "about-you",
+    nav: "you",
+    title: "Start with you",
+    blurb: "The person who would be running it.",
+    questions: [
+      {
+        id: "name",
+        label: "Full name",
+        type: "short_text",
+        required: true,
+        autocomplete: "name",
+      },
+      {
+        id: "email",
+        label: "Email",
+        type: "short_text",
+        inputType: "email",
+        required: true,
+        autocomplete: "email",
+      },
+      {
+        id: "phone",
+        label: "Phone",
+        type: "short_text",
+        inputType: "tel",
+        autocomplete: "tel",
+      },
+      {
+        id: "grade",
+        label: "What year are you in?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "9th", label: "9th grade" },
+          { value: "10th", label: "10th grade" },
+          { value: "11th", label: "11th grade" },
+          { value: "12th", label: "12th grade" },
+          { value: "College freshman", label: "College freshman" },
+          { value: "College sophomore+", label: "College sophomore or above" },
+          { value: "Gap year", label: "Gap year" },
+        ],
+      },
+      {
+        id: "city",
+        label: "Where are you based?",
+        type: "short_text",
+        required: true,
+        placeholder: "City, State",
+      },
+      {
+        id: "linkedin",
+        label: "LinkedIn",
+        type: "url",
+        placeholder: "profile URL",
+      },
+      {
+        id: "other_link",
+        label: "Anything else that shows your work",
+        type: "url",
+        helpText:
+          "GitHub, a portfolio, a project, the account you actually post on.",
+      },
+    ],
+  },
+  {
+    id: "your-school",
+    nav: "your school",
+    title: "Where the chapter would live",
+    blurb:
+      "Chapters run inside a real school, which means real constraints. We would rather know them now.",
+    questions: [
+      {
+        id: "school",
+        label: "School name",
+        type: "short_text",
+        required: true,
+      },
+      {
+        id: "school_type",
+        label: "What kind of school?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "Public high school", label: "Public high school" },
+          { value: "Private high school", label: "Private high school" },
+          { value: "Charter", label: "Charter" },
+          { value: "Boarding", label: "Boarding" },
+          { value: "Homeschool co-op", label: "Homeschool co-op" },
+          { value: "University", label: "University" },
+          { value: "Other", label: "Other" },
+        ],
+      },
+      {
+        id: "school_size",
+        label: "Roughly how many students?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "Under 200", label: "Under 200" },
+          { value: "200-500", label: "200–500" },
+          { value: "500-1000", label: "500–1,000" },
+          { value: "1000-2000", label: "1,000–2,000" },
+          { value: "2000+", label: "2,000+" },
+        ],
+      },
+      {
+        id: "club_process",
+        label: "How do clubs get approved at your school?",
+        type: "textarea",
+        required: true,
+        helpText:
+          "If you do not know yet, say that. It is a real answer and we would rather have it than a guess.",
+      },
+      {
+        id: "advisor_status",
+        label: "Do you have a faculty advisor?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "Yes, confirmed", label: "Yes, confirmed" },
+          { value: "Someone in mind", label: "Someone in mind" },
+          { value: "Not yet", label: "Not yet" },
+        ],
+      },
+      {
+        id: "advisor_name",
+        label: "Who?",
+        type: "short_text",
+        required: true,
+        placeholder: "name and what they teach",
+        conditional: {
+          dependsOn: "advisor_status",
+          showWhenOneOf: ["Yes, confirmed", "Someone in mind"],
+        },
+      },
+      {
+        id: "existing_clubs",
+        label: "What similar clubs already exist there?",
+        type: "textarea",
+        required: true,
+        helpText:
+          "CS club, DECA, entrepreneurship, robotics. “None” is a fine answer — it changes what the chapter has to be.",
+      },
+    ],
+  },
+  {
+    id: "why-you",
+    nav: "why you",
+    title: "Why you, specifically",
+    blurb:
+      "Chapters are run by one person for a long time before anyone shows up. This section is most of the decision.",
+    questions: [
+      {
+        id: "qualified",
+        label: "What makes you the person to run this?",
+        type: "textarea",
+        required: true,
+      },
+      {
+        id: "built",
+        label: "What have you actually built, led, or shipped?",
+        type: "textarea",
+        required: true,
+        helpText:
+          "Members, revenue, users, views, event turnout — real figures beat adjectives every time.",
+      },
+      {
+        id: "why_axiom",
+        label: "Why an Axiom chapter and not something you start yourself?",
+        type: "textarea",
+        required: true,
+      },
+      {
+        id: "hardest",
+        label: "Tell us about something you started that did not work.",
+        type: "textarea",
+        required: true,
+        helpText: "We care more about this answer than about the wins.",
+      },
+    ],
+  },
+  {
+    id: "the-plan",
+    nav: "the plan",
+    title: "What actually happens when you start one",
+    blurb:
+      "Specific beats ambitious. A plan for ten people you can name is stronger than a plan for a hundred you cannot.",
+    questions: [
+      {
+        id: "first_30",
+        label: "Your first 30 days, concretely.",
+        type: "textarea",
+        required: true,
+      },
+      {
+        id: "first_members",
+        label: "How do you get the first 10 members?",
+        type: "textarea",
+        required: true,
+      },
+      {
+        id: "cadence",
+        label: "How often would the chapter meet?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "Weekly", label: "Weekly" },
+          { value: "Every other week", label: "Every other week" },
+          { value: "Monthly", label: "Monthly" },
+          { value: "Not sure yet", label: "Not sure yet" },
+        ],
+      },
+      {
+        id: "member_value",
+        label:
+          "What does a member have after 3 months that they did not before?",
+        type: "textarea",
+        required: true,
+      },
+      {
+        id: "startups_local",
+        label: "Any startups, founders, or mentors near you?",
+        type: "textarea",
+        helpText:
+          "Name them. One local founder you have actually met counts for more than a list of famous ones.",
+      },
+      {
+        id: "biggest_risk",
+        label: "What is most likely to kill this chapter?",
+        type: "textarea",
+        required: true,
+      },
+    ],
+  },
+  {
+    id: "commitment",
+    nav: "commitment",
+    title: "The part people skip",
+    blurb: "Most chapters die from time, not from ideas.",
+    questions: [
+      {
+        id: "hours",
+        label: "Hours per week you can commit",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1-3", label: "1–3" },
+          { value: "3-5", label: "3–5" },
+          { value: "5-10", label: "5–10" },
+          { value: "10+", label: "10+" },
+        ],
+      },
+      {
+        id: "how_long",
+        label: "How long will you run it?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "One semester", label: "One semester" },
+          { value: "One year", label: "One year" },
+          { value: "Until I graduate", label: "Until I graduate" },
+          { value: "Beyond, I would hand it off", label: "Beyond — I would hand it off" },
+        ],
+      },
+      {
+        id: "cofounders",
+        label: "Starting it with anyone?",
+        type: "yes_no",
+        required: true,
+      },
+      {
+        id: "cofounder_names",
+        label: "Who, and what do they do?",
+        type: "textarea",
+        required: true,
+        conditional: { dependsOn: "cofounders", showWhen: "yes" },
+      },
+      {
+        id: "monthly_call",
+        label: "Can you make a 30-minute call with Axiom once a month?",
+        type: "yes_no",
+        required: true,
+      },
+      {
+        id: "also_interested",
+        label: "Do you also want to be an intern, or bring your startup in?",
+        type: "multi_checkbox",
+        options: [
+          { value: "Intern placement", label: "Intern placement" },
+          { value: "I run a startup", label: "I run a startup" },
+          { value: "Just the chapter for now", label: "Just the chapter for now" },
+        ],
+        helpText:
+          "Running a chapter does not replace either one — you can do both, and this is what unlocks the next step on your dashboard.",
+      },
+      {
+        id: "anything_else",
+        label: "Anything else?",
+        type: "textarea",
+        placeholder: "Reply-level detail is fine. A person reads this.",
+      },
+    ],
+  },
+];
+
+export const CHAPTER_SET: QuestionSet = {
+  key: "chapter",
+  storageKey: "axiom_apply_chapter",
+  heading: "chapter application",
+  dates: "reviewed by hand — usually within a week",
+  note: "Chapters are approved one at a time, by a person, because a chapter that fails is worse than a school with none. Starting one does not stop you applying as an intern or bringing a startup in.",
+  gate: { nameId: "name", emailId: "email" },
+  sections: CHAPTER_SECTIONS,
+};
+
 export const QUESTION_SETS: Record<QuestionSet["key"], QuestionSet> = {
   intern: INTERN_SET,
   startup: STARTUP_SET,
+  chapter: CHAPTER_SET,
 };
 
 /* ------------------------------------------------------------------ */
@@ -510,6 +842,10 @@ export function isVisible(question: Question, answers: Answers): boolean {
   if (!rule) return true;
 
   const value = answers[rule.dependsOn] ?? "";
+
+  if (rule.showWhenOneOf) {
+    return rule.showWhenOneOf.includes(value);
+  }
 
   if (rule.showWhenIncludes) {
     // multi_checkbox stores a comma-joined list, so membership is the test.

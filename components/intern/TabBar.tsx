@@ -22,8 +22,19 @@ const TABS = [
  * Apply sits first, left of Home, and changes with the user's application:
  * a call to action before they apply, a status once they have.
  */
-export function TabBar({ applicationStatus = null }: { applicationStatus?: ApplicationStatus | null }) {
+export function TabBar({
+  applicationStatus = null,
+  hasChapter = false,
+}: {
+  applicationStatus?: ApplicationStatus | null;
+  /** Adds the Chapter HQ tab — chapters are additive to being an intern. */
+  hasChapter?: boolean;
+}) {
   const pathname = usePathname();
+
+  const tabs = hasChapter
+    ? [...TABS, { href: "/chapter/home", label: "Chapter" } as const]
+    : TABS;
 
   return (
     <nav
@@ -36,7 +47,7 @@ export function TabBar({ applicationStatus = null }: { applicationStatus?: Appli
 
         <span aria-hidden className="mx-1 h-5 w-px shrink-0 bg-ink/10" />
 
-        {TABS.map((tab) => {
+        {tabs.map((tab) => {
           const active =
             pathname === tab.href || pathname.startsWith(tab.href + "/");
           return (

@@ -5,9 +5,11 @@ import { getServerSupabase } from "@/lib/supabase/server";
 import { getUser } from "@/lib/auth";
 import { APPLY_STEPS } from "@/lib/apply-contract";
 import { postStartupToSheet } from "@/lib/startup-submit";
+import { postChapterToSheet } from "@/lib/chapter-submit";
 import { FIELDS } from "@/types/database";
 import {
   sendApplicationReceived,
+  sendChapterReceived,
   sendInternWelcome,
   sendStartupReceived,
 } from "@/lib/email/send";
@@ -204,6 +206,110 @@ export async function submitStartupApplication(
         })
         .eq("id", user.id);
     }
+  }
+
+  return { ok: true };
+}
+
+/** Columns the chapter table models by name. Anything else rides in sheet_row. */
+const CHAPTER_COLUMNS = new Set([
+  "name",
+  "email",
+  "phone",
+  "grade",
+  "city",
+  "linkedin",
+  "other_link",
+  "school",
+  "school_type",
+  "school_size",
+  "club_process",
+  "advisor_status",
+  "advisor_name",
+  "existing_clubs",
+  "qualified",
+  "built",
+  "why_axiom",
+  "hardest",
+  "first_30",
+  "first_members",
+  "cadence",
+  "member_value",
+  "startups_local",
+  "biggest_risk",
+  "hours",
+  "how_long",
+  "cofounders",
+  "cofounder_names",
+  "monthly_call",
+  "also_interested",
+  "anything_else",
+]);
+
+export type ChapterApplicationResult = { ok: boolean; error?: string };
+
+/**
+ * The chapter side.
+ *
+ * Writes nothing to profiles.role on purpose — starting a chapter does not
+ * make someone stop being an intern, or stop them bringing a startup in later.
+ * The chapter row IS the membership.
+ */
+export async function submitChapterApplication(
+  answers: Record<string, string>,
+): Promise<ChapterApplicationResult> {
+  const name = answers.name?.trim();
+  const email = answers.email?.trim();
+  const school = answers.school?.trim();
+
+  if (!name || !email || !school) {
+    return { ok: false, error: "Name, email, and school are required." };
+  }
+
+  // Sent FIRST and unconditionally, same as the intern path: someone who
+  // submitted has earned their receipt whether or not the mirror worked.
+  await sendChapterReceived(email, { firstName: name, school }).catch(
+    () => undefined,
+  );
+
+  const supabase = getAdminSupabase();
+  if (!supabase) {
+    return {
+      ok: false,
+      error: "Not connected yet — email matthew@axiompathways.org instead.",
+    };
+  }
+
+  const row: Record<string, unknown> = { email: email.toLowerCase() };
+  for (const [key, value] of Object.entries(answers)) {
+    const trimmed = value?.trim();
+    if (!trimmed || key === "email") continue;
+    if (CHAPTER_COLUMNS.has(key)) row[key] = trimmed;
+  }
+  // Whole submission kept verbatim so a question added to the form before its
+  // column exists is never silently dropped.
+  row.sheet_row = answers;
+
+  // Link the account when there is one, so the founder sees their own chapter
+  // immediately instead of waiting on the claim-by-email path.
+  const user = await getUser();
+  if (user) row.user_id = user.id;
+
+  const { error } = await supabase.from("chapter_applications").insert(row);
+  if (error) {
+    // The applicant gets a human sentence; the reason goes to the log. Without
+    // this, "the table does not exist yet" and "one column is misspelled" look
+    // identical from the outside.
+    console.error(`Chapter insert failed: ${error.message}`);
+    return { ok: false, error: "That did not send. Try once more." };
+  }
+
+  // Second destination: the chapters spreadsheet, its own Sheet and its own
+  // Apps Script. Never allowed to fail the submission — the row is already in
+  // Postgres, and Postgres is what Chapter HQ reads.
+  const sheet = await postChapterToSheet(answers);
+  if (!sheet.ok && sheet.reason !== "not-configured") {
+    console.error(`Chapter Sheet write failed: ${sheet.reason}`);
   }
 
   return { ok: true };

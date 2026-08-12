@@ -48,6 +48,12 @@ const STARTUP_STATS: Stat[] = [
   { value: "by hand", label: "every match" },
 ];
 
+const CHAPTER_STATS: Stat[] = [
+  { value: "600+", label: "in the network" },
+  { value: "one", label: "chapter per school" },
+  { value: "by hand", label: "every approval" },
+];
+
 const INTERN_PANELS: Panel[] = [
   {
     kind: "founders",
@@ -112,16 +118,63 @@ const STARTUP_PANELS: Panel[] = [
   },
 ];
 
+const CHAPTER_PANELS: Panel[] = [
+  {
+    kind: "founders",
+    eyebrow: "who reads this",
+    title: "Matthew and Frank.",
+    body: "Chapter applications are read by hand, one at a time. Handing a school's chapter to the wrong person is worse than that school not having one, so this takes a little longer than the other two.",
+  },
+  {
+    kind: "logo",
+    eyebrow: "who we are",
+    title: "Axiom Pathways.",
+    body: "A nonprofit that places high schoolers and early-college students into real startup work. A chapter is how that reaches a school we have never been to.",
+  },
+  {
+    kind: "statement",
+    eyebrow: "what a chapter is",
+    title: "You run it.",
+    body: "We give you the curriculum, the startup network and someone to call once a month. Everything else — the room, the members, the meetings, the momentum — is you. Chapter leads who treat it like a club fold by spring. The ones who treat it like a thing they are building do not.",
+  },
+  {
+    kind: "statement",
+    eyebrow: "fair warning",
+    title: "Time kills chapters.",
+    body: "Almost none of them die from a bad idea. They die because the person running it got a season of homework, a sport, and a college application in the same month. That is why this form asks about hours before it asks about ambition.",
+  },
+  {
+    kind: "statement",
+    eyebrow: "and after",
+    title: "You can still be an intern.",
+    body: "Running a chapter is not instead of a placement, and it is not instead of bringing your own startup in. It is the doorway — plenty of people walk through all three.",
+  },
+];
+
+const PANELS_BY_VARIANT: Record<MediaVariant, Panel[]> = {
+  intern: INTERN_PANELS,
+  startup: STARTUP_PANELS,
+  chapter: CHAPTER_PANELS,
+};
+
+const STATS_BY_VARIANT: Record<MediaVariant, Stat[]> = {
+  intern: INTERN_STATS,
+  startup: STARTUP_STATS,
+  chapter: CHAPTER_STATS,
+};
+
+type MediaVariant = "intern" | "startup" | "chapter";
+
 export function MediaPanel({
   variant,
   embedded = false,
 }: {
-  variant: "intern" | "startup";
+  variant: MediaVariant;
   /** Inside the workspace shell the page scrolls, so this does not. */
   embedded?: boolean;
 }) {
-  const panels = variant === "intern" ? INTERN_PANELS : STARTUP_PANELS;
-  const stats = variant === "intern" ? INTERN_STATS : STARTUP_STATS;
+  const panels = PANELS_BY_VARIANT[variant];
+  const stats = STATS_BY_VARIANT[variant];
 
   // The panel scrolls on its own, so it drives its own line-fill rules.
   const asideRef = useRef<HTMLElement>(null);

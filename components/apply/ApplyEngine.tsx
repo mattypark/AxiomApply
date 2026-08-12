@@ -56,8 +56,11 @@ type ApplyEngineProps = {
   set: QuestionSet;
   prefill?: ApplyPrefill;
   backHref?: string;
-  /** "dark" runs the whole engine on the night surface (startup side). */
-  variant?: "light" | "dark";
+  /**
+   * The surface the engine runs on: "light" intern white, "dark" startup
+   * night, "grey" chapter charcoal. Each maps to a scope class in globals.css.
+   */
+  variant?: "light" | "dark" | "grey";
   /**
    * "full"     — standalone page: own rail, own scroll containers.
    * "embedded" — inside the workspace shell, which already provides the rail
@@ -104,6 +107,16 @@ function callbackUrl(next: string): string {
     window.location.origin;
   return `${origin}/auth/callback?next=${encodeURIComponent(next)}`;
 }
+
+/**
+ * Where each application hands off once it is submitted or skipped. Kept as a
+ * lookup rather than a ternary so adding a set cannot silently inherit /home.
+ */
+const HOME_BY_SET: Record<QuestionSet["key"], string> = {
+  intern: "/home",
+  startup: "/startup/home",
+  chapter: "/chapter/home",
+};
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -357,8 +370,7 @@ export function ApplyEngine({
     // Hand off to the workspace. The confirmation screen holds long enough to
     // be read, then the applicant lands somewhere they can actually do
     // something — with their status showing — rather than on a dead end.
-    const home = set.key === "startup" ? "/startup/home" : "/home";
-    window.setTimeout(() => router.push(home), 2600);
+    window.setTimeout(() => router.push(HOME_BY_SET[set.key]), 2600);
   }
 
   if (isSubmitted) {
@@ -366,7 +378,7 @@ export function ApplyEngine({
       <div className={`apply-${variant}`}>
         <Submitted
           name={answers[nameId] ?? ""}
-          homeHref={set.key === "startup" ? "/startup/home" : "/home"}
+          homeHref={HOME_BY_SET[set.key]}
         />
       </div>
     );
@@ -422,9 +434,12 @@ export function ApplyEngine({
             </p>
 
             <div className="mt-6">
+              {/* Chapter HQ only exists once an application has been filed,
+                  so skipping that one lands on the welcome page instead of
+                  bouncing off a gate that would send them straight back. */}
               <SkipButton
                 role={set.key}
-                next={set.key === "startup" ? "/startup/home" : "/home"}
+                next={set.key === "chapter" ? "/" : HOME_BY_SET[set.key]}
               />
             </div>
 

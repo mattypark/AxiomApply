@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { StartupTabBar } from "@/components/startup/StartupTabBar";
 import { GlassPanel } from "@/components/glass/GlassPanel";
 import { getProfile } from "@/lib/auth";
+import { hasChapter as getHasChapter } from "@/lib/chapters";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { signOut } from "@/lib/actions/profile";
 
@@ -53,10 +54,14 @@ export default async function StartupLayout({
     }
   }
 
+  // A founder may also run a school chapter — the dock has to carry the way
+  // across, because chapters are additive rather than a different role.
+  const runsChapter = await getHasChapter();
+
   return (
     <div className="min-h-dvh px-5 pt-10 pb-36 sm:px-8">
       {children}
-      <StartupTabBar />
+      <StartupTabBar hasChapter={runsChapter} />
     </div>
   );
 }

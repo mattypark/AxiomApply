@@ -5,33 +5,24 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
 const TABS = [
-  { href: "/startup/home", label: "Home" },
-  { href: "/startup/interns", label: "Potential interns" },
-  { href: "/startup/how-to-pick", label: "How to pick" },
-  { href: "/startup/demo-call", label: "Demo call" },
+  { href: "/chapter/home", label: "Chapter HQ" },
+  { href: "/chapter/playbook", label: "Playbook" },
+  { href: "/chapter/members", label: "Members" },
+  { href: "/account", label: "Account" },
 ] as const;
 
-/** Startup-side dock — same glass pill as the intern side, its own tabs. */
-export function StartupTabBar({
-  hasChapter = false,
-}: {
-  /** Adds the Chapter HQ tab — a founder may also run a school chapter. */
-  hasChapter?: boolean;
-}) {
+/** Chapter-side dock — same glass pill as the other two, its own tabs. */
+export function ChapterTabBar() {
   const pathname = usePathname();
-
-  const tabs = hasChapter
-    ? [...TABS, { href: "/chapter/home", label: "Chapter" } as const]
-    : TABS;
 
   return (
     <nav
-      aria-label="Startup navigation"
+      aria-label="Chapter navigation"
       className="fixed left-1/2 z-50 -translate-x-1/2"
       style={{ bottom: "max(1.25rem, calc(env(safe-area-inset-bottom) + 0.5rem))" }}
     >
       <div className="glass glass-deep flex max-w-[calc(100vw-1.5rem)] items-center gap-0.5 overflow-x-auto rounded-full p-1 sm:gap-1 sm:p-1.5">
-        {tabs.map((tab) => {
+        {TABS.map((tab) => {
           const active =
             pathname === tab.href || pathname.startsWith(tab.href + "/");
           return (
@@ -45,7 +36,7 @@ export function StartupTabBar({
             >
               {active && (
                 <motion.span
-                  layoutId="startup-tab-blob"
+                  layoutId="chapter-tab-blob"
                   transition={{ type: "spring", stiffness: 380, damping: 32 }}
                   className="absolute inset-0 rounded-full bg-forest shadow-[0_8px_24px_rgba(47,107,61,0.35),inset_0_1px_0_rgba(255,255,255,0.25)]"
                 />

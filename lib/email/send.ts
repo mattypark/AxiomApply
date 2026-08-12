@@ -23,7 +23,7 @@ type DeliverInput = {
   unsubscribeUrl?: string;
 };
 
-export type DeliverResult = { ok: boolean; skipped?: string; error?: string };
+export type DeliverResult = { ok: boolean; skipped?: string; error?: string; id?: string };
 
 async function isSuppressed(email: string, mailClass: MailClass): Promise<boolean> {
   const supabase = getAdminSupabase();
@@ -76,11 +76,32 @@ async function deliver(input: DeliverInput): Promise<DeliverResult> {
   });
 
   await log(input, result);
-  return { ok: result.ok, error: result.error };
+  return { ok: result.ok, error: result.error, id: result.id };
+}
+
+/**
+ * Send copy that was rendered earlier and reviewed since.
+ *
+ * The lifecycle senders below render from `templates` at the moment of
+ * sending, which is right for mail triggered by an event. Decision mail is
+ * different: it is rendered in bulk, read on /admin/applications, and sent
+ * later by a human who is approving the exact words they read. Re-rendering at
+ * send time would mean an edit to templates.ts between review and click
+ * silently changes what ships, so the queue stores the text and this sends it.
+ *
+ * `template` is still recorded, so email_log stays queryable by kind.
+ */
+export function sendPrepared(input: {
+  to: string;
+  template: string;
+  subject: string;
+  text: string;
+}): Promise<DeliverResult> {
+  return deliver({ ...input, mailClass: "transactional" });
 }
 
 /* ------------------------------------------------------------------ */
-/* the five lifecycle sends                                            */
+/* the lifecycle sends                                                 */
 /* ------------------------------------------------------------------ */
 
 export function sendInternWelcome(to: string, firstName?: string) {
@@ -144,6 +165,17 @@ export function sendNotSelected(to: string, vars: templates.NotSelectedVars) {
   });
 }
 
+export function sendWaitlisted(to: string, vars: templates.WaitlistedVars) {
+  return deliver({
+    to,
+    template: "waitlisted",
+    // News about the recipient's own application, so a marketing unsubscribe
+    // must not swallow it — same call as sendAccepted and sendNotSelected.
+    mailClass: "transactional",
+    ...templates.waitlisted(vars),
+  });
+}
+
 export function sendStartupApproved(
   to: string,
   vars: { contactFirstName?: string; company: string; turnaround?: string },
@@ -169,5 +201,17 @@ export function sendStartupReceived(
     template: "startupReceived",
     mailClass: "transactional",
     ...templates.startupReceived(vars),
+  });
+}
+
+export function sendChapterReceived(
+  to: string,
+  vars: { firstName?: string; school: string },
+) {
+  return deliver({
+    to,
+    template: "chapterReceived",
+    mailClass: "transactional",
+    ...templates.chapterReceived(vars),
   });
 }

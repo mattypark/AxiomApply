@@ -15,6 +15,18 @@ export default async function AdminLayout({
       <header className="flex items-center justify-between py-6">
         <span className="kicker">Axiom admin</span>
         <nav className="flex items-center gap-5 text-[0.9rem]">
+          <Link
+            href="/admin/applications"
+            className="text-muted transition-colors hover:text-ink"
+          >
+            Decisions
+          </Link>
+          <Link
+            href="/admin/chapters"
+            className="text-muted transition-colors hover:text-ink"
+          >
+            Chapters
+          </Link>
           <Link href="/admin/sources" className="text-muted transition-colors hover:text-ink">
             Sources
           </Link>

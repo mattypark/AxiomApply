@@ -4,6 +4,7 @@ import { getMyApplicationStatus } from "@/lib/applications";
 import { getProfile, getUser } from "@/lib/auth";
 import { MatchChecklist } from "@/components/intern/MatchChecklist";
 import { getMatchSignals } from "@/lib/signals";
+import { hasChapter as getHasChapter } from "@/lib/chapters";
 import { claimInternRole } from "@/lib/actions/profile";
 
 // Intern-side shell: the site header up top (menu pill + profile icon, same
@@ -13,9 +14,10 @@ import { claimInternRole } from "@/lib/actions/profile";
 export default async function InternLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const [applicationStatus, user] = await Promise.all([
+  const [applicationStatus, user, runsChapter] = await Promise.all([
     getMyApplicationStatus(),
     getUser(),
+    getHasChapter(),
   ]);
 
   const profile = user ? await getProfile() : null;
@@ -44,6 +46,7 @@ export default async function InternLayout({
         email={user?.email ?? null}
         avatarUrl={profile?.avatar_url ?? null}
         applicationStatus={applicationStatus}
+        hasChapter={runsChapter}
       />
 
       {/* Offset matches the rail's collapsed / expanded widths. */}
@@ -55,7 +58,10 @@ export default async function InternLayout({
 
       {/* The dock stays for phones, where the rail is hidden. */}
       <div className="md:hidden">
-        <TabBar applicationStatus={applicationStatus} />
+        <TabBar
+          applicationStatus={applicationStatus}
+          hasChapter={runsChapter}
+        />
       </div>
     </div>
   );
