@@ -26,6 +26,24 @@ export const metadata: Metadata = {
   description:
     "Axiom Pathways drops high school and college students straight into real startups — building what ships, picked for passion, not credentials.",
   icons: { icon: "/axiom-mark.png" },
+  // Declared explicitly so a scraper never has to guess. Left to its own
+  // devices iMessage picked the largest image on the welcome page, which was a
+  // founder's photo out of the orbiting ring — the card is the mark and the
+  // why, and app/opengraph-image.tsx draws it.
+  openGraph: {
+    type: "website",
+    siteName: "Axiom Pathways",
+    title: "Axiom Pathways — Connecting young talent to their passions",
+    description:
+      "A nonprofit placing high school and early-college students into real startup work. Selected for what they have shipped, not their credentials.",
+    url: "https://axiomapply.com",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Axiom Pathways — Connecting young talent to their passions",
+    description:
+      "A nonprofit placing high school and early-college students into real startup work.",
+  },
 };
 
 export default function RootLayout({
