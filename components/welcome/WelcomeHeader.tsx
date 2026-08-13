@@ -107,7 +107,7 @@ export function WelcomeHeader({
       )}
 
       <div className="flex items-center justify-end gap-3">
-        {isApp && <MenuPill compact />}
+        {isApp && <MenuPill />}
         {isApp ? null : signedIn ? (
           // Signed in: one destination, not two. The avatar led to /account,
           // which reads as "settings" when what someone wants from the
