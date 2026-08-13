@@ -60,6 +60,15 @@ const CHOICES: Choice[] = [
   },
 ];
 
+/**
+ * PLACEHOLDER — not a real address or number.
+ *
+ * Both must be replaced before launch: a nonprofit publishing a fake postal
+ * address is a real problem, not a cosmetic one, and the CAN-SPAM footer reads
+ * from the same details.
+ */
+const ADDRESS = ["1200 Innovation Way", "Houston, TX 77002", "+1 999 999 9999"];
+
 const CONTACT = [
   { href: "mailto:matthew@axiompathways.org", label: "matthew@axiompathways.org" },
   { href: "https://www.instagram.com/axiompathways/", label: "Instagram" },
@@ -173,19 +182,13 @@ function HoverLines({ from }: { from: "left" | "right" }) {
 function Picker({ onPick }: { onPick: (side: Side) => void }) {
   return (
     <main className="flex min-h-dvh flex-col bg-paper">
-      {/* On a phone the centred title would sit on top of Back, so below sm
-          the two simply stack instead of overlapping. */}
-      <header className="relative flex flex-col gap-3 px-6 pt-9 pb-4 sm:block sm:px-12 lg:px-20">
+      <header className="px-6 pt-9 pb-4 sm:px-12 lg:px-20">
         <Link
           href="/"
           className="w-fit font-mono text-[0.72rem] tracking-[0.16em] text-muted uppercase transition-colors duration-300 hover:text-ink"
         >
           ← Back
         </Link>
-
-        <h1 className="pointer-events-none font-mono text-[0.72rem] tracking-[0.24em] text-muted uppercase sm:absolute sm:inset-x-0 sm:top-9 sm:text-center">
-          Which side are you on?
-        </h1>
       </header>
 
       {/* the stack — numbered, staggered, one row each */}
@@ -207,12 +210,12 @@ function Picker({ onPick }: { onPick: (side: Side) => void }) {
               className="relative flex items-baseline gap-4 sm:gap-8 md:ml-[var(--indent)]"
               style={{ ["--indent" as string]: choice.indent }}
             >
-              <span className="shrink-0 font-mono text-[0.7rem] tracking-[0.16em] text-faint transition-colors duration-300 group-hover:text-forest sm:text-[0.78rem]">
+              <span className="shrink-0 font-display text-[1rem] text-faint transition-colors duration-300 group-hover:text-forest sm:text-[1.15rem]">
                 0{index + 1}
               </span>
 
               <span className="flex min-w-0 flex-col">
-                <span className="block text-[clamp(2.7rem,9vw,7rem)] leading-[0.98] font-semibold tracking-[-0.04em] text-ink transition-colors duration-400 group-hover:text-forest">
+                <span className="block font-display text-[clamp(3rem,9.5vw,7.5rem)] leading-[0.95] font-normal tracking-[-0.02em] text-ink transition-colors duration-400 group-hover:text-forest">
                   {choice.label}
                 </span>
                 <span className="mt-2 max-w-[52ch] text-[0.88rem] leading-relaxed text-muted transition-colors duration-400 group-hover:text-forest-deep sm:text-[0.95rem]">
@@ -237,6 +240,15 @@ function Picker({ onPick }: { onPick: (side: Side) => void }) {
         style={{ borderTop: "1px solid var(--lines)" }}
       >
         <address className="flex flex-col gap-1 not-italic">
+          {ADDRESS.map((line) => (
+            <span
+              key={line}
+              className="font-mono text-[0.72rem] font-semibold tracking-[0.1em] text-ink uppercase"
+            >
+              {line}
+            </span>
+          ))}
+          <span aria-hidden className="h-2" />
           {CONTACT.map((link) => (
             <a
               key={link.href}

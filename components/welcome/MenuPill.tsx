@@ -38,17 +38,19 @@ const SIDES = [
   },
 ] as const;
 
+/**
+ * Everything that is not the decision. Sign in lives here now rather than in
+ * the header: it serves people who already have an account, which is the
+ * smaller audience, and the header only has room for one real action.
+ */
 const SECONDARY = [
-  // Sign in lives here too: the header hides its pill below `sm`, so on a
-  // phone this panel is the only way to reach it.
-  { href: "/auth", label: "Sign in" },
-  // /learn is a signed-in workspace surface. From the marketing menu this
-  // must land on the public explainer instead — dropping a signed-out visitor
-  // straight into the product skips the part where they decide to sign up.
-  { href: "/about/learn", label: "Videos" },
+  { href: "/", label: "Homepage" },
+  { href: "/about/internships", label: "About us" },
+  { href: "/about/learn", label: "Who we are" },
+  { href: "/#faq", label: "FAQs" },
   // The published writing lives on the org site, not in this app.
   { href: "https://www.axiompathways.org/articles", label: "Articles" },
-  { href: "/classic", label: "Actual website" },
+  { href: "/auth", label: "Sign in" },
 ] as const;
 
 const LEGAL = [
@@ -110,17 +112,19 @@ export function MenuPill() {
             {/* Close lives inside the panel, in the burger's own position.
                 The pill itself is in the header's stacking context and cannot
                 out-rank a portalled overlay, so reusing it would bury the X. */}
-            <button
+            <motion.button
               type="button"
               onClick={close}
               aria-label="Close menu"
-              className="absolute top-6 left-6 z-10 flex h-[3.4rem] w-[3.4rem] items-center justify-center rounded-full bg-ink text-white shadow-[0_10px_30px_rgba(21,21,15,0.22)] transition-opacity duration-200 hover:opacity-80 sm:top-8 sm:left-10"
+              initial={{ rotate: 120 }}
+              animate={{ rotate: 120 }}
+              exit={{ rotate: 0 }}
+              whileHover={{ rotate: 0 }}
+              transition={{ duration: 0.55, ease: EASE }}
+              className="absolute top-4 right-4 z-10 grid h-[3.4rem] w-[3.4rem] cursor-pointer place-items-center rounded-full bg-ink text-white shadow-[0_10px_30px_rgba(21,21,15,0.22)] transition-opacity duration-200 hover:opacity-85 sm:top-7 sm:right-9"
             >
-              <span className="relative block h-5 w-5" aria-hidden="true">
-                <span className="absolute top-1/2 left-0 block h-[1.5px] w-full rotate-45 rounded bg-current" />
-                <span className="absolute top-1/2 left-0 block h-[1.5px] w-full -rotate-45 rounded bg-current" />
-              </span>
-            </button>
+              <Dots light />
+            </motion.button>
 
             {/* the decision — left-aligned, numbered */}
             <nav
@@ -143,11 +147,11 @@ export function MenuPill() {
                     onClick={close}
                     className="group flex w-fit items-baseline gap-4 sm:gap-7"
                   >
-                    <span className="font-mono text-[0.7rem] tracking-[0.16em] text-faint transition-colors duration-300 group-hover:text-forest sm:text-[0.8rem]">
+                    <span className="font-display text-[1rem] text-faint transition-colors duration-300 group-hover:text-forest sm:text-[1.2rem]">
                       0{index + 1}
                     </span>
                     <span className="flex flex-col">
-                      <span className="text-[clamp(2.6rem,8vw,6.5rem)] leading-[1.02] font-semibold tracking-[-0.035em] text-ink transition-colors duration-300 group-hover:text-forest">
+                      <span className="font-display text-[clamp(2.8rem,8.5vw,7rem)] leading-[0.98] font-normal tracking-[-0.02em] text-ink transition-colors duration-300 group-hover:text-forest">
                         {side.label}
                       </span>
                       <span className="mt-1 text-[0.85rem] text-muted transition-colors duration-300 group-hover:text-forest-deep sm:text-[0.95rem]">
@@ -167,6 +171,14 @@ export function MenuPill() {
               className="px-6 pb-8 sm:px-12 lg:px-20"
               style={{ borderTop: "1px solid var(--lines)", paddingTop: "1.75rem" }}
             >
+              <Link
+                href="/onboarding"
+                onClick={close}
+                className="mb-6 inline-flex w-fit items-center rounded-full bg-ink px-7 py-3.5 text-[0.95rem] font-medium text-white transition-transform duration-300 hover:-translate-y-0.5"
+              >
+                Get started →
+              </Link>
+
               <div className="flex flex-wrap gap-x-7 gap-y-2">
                 {SECONDARY.map((link) =>
                   link.href.startsWith("http") ? (
@@ -245,23 +257,34 @@ export function MenuPill() {
     <div className="relative flex flex-col items-center">
       {mounted && createPortal(panel, document.body)}
 
-      {/* pill — z above the panel so the X is always reachable */}
-      <div
-        className="relative z-10 flex items-center wel-pill rounded-full p-1.5 shadow-[0_10px_30px_rgba(21,21,15,0.22)]"
+      {/* Three dots set as a triangle, matching the mark. Opening rotates
+          them a third of a turn clockwise; closing unwinds it. One motion,
+          reversed — so the control reads as a state, not two icons. */}
+      <motion.button
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-expanded={open}
+        aria-label="Open menu"
+        animate={{ rotate: open ? 120 : 0 }}
+        transition={{ duration: 0.55, ease: EASE }}
+        className="relative z-10 grid h-[3.4rem] w-[3.4rem] cursor-pointer place-items-center rounded-full wel-pill shadow-[0_10px_30px_rgba(21,21,15,0.22)] transition-opacity duration-200 hover:opacity-85"
       >
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          aria-expanded={open}
-          aria-label="Open menu"
-          className="flex items-center rounded-full px-3.5 py-3.5 transition-opacity duration-200 hover:opacity-80"
-        >
-          <span className="relative block h-5 w-5" aria-hidden="true">
-            <span className="absolute top-1/2 left-0 block h-[1.5px] w-full -translate-y-[4.5px] rounded bg-current" />
-            <span className="absolute top-1/2 left-0 block h-[1.5px] w-full translate-y-[4.5px] rounded bg-current" />
-          </span>
-        </button>
-      </div>
+        <Dots />
+      </motion.button>
     </div>
+  );
+}
+
+/** Three dots arranged as a triangle — the same geometry as the mark. */
+function Dots({ light = false }: { light?: boolean }) {
+  const dot = `absolute h-[5px] w-[5px] rounded-full ${
+    light ? "bg-white" : "bg-current"
+  }`;
+  return (
+    <span className="relative block h-5 w-5" aria-hidden="true">
+      <span className={dot} style={{ top: 0, left: "50%", marginLeft: -2.5 }} />
+      <span className={dot} style={{ bottom: 0, left: 0 }} />
+      <span className={dot} style={{ bottom: 0, right: 0 }} />
+    </span>
   );
 }

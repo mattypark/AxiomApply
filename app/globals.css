@@ -31,6 +31,8 @@
     BlinkMacSystemFont, var(--font-inter), "Segoe UI", sans-serif;
   --font-mono: var(--font-jetbrains), "SF Mono", ui-monospace,
     Menlo, monospace;
+  /* Display only — never body copy. See app/layout.tsx for why this face. */
+  --font-display: var(--font-newsreader), "Iowan Old Style", Georgia, serif;
 
   --radius-glass: 24px;
   --radius-pill: 999px;

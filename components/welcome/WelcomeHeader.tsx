@@ -80,9 +80,9 @@ export function WelcomeHeader({
       // centred. Menu hard left, actions hard right, at every width.
       className="fixed inset-x-0 top-0 z-50 flex items-start justify-between gap-3 px-4 py-4 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform data-[hidden]:-translate-y-[130%] sm:gap-4 sm:px-9 sm:py-7"
     >
-      {/* Left: the menu. The lockup used to sit here and now anchors the
-          centre of the hero ring, which is the only place on the page big
-          enough to show it at a readable size. */}
+      {/* Left: the primary action. Get started is the only thing on this page
+          anyone needs to do, so it stays a real button and never hides behind
+          a menu. In the app the lockup takes this slot instead. */}
       {isApp ? (
         <Link
           href="/"
@@ -100,39 +100,22 @@ export function WelcomeHeader({
             className="h-11 w-auto object-contain"
           />
         </Link>
+      ) : signedIn ? (
+        <Link
+          href="/home"
+          className="wel-pill inline-flex items-center rounded-full px-6 py-3 text-[0.95rem] font-medium shadow-[0_10px_30px_rgba(21,21,15,0.22)] transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:opacity-85 sm:px-8 sm:py-4 sm:text-[1.05rem]"
+        >
+          Home
+        </Link>
       ) : (
-        <div className="w-fit">
-          <MenuPill />
-        </div>
+        <GetStartedButton href={ctaHref} />
       )}
 
+      {/* Right: the menu. Sign in moved inside it — it is for people who
+          already have an account, which is the smaller of the two audiences
+          and does not need to occupy the header. */}
       <div className="flex items-center justify-end gap-3">
-        {isApp && <MenuPill />}
-        {isApp ? null : signedIn ? (
-          // Signed in: one destination, not two. The avatar led to /account,
-          // which reads as "settings" when what someone wants from the
-          // marketing page is the way back into the product.
-          <Link
-            href="/home"
-            className="wel-pill inline-flex items-center rounded-full px-6 py-3 text-[0.95rem] font-medium shadow-[0_10px_30px_rgba(21,21,15,0.22)] transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:opacity-85 sm:px-8 sm:py-4 sm:text-[1.05rem]"
-          >
-            Home
-          </Link>
-        ) : (
-          <>
-            {/* Sign in is for people who already have an account: straight to
-                Google / email. Get started is for newcomers and goes to the
-                side picker. Both pointed at /onboarding, which asked returning
-                users a question they had already answered. */}
-            <Link
-              href="/auth?next=/home"
-              className="wel-chip hidden items-center rounded-full px-8 py-4 text-[1.05rem] font-medium sm:inline-flex transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:opacity-80"
-            >
-              Sign in
-            </Link>
-            <GetStartedButton href={ctaHref} />
-          </>
-        )}
+        <MenuPill />
       </div>
     </header>
   );

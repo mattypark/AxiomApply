@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Newsreader } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { LenisProvider } from "@/components/motion/LenisProvider";
 import "./globals.css";
@@ -9,6 +9,22 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
+});
+
+/**
+ * Display serif.
+ *
+ * Anthropic's own faces (Styrene, Copernicus) are licensed and cannot be
+ * redistributed, so this is the closest free stand-in: a warm high-contrast
+ * transitional serif with the same editorial weight. Display sizes only —
+ * Inter still carries every piece of running text.
+ */
+const newsreader = Newsreader({
+  subsets: ["latin"],
+  variable: "--font-newsreader",
+  display: "swap",
+  weight: ["300", "400", "500"],
+  style: ["normal", "italic"],
 });
 
 const jetbrains = JetBrains_Mono({
@@ -53,7 +69,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme="light"
-      className={`${inter.variable} ${jetbrains.variable}`}
+      className={`${inter.variable} ${jetbrains.variable} ${newsreader.variable}`}
     >
       <head>
       </head>
