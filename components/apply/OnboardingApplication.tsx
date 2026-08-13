@@ -48,14 +48,14 @@ const CHOICES: Choice[] = [
     side: "startup",
     label: "Startup",
     note: "Hiring interns. Matched by hand — 2–4 candidates, not a firehose of 200.",
-    indent: "20%",
+    indent: "34%",
     from: "left",
   },
   {
     side: "chapter",
     label: "Chapter",
     note: "Start one at your school. Approved one at a time, and it does not use up the other two.",
-    indent: "8%",
+    indent: "0%",
     from: "right",
   },
 ];

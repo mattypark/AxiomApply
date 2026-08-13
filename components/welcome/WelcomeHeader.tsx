@@ -100,15 +100,36 @@ export function WelcomeHeader({
             className="h-11 w-auto object-contain"
           />
         </Link>
-      ) : signedIn ? (
+      ) : (
+        <div className="flex items-center gap-4 sm:gap-6">
+          {/* The way home stays visible at the top of the page, not only from
+              inside the menu. */}
+          <Link
+            href="/"
+            aria-label="Axiom Pathways home"
+            className="flex items-center transition-opacity duration-300 hover:opacity-70"
+          >
+            <Image
+              src="/axiom-mark.png"
+              alt="Axiom Pathways"
+              width={120}
+              height={120}
+              priority
+              className="h-9 w-9 object-contain sm:h-10 sm:w-10"
+            />
+          </Link>
+
+          {signedIn ? (
         <Link
           href="/home"
           className="wel-pill inline-flex items-center rounded-full px-6 py-3 text-[0.95rem] font-medium shadow-[0_10px_30px_rgba(21,21,15,0.22)] transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:opacity-85 sm:px-8 sm:py-4 sm:text-[1.05rem]"
         >
           Home
         </Link>
-      ) : (
-        <GetStartedButton href={ctaHref} />
+          ) : (
+            <GetStartedButton href={ctaHref} />
+          )}
+        </div>
       )}
 
       {/* Right: the menu. Sign in moved inside it — it is for people who
