@@ -395,3 +395,46 @@ List-Unsubscribe-Post: List-Unsubscribe=One-Click
 2. Two Resend subdomains
 3. Intern welcome email
 4. `applications` table — everything after the welcome is blocked on it. Shipping decision emails off a Google Sheet means you cannot suppress a bounced address or segment a cycle.
+
+---
+
+## Decision mail — how it actually runs
+
+Built after the `applications` table landed. Three human actions, no scheduled job anywhere. Nothing in this repo sends decision mail on a timer, and that is a design constraint, not an omission: a cron that mails 600 people is one bad Sheet edit away from being unrecoverable.
+
+### 1. Push from the Sheet
+
+`Axiom → Push decisions to site` in the interns Sheet (`APPS_SCRIPT_DECISIONS.gs`, pasted into the bound script) POSTs every row to `POST /api/sheet/decisions`, authenticated with `SHEET_PUSH_SECRET` in an `x-axiom-secret` header. The route updates `applications.status` and stops.
+
+**Column positions are read by index, not by header.** The Sheet's header row has drifted: row 1 labels column J "Status", but J holds free text and the real decision chip is in **column Y, which has no header**. Reviewer is X, category is Z. Do not repair the header row and do not insert or reorder columns — adding to the right of AA is safe, anything else silently moves what the push reads.
+
+Decision vocabulary in Y: `Accepted`, `Rejected`, `waitlist`, `withdrawn`, or blank. Anything else — `POOL`, a stray timestamp, a typo — **skips that person entirely** and comes back in the response with a row number. Never guessed, because guessing here means mailing someone the wrong verdict.
+
+Duplicate addresses collapse to one person: a real decision beats a blank, and between two real decisions the later timestamp wins. If one of a person's rows is unreadable, the whole person is skipped.
+
+**Rows 414–453 are written in a different column layout** — an older version of the webhook put the email in K, M or Z instead of C. Their decision column can't be trusted either, so all ~40 are skipped and listed by row number in the push summary. They receive nothing until someone realigns those rows and pushes again. Two more rows (234, 235) are empty spacers, and rows 344–345 say `POOL`.
+
+Measured against the Sheet as of the first push: 693 readable rows → 659 people → 10 rejections, 629 waitlist, 20 accepted (not mailed), 42 skipped.
+
+### 2. Build the queue
+
+`/admin/applications` → **Build queue**. Renders copy from `lib/email/templates.ts` and stores subject + body in `email_queue` (`0016_email_queue.sql`). Sends nothing.
+
+Storing the rendered text is the point: the page shows exactly the row that will be sent, so editing a template between review and click cannot change what ships.
+
+Who gets what:
+
+| `applications.status` | Email |
+|---|---|
+| `rejected` | `notSelected` |
+| `waitlist`, `applied` | `waitlisted` |
+| `accepted` | none — sent by hand. `MatchVars` needs startup, role, founder and an accept link the Sheet doesn't carry |
+| `withdrawn` | none |
+
+The four cycle facts (applications, seats, season, reopen date) are typed on the page and land verbatim in the copy. They are required fields — blank ones would ship as "we had  applications and  seats".
+
+### 3. Send in batches
+
+**Send next 150**, per template. Each click sends one batch through `sendPrepared()` → the existing `deliver()` path, so suppression and `email_log` apply exactly as they do to every other send. `email_queue` has a unique index on `(lower(email), template)`: one decision email per person, ever, regardless of how many times the Sheet is pushed or a button is double-clicked.
+
+Batch size exists for deliverability. ~600 waitlist emails in one burst from a subdomain with no sending history is the fastest way to get `axiomapply.com` filtered — including the auth mail the site depends on. Spread the clicks across days.
