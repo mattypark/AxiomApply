@@ -20,19 +20,6 @@ import { useEffect } from "react";
 const HOT = "#2f6b3d";
 const WARM = "#3f8f52";
 
-/* list-pin tuning knobs. An earlier pass leaned harder and faster; Axiom's slides
-   hold flat for most of the pin and then lean slowly. */
-const PERSPECTIVE = 1800;
-const TILT = 15;
-const SHRINK = 0.85;
-const SKEW = 7;
-
-/** Fraction of the pin spent zooming out before any rotation begins. */
-const ZOOM_PHASE = 0.55;
-
-/** Point in the pin where the outgoing card starts fading behind the next. */
-const FADE_START = 0.6;
-
 /* how — floor opacity and where the fade finishes */
 const FLOOR_OPACITY = 0.2;
 const FADE_FINISH = 0.15;
@@ -120,11 +107,6 @@ export function ScrollMotion() {
         document
           .querySelectorAll("[data-flash]")
           .forEach((element) => wire(element, "var(--fonts-100)"));
-        // Headlines on the coloured slides always resolve to white.
-        document
-          .querySelectorAll("[data-flash-stb]")
-          .forEach((element) => wire(element, "#ffffff"));
-
         /* ---- ai grids cross-fade --------------------------------------- */
         const animaTargets = ANIMA_TARGETS.filter((selector) =>
           document.querySelector(selector),
@@ -154,66 +136,6 @@ export function ScrollMotion() {
               );
           });
         }
-
-        /* ---- pinned gradient slides ------------------------------------ */
-        const slides = document.querySelectorAll(
-          ".list__main__wrap .list__main__slide",
-        );
-        slides.forEach((slide, index) => {
-          // Nothing follows the last slide, so it stays put.
-          if (index === slides.length - 1) return;
-
-          const wrapper = slide.querySelector(".list__main__content__wrap");
-          const content = slide.querySelector(".list__main__content");
-          if (!wrapper || !content) return;
-
-          // Two phases, in the reference's order: the card first zooms out
-          // flat while the next slide rises behind it, and only once it has
-          // shrunk does it lean back. Rotating and scaling together — or
-          // rotating first — is what made it read as "it tilts the moment I
-          // pass it".
-          // Pin length MUST stay one viewport: each .list__main__slide is
-          // 100vh tall and the next slide's start position assumes exactly
-          // that much pin spacing. A longer pin desyncs the spacers and the
-          // outgoing cards float over the FAQ (the "keeps going" glitch).
-          const lean = gsap.timeline({
-            scrollTrigger: {
-              pin: wrapper,
-              trigger: slide,
-              start: "top top",
-              end: `+=${window.innerHeight}`,
-              scrub: 1,
-            },
-          });
-
-          lean
-            // 1 — zoom out, no rotation at all yet.
-            .to(content, {
-              transformPerspective: PERSPECTIVE,
-              scale: SHRINK,
-              // Linear: with scrub, an eased curve front-loads the motion.
-              ease: "none",
-              duration: ZOOM_PHASE,
-            })
-            // 2 — now it leans back and picks up its small Z skew.
-            .to(content, {
-              rotationX: TILT,
-              rotationZ: (Math.random() - 0.5) * SKEW,
-              ease: "none",
-              duration: 1 - ZOOM_PHASE,
-            })
-            // 3 — and fades out over the tail of the pin. The fade lives
-            // INSIDE the pin timeline on purpose: a separate post-pin
-            // ScrollTrigger measures against pin-spacer positions that this
-            // fixed-height slide layout never actually produces, which left
-            // half-faded cards floating over the FAQ. Inside the pin, the
-            // card is guaranteed invisible the moment the pin releases.
-            .to(
-              content,
-              { autoAlpha: 0, ease: "none", duration: 1 - FADE_START },
-              FADE_START,
-            );
-        });
       });
 
       /* ---- how: measure each marquee line every frame ------------------ */
@@ -254,10 +176,10 @@ export function ScrollMotion() {
         frame();
       }
 
-      // Pinned slides measure the page at setup time. Anything that changes
+      // ScrollTriggers measure the page at setup time. Anything that changes
       // layout afterwards — a resize, or an image finishing its load — leaves
-      // every pin's start/end pointing at stale positions, which is exactly
-      // the "slides floating over the FAQ" glitch. Debounced refresh on both.
+      // every trigger's start/end pointing at stale positions, so the flash
+      // headlines fire at the wrong scroll depth. Debounced refresh on both.
       let refreshTimer: ReturnType<typeof setTimeout>;
       const queueRefresh = () => {
         clearTimeout(refreshTimer);
