@@ -16,105 +16,54 @@ import type { Side } from "@/lib/apply-sides";
  * later inside the application's own gate (name + email + Google). The only
  * job of this screen is the side pick.
  *
- * Three sides now, so the layout is a triangle rather than the old split: one
- * shape, cut into three wedges by a horizontal rule and a stem down to the
- * base. Hovering a wedge fills it in its application's own surface colour and
- * draws its edges in forest; choosing one animates the whole picker out and
- * mounts that application in place.
+ * Three sides, so three full-height columns split by two vertical hairlines.
+ * Hovering one fills it in that application's own surface colour, runs the
+ * assembling lines across it and outlines it in forest; choosing one animates
+ * the whole picker out and mounts that application in place.
  *
- * Below `md` the triangle is unreadable — the wedge interiors are too narrow
- * for a phone — so it collapses to three stacked bands carrying the same copy.
+ * Below `md` the columns stack into three bands carrying the same copy.
  */
 
-type Wedge = {
+type Column = {
   side: Side;
   kicker: string;
-  label: string;
+  label: [string, string];
   blurb: string;
-  /** SVG polygon points, and the same geometry as a clip-path. */
-  points: [number, number][];
-  /** Where the copy sits inside the wedge, as inset percentages. */
-  copy: { top: string; left: string; width: string; align: "center" | "left" };
-  /** Which side the assembling lines sweep in from. */
+  /** Which edge the assembling lines sweep in from. */
   from: "left" | "right";
-  /**
-   * Where the lines fade in from, as a background-position on the FULL
-   * container — the button box is the whole triangle, not the wedge, so a
-   * corner origin would land outside this wedge and mask the lines away.
-   */
-  maskAt: string;
   /** Fill on hover — each application's own surface. Null keeps it white. */
   fill: string | null;
 };
 
-/**
- * Triangle: apex (50,3), base (2,97)–(98,97). A horizontal cut at y=58 meets
- * the sides at x=21.9 and x=78.1, and a stem drops from (50,58) to the base.
- *
- * The cut sits below the midpoint on purpose: at the midpoint the top wedge is
- * too narrow to hold a line of text without the clip-path slicing through it.
- * Copy boxes are inset to each wedge's safe interior for the same reason —
- * clip-path silently cuts overflow rather than reflowing it.
- */
-const CUT_Y = 58;
-const CUT_LEFT = 21.9;
-const CUT_RIGHT = 78.1;
-
-const WEDGES: Wedge[] = [
+const COLUMNS: Column[] = [
   {
     side: "intern",
     kicker: "Student",
-    label: "Looking for an internship.",
-    blurb: "A person reads it. You hear back within 14 days.",
-    points: [
-      [50, 3],
-      [CUT_RIGHT, CUT_Y],
-      [CUT_LEFT, CUT_Y],
-    ],
-    copy: { top: "31%", left: "34%", width: "32%", align: "center" },
+    label: ["Looking for", "an internship."],
+    blurb:
+      "The full application. It saves as you type, a person reads it, and you hear back within 14 days either way. Selected on what you have shipped, not GPA.",
     from: "right",
-    maskAt: "50% 6%",
     fill: null,
   },
   {
     side: "startup",
     kicker: "Startup",
-    label: "Hiring interns.",
-    blurb: "Matched by hand — 2–4 candidates, not 200 résumés.",
-    points: [
-      [CUT_LEFT, CUT_Y],
-      [50, CUT_Y],
-      [50, 97],
-      [2, 97],
-    ],
-    copy: { top: "66%", left: "20%", width: "28%", align: "left" },
+    label: ["Hiring", "interns."],
+    blurb:
+      "Tell us the shape of the work and we match by hand — 2–4 candidates, not a firehose of 200. Every startup is verified by a person before the dashboard unlocks.",
     from: "left",
-    maskAt: "6% 96%",
     fill: "#0e0f0d",
   },
   {
     side: "chapter",
     kicker: "Chapter",
-    label: "Start a chapter.",
-    blurb: "Bring Axiom to your school. You can still do the other two.",
-    points: [
-      [50, CUT_Y],
-      [CUT_RIGHT, CUT_Y],
-      [98, 97],
-      [50, 97],
-    ],
-    copy: { top: "66%", left: "52%", width: "28%", align: "left" },
-    from: "right",
-    maskAt: "94% 96%",
+    label: ["Start a chapter", "at your school."],
+    blurb:
+      "Bring Axiom somewhere it has never been. Approved one at a time, by hand — and it does not use up either of the other two.",
+    from: "left",
     fill: "#2e302c",
   },
 ];
-
-const toPoints = (points: [number, number][]) =>
-  points.map(([x, y]) => `${x},${y}`).join(" ");
-
-const toClipPath = (points: [number, number][]) =>
-  `polygon(${points.map(([x, y]) => `${x}% ${y}%`).join(", ")})`;
 
 export function OnboardingApplication({
   prefill,
@@ -174,22 +123,18 @@ const LINE_COUNT = 14;
 /**
  * The assembling-lines hover, the Iron-Man-nanoparticle read: thin diagonal
  * rules materialise one after another from a top corner and sweep across the
- * wedge. The button is clip-pathed, so they are clipped to the wedge with it.
+ * column.
  *
  * Pure CSS: each line owns a transition-delay, so hovering runs them in
  * sequence and un-hovering runs the sequence backwards. Only opacity and
  * transform animate, so it all stays on the compositor.
  */
-function HoverLines({
-  from,
-  dark,
-  maskAt,
-}: {
-  from: "left" | "right";
-  dark?: boolean;
-  maskAt: string;
-}) {
-  const mask = `radial-gradient(90% 90% at ${maskAt}, #000 20%, transparent 70%)`;
+function HoverLines({ from, dark }: { from: "left" | "right"; dark?: boolean }) {
+  // The button box IS the column now, so a plain top-corner origin works.
+  const mask =
+    from === "right"
+      ? "radial-gradient(120% 120% at 100% 0%, #000 25%, transparent 72%)"
+      : "radial-gradient(120% 120% at 0% 0%, #000 25%, transparent 72%)";
 
   return (
     <span
@@ -240,149 +185,90 @@ function Picker({ onPick }: { onPick: (side: Side) => void }) {
         </h1>
       </header>
 
-      {/* ---- the triangle (md and up) ---- */}
-      <div className="hidden flex-1 items-center justify-center px-6 py-10 md:flex">
-        <div className="relative aspect-[1.5/1] h-[min(62dvh,500px)]">
-          {WEDGES.map((wedge, index) => (
-            <button
-              key={wedge.side}
-              type="button"
-              onClick={() => onPick(wedge.side)}
-              aria-label={`${wedge.kicker} — ${wedge.label}`}
-              // clip-path shapes the hit area as well as the paint, so the
-              // three buttons can overlap in the box without stealing each
-              // other's clicks.
-              className="group absolute inset-0 cursor-pointer outline-none"
-              style={{ clipPath: toClipPath(wedge.points) }}
-            >
-              {/* fill — each application's own surface, on hover only */}
-              <span
-                aria-hidden
-                className="absolute inset-0 opacity-0 transition-opacity duration-400 group-hover:opacity-100 group-focus-visible:opacity-100"
-                style={{
-                  background: wedge.fill ?? "rgba(47,107,61,0.06)",
-                }}
-              />
-
-              <HoverLines
-                from={wedge.from}
-                dark={Boolean(wedge.fill)}
-                maskAt={wedge.maskAt}
-              />
-
-              {/* this wedge's own edges, drawn forest on hover. A boxShadow
-                  inset would trace the button's rectangle, not its shape. */}
-              <svg
-                aria-hidden
-                viewBox="0 0 100 100"
-                preserveAspectRatio="none"
-                className="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-400 group-hover:opacity-100 group-focus-visible:opacity-100"
-              >
-                <polygon
-                  points={toPoints(wedge.points)}
-                  fill="none"
-                  stroke="var(--color-forest)"
-                  strokeWidth={2}
-                  vectorEffect="non-scaling-stroke"
-                />
-              </svg>
-
-              <span
-                className="absolute flex flex-col gap-2"
-                style={{
-                  top: wedge.copy.top,
-                  left: wedge.copy.left,
-                  width: wedge.copy.width,
-                  textAlign: wedge.copy.align,
-                  alignItems:
-                    wedge.copy.align === "center" ? "center" : "flex-start",
-                }}
-              >
-                <span
-                  className={`font-mono text-[0.68rem] font-semibold tracking-[0.24em] uppercase transition-colors duration-300 ${
-                    wedge.fill
-                      ? "text-faint group-hover:text-[#a8d5b3]"
-                      : "text-faint group-hover:text-forest"
-                  }`}
-                >
-                  {`0${index + 1} — ${wedge.kicker}`}
-                </span>
-                <span
-                  className={`block text-[clamp(0.95rem,1.5vw,1.3rem)] leading-[1.14] font-bold tracking-[-0.025em] transition-colors duration-400 ${
-                    wedge.fill
-                      ? "text-ink group-hover:text-[#f2f0e9]"
-                      : "text-ink group-hover:text-forest-deep"
-                  }`}
-                >
-                  {wedge.label}
-                </span>
-                <span
-                  className={`text-[0.76rem] leading-[1.5] transition-colors duration-400 ${
-                    wedge.fill
-                      ? "text-muted group-hover:text-[#b0aea3]"
-                      : "text-muted"
-                  }`}
-                >
-                  {wedge.blurb}
-                </span>
-              </span>
-            </button>
-          ))}
-
-          {/* the resting hairlines: outer triangle plus the two cuts. Sits
-              above the buttons but takes no pointer events. */}
-          <svg
-            aria-hidden
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
-            className="pointer-events-none absolute inset-0 h-full w-full"
-          >
-            <g
-              fill="none"
-              stroke="var(--lines)"
-              strokeWidth={1}
-              vectorEffect="non-scaling-stroke"
-            >
-              <polygon points="50,3 98,97 2,97" />
-              <line x1={CUT_LEFT} y1={CUT_Y} x2={CUT_RIGHT} y2={CUT_Y} />
-              <line x1="50" y1={CUT_Y} x2="50" y2="97" />
-            </g>
-          </svg>
-        </div>
-      </div>
-
-      {/* ---- stacked bands (below md) ---- */}
-      <div className="flex flex-1 flex-col md:hidden">
-        {WEDGES.map((wedge, index) => (
+      {/* Three columns split by two vertical hairlines. Under md they stack
+          into bands, and the divider moves to the bottom edge. */}
+      <div className="grid flex-1 md:grid-cols-3">
+        {COLUMNS.map((column, index) => (
           <button
-            key={wedge.side}
+            key={column.side}
             type="button"
-            onClick={() => onPick(wedge.side)}
-            className="group relative flex flex-1 cursor-pointer flex-col justify-center gap-2 border-b border-b-[var(--lines)] px-6 py-10 text-left outline-none transition-colors duration-400 last:border-b-0"
-            style={
-              wedge.fill
-                ? undefined
-                : { backgroundColor: "transparent" }
-            }
+            onClick={() => onPick(column.side)}
+            className={`group relative flex cursor-pointer flex-col justify-between gap-12 px-6 py-10 text-left outline-none transition-colors duration-500 sm:px-8 sm:py-12 ${
+              index < COLUMNS.length - 1
+                ? "border-b border-b-[var(--lines)] md:border-r md:border-r-[var(--lines)] md:border-b-0"
+                : ""
+            }`}
           >
-            <span className="font-mono text-[0.66rem] font-semibold tracking-[0.24em] text-faint uppercase">
-              {`0${index + 1} — ${wedge.kicker}`}
-            </span>
-            <span className="text-[1.5rem] leading-[1.1] font-bold tracking-[-0.03em] text-ink">
-              {wedge.label}
-            </span>
-            <span className="max-w-[38ch] text-[0.85rem] leading-relaxed text-muted">
-              {wedge.blurb}
-            </span>
+            {/* fill — each application's own surface, on hover only */}
             <span
               aria-hidden
-              className="absolute right-6 bottom-10 text-[1.2rem] text-faint"
+              className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100"
+              style={{ background: column.fill ?? "rgba(47,107,61,0.05)" }}
+            />
+
+            {/* forest outline on hover/focus — inset so the grid never shifts */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-400 group-hover:opacity-100 group-focus-visible:opacity-100"
+              style={{ boxShadow: "inset 0 0 0 2px var(--color-forest)" }}
+            />
+
+            <HoverLines from={column.from} dark={Boolean(column.fill)} />
+
+            <span className="relative flex items-center justify-between">
+              <span
+                className={`font-mono text-[0.74rem] font-semibold tracking-[0.24em] uppercase transition-colors duration-300 ${
+                  column.fill
+                    ? "text-faint group-hover:text-[#a8d5b3]"
+                    : "text-faint group-hover:text-forest"
+                }`}
+              >
+                {column.kicker}
+              </span>
+              <span
+                className={`font-mono text-[0.64rem] tracking-[0.16em] transition-colors duration-300 ${
+                  column.fill ? "text-faint group-hover:text-[#8c8a82]" : "text-faint"
+                }`}
+              >
+                0{index + 1}
+              </span>
+            </span>
+
+            <span
+              className={`relative block text-[clamp(1.7rem,3.1vw,2.9rem)] leading-[1.02] font-bold tracking-[-0.032em] transition-colors duration-400 ${
+                column.fill
+                  ? "text-ink group-hover:text-[#f2f0e9]"
+                  : "text-ink group-hover:text-forest-deep"
+              }`}
             >
-              →
+              {column.label[0]}
+              <br />
+              {column.label[1]}
+            </span>
+
+            <span className="relative flex items-end justify-between gap-5">
+              <span
+                className={`max-w-[38ch] text-[0.88rem] leading-relaxed transition-colors duration-400 ${
+                  column.fill
+                    ? "text-muted group-hover:text-[#b0aea3]"
+                    : "text-muted"
+                }`}
+              >
+                {column.blurb}
+              </span>
+              <span
+                aria-hidden
+                className={`shrink-0 text-[1.3rem] transition-[color,transform] duration-400 group-hover:translate-x-1.5 group-hover:text-forest ${
+                  column.fill ? "text-faint" : "text-faint"
+                }`}
+              >
+                →
+              </span>
             </span>
           </button>
         ))}
       </div>
+
     </main>
   );
 }
