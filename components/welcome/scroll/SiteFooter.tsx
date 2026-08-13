@@ -5,12 +5,14 @@ import { einLine } from "@/lib/org";
 /**
  * The closing section.
  *
- * A dark panel that ends the page on the one thing worth saying: a gradient
- * line, the two ways in, then a thin bar carrying the mark, the links and the
- * socials. The dot field sits behind it all as texture.
+ * Ends the page on the one thing worth saying: a gradient line, the two ways
+ * in, then a thin bar carrying the mark, the links and the socials. The dot
+ * field sits behind it all as texture.
  *
- * Gradient stays inside the brand's greens rather than reaching for a second
- * hue — on the near-black ground they already read as neon.
+ * Light, on the same paper as the rest of the site — the page never goes dark,
+ * so the footer should not either. The gradient runs strictly left to right
+ * through the brand's greens, dark to bright, so it reads as one sweep rather
+ * than a colour wash.
  */
 
 const FOOTER_LINKS = [
@@ -41,12 +43,12 @@ const SOCIAL_LINKS = [
 
 export function SiteFooter() {
   return (
-    <section className="relative overflow-hidden bg-night text-night-text">
+    <section className="relative overflow-hidden bg-paper text-ink">
       {/* the dot field, as texture behind everything */}
       {/* Texture, not content: knocked back and masked out of the middle so
           the gradient line and the buttons sit on clean ground. */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.28]"
+        className="pointer-events-none absolute inset-0 opacity-70"
         style={{
           maskImage:
             "radial-gradient(70% 55% at 50% 42%, transparent 30%, #000 78%)",
@@ -63,7 +65,7 @@ export function SiteFooter() {
           <span
             style={{
               backgroundImage:
-                "linear-gradient(100deg, #a8d5b3 0%, #7bf0a5 38%, #3f8f52 72%, #d8f0dd 100%)",
+                "linear-gradient(90deg, #1d4527 0%, #2f6b3d 34%, #3f8f52 67%, #6cc47f 100%)",
               WebkitBackgroundClip: "text",
               backgroundClip: "text",
               color: "transparent",
@@ -76,13 +78,13 @@ export function SiteFooter() {
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
           <Link
             href="/onboarding?side=intern"
-            className="rounded-full border border-night-text/60 px-7 py-3.5 text-[0.95rem] font-medium transition-[transform,background-color,color] duration-300 hover:-translate-y-0.5 hover:bg-night-text hover:text-night"
+            className="rounded-full bg-ink px-7 py-3.5 text-[0.95rem] font-medium text-white transition-transform duration-300 hover:-translate-y-0.5"
           >
             Get started
           </Link>
           <Link
             href="/onboarding?side=startup"
-            className="rounded-full bg-night-text/10 px-7 py-3.5 text-[0.95rem] font-medium text-night-muted transition-[transform,color] duration-300 hover:-translate-y-0.5 hover:text-night-text"
+            className="rounded-full bg-ink/[0.06] px-7 py-3.5 text-[0.95rem] font-medium text-muted transition-[transform,color] duration-300 hover:-translate-y-0.5 hover:text-ink"
           >
             Hire an intern
           </Link>
@@ -91,7 +93,7 @@ export function SiteFooter() {
         {/* the bar */}
         <div
           className="mt-24 flex flex-wrap items-center justify-between gap-6 pt-7 sm:mt-32"
-          style={{ borderTop: "1px solid rgba(242,240,233,0.14)" }}
+          style={{ borderTop: "1px solid var(--lines)" }}
         >
           <div className="flex flex-wrap items-center gap-x-7 gap-y-3">
             <Link
@@ -114,7 +116,7 @@ export function SiteFooter() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-[0.92rem] text-night-muted transition-colors duration-200 hover:text-night-text"
+                className="text-[0.92rem] text-muted transition-colors duration-200 hover:text-ink"
               >
                 {link.label}
               </Link>
@@ -129,7 +131,7 @@ export function SiteFooter() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={social.label}
-                className="text-night-muted transition-colors duration-200 hover:text-night-text"
+                className="text-muted transition-colors duration-200 hover:text-ink"
               >
                 <svg viewBox="0 0 24 24" className="h-[22px] w-[22px]" fill="currentColor" aria-hidden>
                   <path d={social.path} />
@@ -145,13 +147,13 @@ export function SiteFooter() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-[0.82rem] text-night-muted/70 transition-colors duration-200 hover:text-night-text"
+                className="text-[0.82rem] text-faint transition-colors duration-200 hover:text-ink"
               >
                 {link.label}
               </Link>
             ))}
           </div>
-          <p className="text-[0.82rem] text-night-muted/70">
+          <p className="text-[0.82rem] text-faint">
             © 2026 Axiom Pathways{einLine() ? ` · ${einLine()}` : ""} · A
             nonprofit placing students into real startup work.
           </p>
