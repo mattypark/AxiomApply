@@ -8,7 +8,6 @@ import { StartupApplication } from "@/components/apply/StartupApplication";
 import { ChapterApplication } from "@/components/apply/ChapterApplication";
 import type { ApplyPrefill } from "@/components/apply/ApplyEngine";
 import type { Side } from "@/lib/apply-sides";
-import { einLine } from "@/lib/org";
 
 /**
  * /onboarding — the second entry point into the apply engine.
@@ -30,8 +29,6 @@ type Choice = {
   side: Side;
   label: string;
   note: string;
-  /** Indent on md+, as a percentage of the row. Staggers the stack. */
-  indent: string;
   /** Which edge the assembling lines sweep in from. */
   from: "left" | "right";
 };
@@ -41,21 +38,18 @@ const CHOICES: Choice[] = [
     side: "intern",
     label: "Intern",
     note: "Looking for an internship. A person reads it — you hear back within 14 days either way.",
-    indent: "0%",
     from: "right",
   },
   {
     side: "startup",
     label: "Startup",
     note: "Hiring interns. Matched by hand — 2–4 candidates, not a firehose of 200.",
-    indent: "34%",
     from: "left",
   },
   {
     side: "chapter",
     label: "Chapter",
     note: "Start one at your school. Approved one at a time, and it does not use up the other two.",
-    indent: "0%",
     from: "right",
   },
 ];
@@ -67,15 +61,21 @@ const CHOICES: Choice[] = [
  * address is a real problem, not a cosmetic one, and the CAN-SPAM footer reads
  * from the same details.
  */
-const ADDRESS = ["1200 Innovation Way", "Houston, TX 77002", "+1 999 999 9999"];
+const ADDRESS = ["1200 Innovation Way", "Houston, TX 77002"];
 
-const CONTACT = [
-  { href: "mailto:matthew@axiompathways.org", label: "matthew@axiompathways.org" },
-  { href: "https://www.instagram.com/axiompathways/", label: "Instagram" },
-  {
-    href: "https://www.linkedin.com/company/axiom-pathways/",
-    label: "LinkedIn",
-  },
+const EMAIL = "matthew@axiompathways.org";
+
+/**
+ * The same links the menu carries. Get started lands here directly, so this
+ * screen cannot be the only one on the site with no way anywhere else.
+ */
+const NAV = [
+  { href: "/", label: "Homepage" },
+  { href: "/about/internships", label: "About us" },
+  { href: "/about/learn", label: "Who we are" },
+  { href: "/#faq", label: "FAQs" },
+  { href: "https://www.axiompathways.org/articles", label: "Articles" },
+  { href: "/auth", label: "Sign in" },
 ] as const;
 
 export function OnboardingApplication({
@@ -182,39 +182,62 @@ function HoverLines({ from }: { from: "left" | "right" }) {
 function Picker({ onPick }: { onPick: (side: Side) => void }) {
   return (
     <main className="flex min-h-dvh flex-col bg-paper">
-      <header className="px-6 pt-9 pb-4 sm:px-12 lg:px-20">
+      <header className="flex flex-wrap items-center gap-x-7 gap-y-3 px-6 pt-9 pb-4 sm:px-12 lg:px-20">
         <Link
           href="/"
-          className="w-fit font-mono text-[0.72rem] tracking-[0.16em] text-muted uppercase transition-colors duration-300 hover:text-ink"
+          className="font-mono text-[0.72rem] tracking-[0.16em] text-muted uppercase transition-colors duration-300 hover:text-ink"
         >
           ← Back
         </Link>
+
+        <nav aria-label="Secondary" className="flex flex-wrap gap-x-7 gap-y-2">
+          {NAV.map((link) =>
+            link.href.startsWith("http") ? (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[0.95rem] text-muted transition-colors duration-200 hover:text-ink"
+              >
+                {link.label}
+              </a>
+            ) : (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-[0.95rem] text-muted transition-colors duration-200 hover:text-ink"
+              >
+                {link.label}
+              </Link>
+            ),
+          )}
+        </nav>
       </header>
 
-      {/* the stack — numbered, staggered, one row each */}
-      <div className="flex flex-1 flex-col justify-center py-6">
+      {/* The stack is centred as a block; the left/right/left stagger then
+          runs inside it, so the group sits in the middle of the page rather
+          than hugging the left edge. */}
+      <div className="flex flex-1 flex-col items-center justify-center gap-6 py-6">
         {CHOICES.map((choice, index) => (
           <button
             key={choice.side}
             type="button"
             onClick={() => onPick(choice.side)}
             aria-label={`${choice.label} — ${choice.note}`}
-            className="group relative w-full cursor-pointer px-6 py-5 text-left outline-none sm:px-12 lg:px-20"
+            className="group relative w-full cursor-pointer px-6 py-5 outline-none sm:px-12 lg:px-20"
           >
             {/* the assembling lines, behind the word rather than over a panel */}
             <HoverLines from={choice.from} />
 
             {/* The indent only applies from md up — on a phone every row
                 starts at the same left edge or the stagger just eats width. */}
-            <span
-              className="relative flex items-baseline gap-4 sm:gap-8 md:ml-[var(--indent)]"
-              style={{ ["--indent" as string]: choice.indent }}
-            >
+            <span className="relative mx-auto flex w-fit items-baseline gap-4 sm:gap-8">
               <span className="shrink-0 font-display text-[1rem] text-faint transition-colors duration-300 group-hover:text-forest sm:text-[1.15rem]">
                 0{index + 1}
               </span>
 
-              <span className="flex min-w-0 flex-col">
+              <span className="flex min-w-0 flex-col items-center text-center">
                 <span className="block font-display text-[clamp(3rem,9.5vw,7.5rem)] leading-[0.95] font-normal tracking-[-0.02em] text-ink transition-colors duration-400 group-hover:text-forest">
                   {choice.label}
                 </span>
@@ -223,18 +246,12 @@ function Picker({ onPick }: { onPick: (side: Side) => void }) {
                 </span>
               </span>
 
-              <span
-                aria-hidden
-                className="ml-auto hidden shrink-0 self-center text-[1.4rem] text-faint opacity-0 transition-[opacity,transform] duration-400 group-hover:translate-x-1.5 group-hover:text-forest group-hover:opacity-100 md:block"
-              >
-                →
-              </span>
             </span>
           </button>
         ))}
       </div>
 
-      {/* contact bottom-left, legal bottom-right */}
+      {/* Location and email. The legal links live on the pages themselves. */}
       <footer
         className="flex flex-wrap items-end justify-between gap-6 px-6 pt-6 pb-8 sm:px-12 lg:px-20"
         style={{ borderTop: "1px solid var(--lines)" }}
@@ -248,31 +265,14 @@ function Picker({ onPick }: { onPick: (side: Side) => void }) {
               {line}
             </span>
           ))}
-          <span aria-hidden className="h-2" />
-          {CONTACT.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              target={link.href.startsWith("http") ? "_blank" : undefined}
-              rel={
-                link.href.startsWith("http") ? "noopener noreferrer" : undefined
-              }
-              className="font-mono text-[0.72rem] tracking-[0.1em] text-faint uppercase transition-colors duration-200 hover:text-ink"
-            >
-              {link.label}
-            </a>
-          ))}
         </address>
 
-        <div className="flex flex-col gap-1 sm:text-right">
-          <p className="font-mono text-[0.72rem] tracking-[0.1em] text-faint uppercase">
-            © 2026 Axiom Pathways
-            {einLine() ? ` · ${einLine()}` : ""}
-          </p>
-          <p className="font-mono text-[0.72rem] tracking-[0.1em] text-faint uppercase">
-            All rights reserved
-          </p>
-        </div>
+        <a
+          href={`mailto:${EMAIL}`}
+          className="font-mono text-[0.72rem] tracking-[0.1em] text-faint uppercase transition-colors duration-200 hover:text-ink"
+        >
+          {EMAIL}
+        </a>
       </footer>
     </main>
   );
