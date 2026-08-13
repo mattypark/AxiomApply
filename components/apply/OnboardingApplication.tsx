@@ -8,6 +8,7 @@ import { StartupApplication } from "@/components/apply/StartupApplication";
 import { ChapterApplication } from "@/components/apply/ChapterApplication";
 import type { ApplyPrefill } from "@/components/apply/ApplyEngine";
 import type { Side } from "@/lib/apply-sides";
+import { einLine } from "@/lib/org";
 
 /**
  * /onboarding — the second entry point into the apply engine.
@@ -16,54 +17,57 @@ import type { Side } from "@/lib/apply-sides";
  * later inside the application's own gate (name + email + Google). The only
  * job of this screen is the side pick.
  *
- * Three sides, so three full-height columns split by two vertical hairlines.
- * Hovering one fills it in that application's own surface colour, runs the
- * assembling lines across it and outlines it in forest; choosing one animates
- * the whole picker out and mounts that application in place.
+ * Three sides, set as a staggered stack on cream: each one numbered, huge, and
+ * indented off the last so the eye walks down them rather than scanning a row.
+ * Hovering runs the assembling lines behind the word and pulls it into forest;
+ * choosing one animates the whole picker out and mounts that application.
  *
- * Below `md` the columns stack into three bands carrying the same copy.
+ * Contact sits bottom-left and the legal line bottom-right, so the screen
+ * reads as a page rather than as a form.
  */
 
-type Column = {
+type Choice = {
   side: Side;
-  kicker: string;
-  label: [string, string];
-  blurb: string;
+  label: string;
+  note: string;
+  /** Indent on md+, as a percentage of the row. Staggers the stack. */
+  indent: string;
   /** Which edge the assembling lines sweep in from. */
   from: "left" | "right";
-  /** Fill on hover — each application's own surface. Null keeps it white. */
-  fill: string | null;
 };
 
-const COLUMNS: Column[] = [
+const CHOICES: Choice[] = [
   {
     side: "intern",
-    kicker: "Student",
-    label: ["Looking for", "an internship."],
-    blurb:
-      "The full application. It saves as you type, a person reads it, and you hear back within 14 days either way. Selected on what you have shipped, not GPA.",
+    label: "Intern",
+    note: "Looking for an internship. A person reads it — you hear back within 14 days either way.",
+    indent: "0%",
     from: "right",
-    fill: null,
   },
   {
     side: "startup",
-    kicker: "Startup",
-    label: ["Hiring", "interns."],
-    blurb:
-      "Tell us the shape of the work and we match by hand — 2–4 candidates, not a firehose of 200. Every startup is verified by a person before the dashboard unlocks.",
+    label: "Startup",
+    note: "Hiring interns. Matched by hand — 2–4 candidates, not a firehose of 200.",
+    indent: "20%",
     from: "left",
-    fill: "#0e0f0d",
   },
   {
     side: "chapter",
-    kicker: "Chapter",
-    label: ["Start a chapter", "at your school."],
-    blurb:
-      "Bring Axiom somewhere it has never been. Approved one at a time, by hand — and it does not use up either of the other two.",
-    from: "left",
-    fill: "#2e302c",
+    label: "Chapter",
+    note: "Start one at your school. Approved one at a time, and it does not use up the other two.",
+    indent: "8%",
+    from: "right",
   },
 ];
+
+const CONTACT = [
+  { href: "mailto:matthew@axiompathways.org", label: "matthew@axiompathways.org" },
+  { href: "https://www.instagram.com/axiompathways/", label: "Instagram" },
+  {
+    href: "https://www.linkedin.com/company/axiom-pathways/",
+    label: "LinkedIn",
+  },
+] as const;
 
 export function OnboardingApplication({
   prefill,
@@ -114,10 +118,10 @@ export function OnboardingApplication({
 }
 
 /* ------------------------------------------------------------------ */
-/* the triangle picker                                                 */
+/* the picker                                                          */
 /* ------------------------------------------------------------------ */
 
-/** How many lines assemble across a wedge. */
+/** How many lines assemble across a row. */
 const LINE_COUNT = 14;
 
 /**
@@ -129,12 +133,14 @@ const LINE_COUNT = 14;
  * sequence and un-hovering runs the sequence backwards. Only opacity and
  * transform animate, so it all stays on the compositor.
  */
-function HoverLines({ from, dark }: { from: "left" | "right"; dark?: boolean }) {
-  // The button box IS the column now, so a plain top-corner origin works.
+function HoverLines({ from }: { from: "left" | "right" }) {
+  // Centred vertically and wide enough to actually reach the word: the rows
+  // are short and full-bleed, so a tight corner gradient faded out before it
+  // got anywhere near the type.
   const mask =
     from === "right"
-      ? "radial-gradient(120% 120% at 100% 0%, #000 25%, transparent 72%)"
-      : "radial-gradient(120% 120% at 0% 0%, #000 25%, transparent 72%)";
+      ? "radial-gradient(150% 200% at 100% 50%, #000 35%, transparent 85%)"
+      : "radial-gradient(150% 200% at 0% 50%, #000 35%, transparent 85%)";
 
   return (
     <span
@@ -150,14 +156,12 @@ function HoverLines({ from, dark }: { from: "left" | "right"; dark?: boolean }) 
           key={index}
           className="fx-line"
           style={{
-            top: `${6 + index * 6.4}%`,
+            top: `${4 + index * 6.8}%`,
             [from === "right" ? "right" : "left"]: "-20%",
             ["--fx-origin" as string]:
               from === "right" ? "right center" : "left center",
             ["--fx-rot" as string]: from === "right" ? "-14deg" : "14deg",
-            ["--fx-line-color" as string]: dark
-              ? "rgba(168,213,179,0.55)"
-              : "rgba(47,107,61,0.5)",
+            ["--fx-line-color" as string]: "rgba(47,107,61,0.42)",
             transitionDelay: `${index * 38}ms`,
           }}
         />
@@ -168,99 +172,57 @@ function HoverLines({ from, dark }: { from: "left" | "right"; dark?: boolean }) 
 
 function Picker({ onPick }: { onPick: (side: Side) => void }) {
   return (
-    <main className="flex min-h-dvh flex-col bg-white">
-      <header
-        className="relative px-6 pt-20 pb-6 sm:px-10 sm:pt-24"
-        style={{ borderBottom: "1px solid var(--lines)" }}
-      >
+    <main className="flex min-h-dvh flex-col bg-paper">
+      {/* On a phone the centred title would sit on top of Back, so below sm
+          the two simply stack instead of overlapping. */}
+      <header className="relative flex flex-col gap-3 px-6 pt-9 pb-4 sm:block sm:px-12 lg:px-20">
         <Link
           href="/"
-          className="absolute top-8 left-6 font-mono text-[0.72rem] tracking-[0.16em] text-muted uppercase transition-colors duration-300 hover:text-ink sm:left-10"
+          className="w-fit font-mono text-[0.72rem] tracking-[0.16em] text-muted uppercase transition-colors duration-300 hover:text-ink"
         >
           ← Back
         </Link>
 
-        <h1 className="text-center font-mono text-[0.78rem] tracking-[0.24em] text-muted uppercase">
+        <h1 className="pointer-events-none font-mono text-[0.72rem] tracking-[0.24em] text-muted uppercase sm:absolute sm:inset-x-0 sm:top-9 sm:text-center">
           Which side are you on?
         </h1>
       </header>
 
-      {/* Three columns split by two vertical hairlines. Under md they stack
-          into bands, and the divider moves to the bottom edge. */}
-      <div className="grid flex-1 md:grid-cols-3">
-        {COLUMNS.map((column, index) => (
+      {/* the stack — numbered, staggered, one row each */}
+      <div className="flex flex-1 flex-col justify-center py-6">
+        {CHOICES.map((choice, index) => (
           <button
-            key={column.side}
+            key={choice.side}
             type="button"
-            onClick={() => onPick(column.side)}
-            className={`group relative flex cursor-pointer flex-col justify-between gap-12 px-6 py-10 text-left outline-none transition-colors duration-500 sm:px-8 sm:py-12 ${
-              index < COLUMNS.length - 1
-                ? "border-b border-b-[var(--lines)] md:border-r md:border-r-[var(--lines)] md:border-b-0"
-                : ""
-            }`}
+            onClick={() => onPick(choice.side)}
+            aria-label={`${choice.label} — ${choice.note}`}
+            className="group relative w-full cursor-pointer px-6 py-5 text-left outline-none sm:px-12 lg:px-20"
           >
-            {/* fill — each application's own surface, on hover only */}
+            {/* the assembling lines, behind the word rather than over a panel */}
+            <HoverLines from={choice.from} />
+
+            {/* The indent only applies from md up — on a phone every row
+                starts at the same left edge or the stagger just eats width. */}
             <span
-              aria-hidden
-              className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100"
-              style={{ background: column.fill ?? "rgba(47,107,61,0.05)" }}
-            />
-
-            {/* forest outline on hover/focus — inset so the grid never shifts */}
-            <span
-              aria-hidden
-              className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-400 group-hover:opacity-100 group-focus-visible:opacity-100"
-              style={{ boxShadow: "inset 0 0 0 2px var(--color-forest)" }}
-            />
-
-            <HoverLines from={column.from} dark={Boolean(column.fill)} />
-
-            <span className="relative flex items-center justify-between">
-              <span
-                className={`font-mono text-[0.74rem] font-semibold tracking-[0.24em] uppercase transition-colors duration-300 ${
-                  column.fill
-                    ? "text-faint group-hover:text-[#a8d5b3]"
-                    : "text-faint group-hover:text-forest"
-                }`}
-              >
-                {column.kicker}
-              </span>
-              <span
-                className={`font-mono text-[0.64rem] tracking-[0.16em] transition-colors duration-300 ${
-                  column.fill ? "text-faint group-hover:text-[#8c8a82]" : "text-faint"
-                }`}
-              >
+              className="relative flex items-baseline gap-4 sm:gap-8 md:ml-[var(--indent)]"
+              style={{ ["--indent" as string]: choice.indent }}
+            >
+              <span className="shrink-0 font-mono text-[0.7rem] tracking-[0.16em] text-faint transition-colors duration-300 group-hover:text-forest sm:text-[0.78rem]">
                 0{index + 1}
               </span>
-            </span>
 
-            <span
-              className={`relative block text-[clamp(1.7rem,3.1vw,2.9rem)] leading-[1.02] font-bold tracking-[-0.032em] transition-colors duration-400 ${
-                column.fill
-                  ? "text-ink group-hover:text-[#f2f0e9]"
-                  : "text-ink group-hover:text-forest-deep"
-              }`}
-            >
-              {column.label[0]}
-              <br />
-              {column.label[1]}
-            </span>
-
-            <span className="relative flex items-end justify-between gap-5">
-              <span
-                className={`max-w-[38ch] text-[0.88rem] leading-relaxed transition-colors duration-400 ${
-                  column.fill
-                    ? "text-muted group-hover:text-[#b0aea3]"
-                    : "text-muted"
-                }`}
-              >
-                {column.blurb}
+              <span className="flex min-w-0 flex-col">
+                <span className="block text-[clamp(2.7rem,9vw,7rem)] leading-[0.98] font-semibold tracking-[-0.04em] text-ink transition-colors duration-400 group-hover:text-forest">
+                  {choice.label}
+                </span>
+                <span className="mt-2 max-w-[52ch] text-[0.88rem] leading-relaxed text-muted transition-colors duration-400 group-hover:text-forest-deep sm:text-[0.95rem]">
+                  {choice.note}
+                </span>
               </span>
+
               <span
                 aria-hidden
-                className={`shrink-0 text-[1.3rem] transition-[color,transform] duration-400 group-hover:translate-x-1.5 group-hover:text-forest ${
-                  column.fill ? "text-faint" : "text-faint"
-                }`}
+                className="ml-auto hidden shrink-0 self-center text-[1.4rem] text-faint opacity-0 transition-[opacity,transform] duration-400 group-hover:translate-x-1.5 group-hover:text-forest group-hover:opacity-100 md:block"
               >
                 →
               </span>
@@ -269,6 +231,37 @@ function Picker({ onPick }: { onPick: (side: Side) => void }) {
         ))}
       </div>
 
+      {/* contact bottom-left, legal bottom-right */}
+      <footer
+        className="flex flex-wrap items-end justify-between gap-6 px-6 pt-6 pb-8 sm:px-12 lg:px-20"
+        style={{ borderTop: "1px solid var(--lines)" }}
+      >
+        <address className="flex flex-col gap-1 not-italic">
+          {CONTACT.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              target={link.href.startsWith("http") ? "_blank" : undefined}
+              rel={
+                link.href.startsWith("http") ? "noopener noreferrer" : undefined
+              }
+              className="font-mono text-[0.72rem] tracking-[0.1em] text-faint uppercase transition-colors duration-200 hover:text-ink"
+            >
+              {link.label}
+            </a>
+          ))}
+        </address>
+
+        <div className="flex flex-col gap-1 sm:text-right">
+          <p className="font-mono text-[0.72rem] tracking-[0.1em] text-faint uppercase">
+            © 2026 Axiom Pathways
+            {einLine() ? ` · ${einLine()}` : ""}
+          </p>
+          <p className="font-mono text-[0.72rem] tracking-[0.1em] text-faint uppercase">
+            All rights reserved
+          </p>
+        </div>
+      </footer>
     </main>
   );
 }

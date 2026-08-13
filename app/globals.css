@@ -9,6 +9,10 @@
    ============================================================ */
 
 @theme {
+  /* The page ground. Warm off-white rather than pure #fff — every full-bleed
+     surface reads from this one token, so the site's paper colour changes in
+     a single place. Elevated panels stay lighter so they still lift off it. */
+  --color-paper: #fef7ee;
   --color-cream: #f2f0e9;
   --color-card: #faf8f2;
   --color-ink: #15150f;
@@ -48,9 +52,8 @@ html {
 }
 
 body {
-  /* Flat white everywhere, matching the welcome screen. The cream token is
-     still available for surfaces that want it. */
-  background: #ffffff;
+  /* One warm paper colour everywhere, matching the welcome screen. */
+  background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -463,7 +466,7 @@ body {
    while this surface can flip to the dark treatment from the reference. */
 
 :root {
-  --wel-bg: #ffffff;
+  --wel-bg: #fef7ee;
   --wel-fg: #15150f;
   --wel-fg-soft: #76746a;
   --wel-pill: #15150f;

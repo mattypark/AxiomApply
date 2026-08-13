@@ -105,7 +105,7 @@ export function MenuPill() {
             animate={{ opacity: 1, y: 0 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: -12 }}
             transition={{ duration: 0.45, ease: EASE }}
-            className="fixed inset-0 z-[100] flex flex-col bg-white"
+            className="fixed inset-0 z-[100] flex flex-col bg-paper"
           >
             {/* Close lives inside the panel, in the burger's own position.
                 The pill itself is in the header's stacking context and cannot

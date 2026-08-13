@@ -14,8 +14,8 @@
 
 :root {
   /* --- Surfaces & ink (light is the default theme) --------------------- */
-  --mainbg: #ffffff;
-  --mainbg-gradient: #ffffff00;
+  --mainbg: #fef7ee;
+  --mainbg-gradient: #fef7ee00;
   --secondbg: #f7f7f7;
 
   --fonts-100: #020108;
