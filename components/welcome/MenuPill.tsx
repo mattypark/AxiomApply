@@ -93,16 +93,16 @@ export function MenuPill() {
     <AnimatePresence>
       {open && (
         <motion.div
-          initial={reduce ? { opacity: 0 } : { opacity: 0, y: -18 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={reduce ? { opacity: 0 } : { opacity: 0, y: -12 }}
-          transition={{ duration: 0.45, ease: EASE }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.28, ease: "easeOut" }}
           className="fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-paper"
         >
           {/* Nav at the top, Close opposite it. The wordmark is gone — the
               page behind this panel already carries the brand, and Homepage
               is in the row below anyway. */}
-          <div className="relative flex flex-col items-center gap-4 px-6 pt-7 sm:px-12 lg:px-20">
+          <div className="relative flex flex-col items-center gap-4 px-6 pt-4 sm:pt-7 sm:px-12 lg:px-20">
             <nav
               aria-label="Secondary"
               className="flex flex-wrap justify-center gap-x-8 gap-y-2"
@@ -136,16 +136,15 @@ export function MenuPill() {
               type="button"
               onClick={close}
               aria-label="Close menu"
-              className="group absolute top-7 right-6 flex shrink-0 cursor-pointer items-center gap-2.5 sm:right-12 lg:right-20"
+              className="group absolute top-4 right-4 flex shrink-0 cursor-pointer items-center gap-2.5 sm:top-7 sm:right-9"
             >
               <span className="text-[0.95rem] font-medium text-ink transition-opacity duration-200 group-hover:opacity-60">
                 Close
               </span>
               <motion.span
-                initial={{ rotate: 120 }}
+                initial={{ rotate: 0 }}
                 animate={{ rotate: 120 }}
-                exit={{ rotate: 0 }}
-                transition={{ duration: 0.55, ease: EASE }}
+                transition={{ duration: 0.5, ease: EASE }}
                 className="grid h-6 w-6 place-items-center"
               >
                 <Dots />
@@ -228,18 +227,16 @@ export function MenuPill() {
         onClick={() => setOpen(true)}
         aria-expanded={open}
         aria-label="Open menu"
-        className="group relative z-10 flex cursor-pointer items-center gap-2.5"
+        className={`group relative z-10 flex cursor-pointer items-center gap-2.5 transition-opacity duration-150 ${
+          open ? "pointer-events-none opacity-0" : "opacity-100"
+        }`}
       >
         <span className="text-[0.95rem] font-medium text-ink transition-opacity duration-200 group-hover:opacity-60">
           Menu
         </span>
-        <motion.span
-          animate={{ rotate: open ? 120 : 0 }}
-          transition={{ duration: 0.55, ease: EASE }}
-          className="grid h-6 w-6 place-items-center"
-        >
+        <span className="grid h-6 w-6 place-items-center">
           <Dots />
-        </motion.span>
+        </span>
       </button>
     </div>
   );
