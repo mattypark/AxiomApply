@@ -58,8 +58,6 @@ const SECONDARY = [
  */
 const ADDRESS = ["1200 Innovation Way", "Houston, TX 77002"];
 
-const EMAIL = "matthew@axiompathways.org";
-
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 export function MenuPill() {
@@ -104,10 +102,10 @@ export function MenuPill() {
           {/* Nav at the top, Close opposite it. The wordmark is gone — the
               page behind this panel already carries the brand, and Homepage
               is in the row below anyway. */}
-          <div className="flex flex-wrap items-start justify-between gap-4 px-6 pt-7 sm:px-12 lg:px-20">
+          <div className="relative flex flex-col items-center gap-4 px-6 pt-7 sm:px-12 lg:px-20">
             <nav
               aria-label="Secondary"
-              className="flex flex-wrap gap-x-7 gap-y-2"
+              className="flex flex-wrap justify-center gap-x-8 gap-y-2"
             >
               {SECONDARY.map((link) =>
                 link.href.startsWith("http") ? (
@@ -117,7 +115,7 @@ export function MenuPill() {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={close}
-                    className="text-[0.95rem] text-muted transition-colors duration-200 hover:text-ink"
+                    className="text-[1.05rem] font-medium text-ink transition-opacity duration-200 hover:opacity-60"
                   >
                     {link.label}
                   </a>
@@ -126,7 +124,7 @@ export function MenuPill() {
                     key={link.href}
                     href={link.href}
                     onClick={close}
-                    className="text-[0.95rem] text-muted transition-colors duration-200 hover:text-ink"
+                    className="text-[1.05rem] font-medium text-ink transition-opacity duration-200 hover:opacity-60"
                   >
                     {link.label}
                   </Link>
@@ -138,7 +136,7 @@ export function MenuPill() {
               type="button"
               onClick={close}
               aria-label="Close menu"
-              className="group flex shrink-0 cursor-pointer items-center gap-2.5"
+              className="group absolute top-7 right-6 flex shrink-0 cursor-pointer items-center gap-2.5 sm:right-12 lg:right-20"
             >
               <span className="text-[0.95rem] font-medium text-ink transition-opacity duration-200 group-hover:opacity-60">
                 Close
@@ -192,13 +190,13 @@ export function MenuPill() {
             ))}
           </nav>
 
-          {/* Location and email. Nothing else — the legal links live at the
-              foot of the page itself, not inside an overlay. */}
+          {/* Location only. Nothing else — the legal links live at the foot of
+              the page itself, not inside an overlay. */}
           <motion.div
             initial={reduce ? { opacity: 0 } : { opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}
-            className="flex flex-wrap items-end justify-between gap-6 px-6 pb-8 sm:px-12 lg:px-20"
+            className="px-6 pb-8 sm:px-12 lg:px-20"
             style={{ borderTop: "1px solid var(--lines)", paddingTop: "1.75rem" }}
           >
             <address className="flex flex-col gap-1 not-italic">
@@ -211,13 +209,6 @@ export function MenuPill() {
                 </span>
               ))}
             </address>
-
-            <a
-              href={`mailto:${EMAIL}`}
-              className="font-mono text-[0.72rem] tracking-[0.1em] text-faint uppercase transition-colors duration-200 hover:text-ink"
-            >
-              {EMAIL}
-            </a>
           </motion.div>
 
         </motion.div>

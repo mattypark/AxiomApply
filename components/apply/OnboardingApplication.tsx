@@ -63,8 +63,6 @@ const CHOICES: Choice[] = [
  */
 const ADDRESS = ["1200 Innovation Way", "Houston, TX 77002"];
 
-const EMAIL = "matthew@axiompathways.org";
-
 /**
  * The same links the menu carries. Get started lands here directly, so this
  * screen cannot be the only one on the site with no way anywhere else.
@@ -182,15 +180,20 @@ function HoverLines({ from }: { from: "left" | "right" }) {
 function Picker({ onPick }: { onPick: (side: Side) => void }) {
   return (
     <main className="flex min-h-dvh flex-col bg-paper">
-      <header className="flex flex-wrap items-center gap-x-7 gap-y-3 px-6 pt-9 pb-4 sm:px-12 lg:px-20">
+      {/* Back stays pinned left; the nav centres on the page rather than
+          trailing off it, so the top reads as one balanced row. */}
+      <header className="relative flex flex-col items-center gap-4 px-6 pt-9 pb-4 sm:px-12 sm:pt-10 lg:px-20">
         <Link
           href="/"
-          className="font-mono text-[0.72rem] tracking-[0.16em] text-muted uppercase transition-colors duration-300 hover:text-ink"
+          className="w-fit self-start font-mono text-[0.72rem] tracking-[0.16em] text-muted uppercase transition-colors duration-300 hover:text-ink sm:absolute sm:top-11 sm:left-12 lg:left-20"
         >
           ← Back
         </Link>
 
-        <nav aria-label="Secondary" className="flex flex-wrap gap-x-7 gap-y-2">
+        <nav
+          aria-label="Secondary"
+          className="flex flex-wrap justify-center gap-x-8 gap-y-2"
+        >
           {NAV.map((link) =>
             link.href.startsWith("http") ? (
               <a
@@ -198,7 +201,7 @@ function Picker({ onPick }: { onPick: (side: Side) => void }) {
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[0.95rem] text-muted transition-colors duration-200 hover:text-ink"
+                className="text-[1.05rem] font-medium text-ink transition-opacity duration-200 hover:opacity-60"
               >
                 {link.label}
               </a>
@@ -206,7 +209,7 @@ function Picker({ onPick }: { onPick: (side: Side) => void }) {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-[0.95rem] text-muted transition-colors duration-200 hover:text-ink"
+                className="text-[1.05rem] font-medium text-ink transition-opacity duration-200 hover:opacity-60"
               >
                 {link.label}
               </Link>
@@ -251,9 +254,9 @@ function Picker({ onPick }: { onPick: (side: Side) => void }) {
         ))}
       </div>
 
-      {/* Location and email. The legal links live on the pages themselves. */}
+      {/* Location only. The legal links live on the pages themselves. */}
       <footer
-        className="flex flex-wrap items-end justify-between gap-6 px-6 pt-6 pb-8 sm:px-12 lg:px-20"
+        className="px-6 pt-6 pb-8 sm:px-12 lg:px-20"
         style={{ borderTop: "1px solid var(--lines)" }}
       >
         <address className="flex flex-col gap-1 not-italic">
@@ -266,13 +269,6 @@ function Picker({ onPick }: { onPick: (side: Side) => void }) {
             </span>
           ))}
         </address>
-
-        <a
-          href={`mailto:${EMAIL}`}
-          className="font-mono text-[0.72rem] tracking-[0.1em] text-faint uppercase transition-colors duration-200 hover:text-ink"
-        >
-          {EMAIL}
-        </a>
       </footer>
     </main>
   );
