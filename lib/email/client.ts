@@ -33,7 +33,15 @@ export type SendInput = {
 export type SendResult = { ok: boolean; id?: string; error?: string };
 
 function env(name: string): string {
-  return process.env[name]?.trim() ?? "";
+  const raw = process.env[name]?.trim() ?? "";
+  // Strip one layer of wrapping quotes.
+  //
+  // .env.example writes the senders quoted, because dotenv strips quotes when
+  // it reads a file. A dashboard does not — it stores the box verbatim — so
+  // copying the line across lands `"Matthew Park <matthew@axiomapply.com>"`,
+  // which is a quoted display name with no address after it. Resend answers
+  // 422 and every send fails for a reason that looks nothing like its cause.
+  return raw.replace(/^(['"])([\s\S]*)\1$/, "$2").trim();
 }
 
 function sender(mailClass: MailClass): string {
