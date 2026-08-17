@@ -26,6 +26,13 @@ export type SheetRow = {
   reviewer?: string;
   decision?: string;
   category?: string;
+  /**
+   * True when this person appears on a "(sent out)" tab — they already
+   * received mail through some other route and must not be sent a decision
+   * from here on top of it. Column Y still reads blank for them, so without
+   * this flag they would look like ordinary undecided applicants.
+   */
+  contacted?: boolean;
 };
 
 /** What column Y is allowed to say. Compared case-insensitively, trimmed. */
@@ -46,6 +53,8 @@ export type ParsedRow = {
   status: ApplicationStatus;
   /** True when the cell was empty — an applicant nobody has looked at yet. */
   undecided: boolean;
+  /** Already mailed elsewhere. Recorded, but never queued for a decision. */
+  contacted: boolean;
   submittedAt: string | null;
 };
 
@@ -127,6 +136,7 @@ export function parseSheetRows(rows: SheetRow[]): ParseResult {
       category: raw.category?.trim() || null,
       status: decision.status,
       undecided: decision.undecided,
+      contacted: raw.contacted === true,
       submittedAt: parseSheetDate(raw.timestamp),
     };
 
@@ -136,16 +146,25 @@ export function parseSheetRows(rows: SheetRow[]): ParseResult {
       continue;
     }
 
+    // `contacted` is sticky across a person's rows: flagged on any row means
+    // flagged for the person. It is a "we already wrote to them" fact, and
+    // losing it to a collapse rule would mail them twice.
+    candidate.contacted = candidate.contacted || existing.contacted;
+
     if (existing.undecided && !candidate.undecided) {
       byEmail.set(email, candidate);
       continue;
     }
-    if (!existing.undecided && candidate.undecided) continue;
+    if (!existing.undecided && candidate.undecided) {
+      existing.contacted = candidate.contacted;
+      continue;
+    }
 
     // Same kind of row on both sides — newest wins.
     const a = existing.submittedAt ?? "";
     const b = candidate.submittedAt ?? "";
     if (b >= a) byEmail.set(email, candidate);
+    else existing.contacted = candidate.contacted;
   }
 
   return {

@@ -51,6 +51,34 @@ export function isEmailConfigured(): boolean {
   return env("RESEND_API_KEY").length > 0 && sender("transactional").length > 0;
 }
 
+/**
+ * What this deployment will actually put on an outgoing email.
+ *
+ * For the admin page, so "did that env var take?" is answered by looking
+ * rather than by sending 660 people a test. Every value here already appears
+ * in the header or footer of each message — the API key is deliberately
+ * reduced to a boolean and never returned.
+ *
+ * `fromDomain` is the one that quietly breaks: Resend rejects any sender whose
+ * domain is not verified *exactly*, so `tx.axiomapply.com` fails while
+ * `axiomapply.com` is verified, and the only symptom is a 403 per send.
+ */
+export function emailConfigSummary(): {
+  apiKeySet: boolean;
+  from: string;
+  fromDomain: string;
+  replyTo: string;
+} {
+  const from = sender("transactional");
+  const match = from.match(/@([^\s>]+)/);
+  return {
+    apiKeySet: env("RESEND_API_KEY").length > 0,
+    from,
+    fromDomain: match ? match[1] : "",
+    replyTo: env("RESEND_REPLY_TO"),
+  };
+}
+
 export async function sendEmail(input: SendInput): Promise<SendResult> {
   const apiKey = env("RESEND_API_KEY");
   const from = sender(input.mailClass);

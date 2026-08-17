@@ -2,7 +2,8 @@ import { GlassPanel } from "@/components/glass/GlassPanel";
 import { GlassInput } from "@/components/glass/GlassInput";
 import { GlassButton } from "@/components/glass/GlassButton";
 import { getAdminSupabase } from "@/lib/supabase/admin";
-import { isEmailConfigured } from "@/lib/email/client";
+import { emailConfigSummary, isEmailConfigured } from "@/lib/email/client";
+import { postalAddress } from "@/lib/email/templates";
 import { BATCH_SIZE, renderDecisionCopy, type QueueTemplate } from "@/lib/email/decision-copy";
 import { buildQueue, discardPending, sendNextBatch } from "@/lib/actions/decisions";
 
@@ -29,7 +30,9 @@ async function loadCounts() {
   const supabase = getAdminSupabase();
   if (!supabase) return null;
 
-  const { data: apps } = await supabase.from("applications").select("status, email");
+  const { data: apps } = await supabase
+    .from("applications")
+    .select("status, email, contacted_elsewhere");
   const { data: queue } = await supabase.from("email_queue").select("template, status");
   const { data: samples } = await supabase
     .from("email_queue")
@@ -40,9 +43,15 @@ async function loadCounts() {
 
   const byStatus: Counts = {};
   const people = new Set<string>();
+  const contactedElsewhere = new Set<string>();
   for (const row of apps ?? []) {
+    const email = String(row.email).toLowerCase();
+    people.add(email);
+    if (row.contacted_elsewhere) {
+      contactedElsewhere.add(email);
+      continue; // never mailed from here, so never counted into a bucket
+    }
     byStatus[row.status as string] = (byStatus[row.status as string] ?? 0) + 1;
-    people.add(String(row.email).toLowerCase());
   }
 
   const queueCounts: Record<string, Counts> = {};
@@ -62,6 +71,7 @@ async function loadCounts() {
   return {
     byStatus,
     uniquePeople: people.size,
+    contactedElsewhere: contactedElsewhere.size,
     totalRows: (apps ?? []).length,
     queueCounts,
     pendingSample,
@@ -73,6 +83,34 @@ function Stat({ label, value }: { label: string; value: string | number }) {
     <div className="flex flex-col gap-1">
       <span className="font-mono text-[1.4rem] leading-none text-ink">{value}</span>
       <span className="text-[0.78rem] text-muted">{label}</span>
+    </div>
+  );
+}
+
+/**
+ * One env-derived fact, with a verdict attached.
+ *
+ * The failure this exists to prevent is silent: an unverified sending domain
+ * or an unset postal address both look completely normal right up until 660
+ * emails either bounce off Resend or ship with a placeholder in the footer.
+ */
+function ConfigLine({
+  label,
+  value,
+  ok,
+  note,
+}: {
+  label: string;
+  value: string;
+  ok: boolean;
+  note?: string;
+}) {
+  return (
+    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+      <span className="w-24 shrink-0 text-[0.78rem] text-muted">{label}</span>
+      <span className="font-mono text-[0.78rem] text-ink">{value || "— not set —"}</span>
+      <span className={`chip ${ok ? "" : "text-faint"}`}>{ok ? "ok" : "fix"}</span>
+      {note && <span className="w-full text-[0.75rem] text-muted sm:w-auto">{note}</span>}
     </div>
   );
 }
@@ -105,7 +143,10 @@ export default async function AdminDecisionsPage() {
     );
   }
 
-  const { byStatus, uniquePeople, totalRows, queueCounts, pendingSample } = data;
+  const { byStatus, uniquePeople, contactedElsewhere, totalRows, queueCounts, pendingSample } =
+    data;
+  const mail = emailConfigSummary();
+  const postal = postalAddress();
   const rejected = byStatus.rejected ?? 0;
   const undecided = (byStatus.applied ?? 0) + (byStatus.waitlist ?? 0);
   const accepted = byStatus.accepted ?? 0;
@@ -141,19 +182,63 @@ export default async function AdminDecisionsPage() {
         )}
       </div>
 
+      <GlassPanel variant="deep" className="flex flex-col gap-3 p-6">
+        <span className="kicker">Sending as</span>
+        <ConfigLine
+          label="API key"
+          value={mail.apiKeySet ? "set" : ""}
+          ok={mail.apiKeySet}
+          note={mail.apiKeySet ? undefined : "RESEND_API_KEY is missing — every send will skip"}
+        />
+        <ConfigLine
+          label="From"
+          value={mail.from}
+          ok={mail.from.length > 0}
+          note={
+            mail.fromDomain
+              ? `${mail.fromDomain} must be Verified in Resend, spelled exactly — a subdomain is a separate domain there`
+              : "RESEND_FROM_TX is not set"
+          }
+        />
+        <ConfigLine
+          label="Reply-To"
+          value={mail.replyTo}
+          ok={mail.replyTo.length > 0}
+          note={mail.replyTo ? "where replies land" : "replies will go to the From address"}
+        />
+        <ConfigLine
+          label="Postal"
+          value={postal.value}
+          ok={postal.configured}
+          note={
+            postal.configured
+              ? "prints in every footer"
+              : "CAN-SPAM requires a real street address — this text ships as-is"
+          }
+        />
+      </GlassPanel>
+
       <GlassPanel className="p-6">
         <span className="kicker">From the Sheet</span>
-        <div className="mt-4 grid grid-cols-2 gap-6 sm:grid-cols-5">
+        <div className="mt-4 grid grid-cols-2 gap-6 sm:grid-cols-6">
           <Stat label="rows" value={totalRows} />
           <Stat label="people" value={uniquePeople} />
           <Stat label="rejected" value={rejected} />
           <Stat label="undecided + waitlist" value={undecided} />
           <Stat label="accepted (not mailed)" value={accepted} />
+          <Stat label="already written to" value={contactedElsewhere} />
         </div>
         <p className="mt-5 text-[0.85rem] leading-relaxed text-muted">
           Rejected people get the rejection email. Everyone undecided or waitlisted gets the
           waitlist email. Accepted people get nothing from here — that email needs the startup,
           role and founder, which the Sheet doesn&rsquo;t carry, so you send those yourself.
+          {contactedElsewhere > 0 && (
+            <>
+              {" "}
+              The {contactedElsewhere} on a &ldquo;(sent out)&rdquo; tab in the Sheet are held
+              back from every bucket — they were already written to by hand.
+            </>
+          )}
         </p>
       </GlassPanel>
 

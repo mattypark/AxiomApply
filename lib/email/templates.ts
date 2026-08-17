@@ -21,6 +21,12 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://axiomapply.com
 const POSTAL_ADDRESS =
   process.env.EMAIL_POSTAL_ADDRESS?.trim() || "[postal address not configured]";
 
+/** The footer address, for the admin page to show before anything is sent. */
+export function postalAddress(): { value: string; configured: boolean } {
+  const configured = (process.env.EMAIL_POSTAL_ADDRESS?.trim() ?? "").length > 0;
+  return { value: POSTAL_ADDRESS, configured };
+}
+
 export type Footer = {
   /** Marketing sends must pass one. Transactional sends omit it. */
   unsubscribeUrl?: string;

@@ -63,6 +63,10 @@ export async function buildQueue(formData: FormData) {
   const { data: applications, error } = await supabase
     .from("applications")
     .select("id, email, name, status, submitted_at")
+    // Anyone on a "(sent out)" tab in the Sheet was already written to by
+    // hand. They read as undecided here, so without this they would be sent a
+    // waitlist notice on top of whatever they already got.
+    .eq("contacted_elsewhere", false)
     .in("status", ["rejected", "waitlist", "applied"])
     .order("submitted_at", { ascending: false });
 

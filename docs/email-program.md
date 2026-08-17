@@ -412,6 +412,10 @@ Decision vocabulary in Y: `Accepted`, `Rejected`, `waitlist`, `withdrawn`, or bl
 
 Duplicate addresses collapse to one person: a real decision beats a blank, and between two real decisions the later timestamp wins. If one of a person's rows is unreadable, the whole person is skipped.
 
+The Sheet's own `buildNotSelectedList` (in `NotSelected.gs`) is **not** part of this flow, and its output tab is not an email list. It finds the decision column by searching the header row for "Decision" — column Y has no header, so the lookup fails and its "skip Accepted" rule silently does nothing. Its 645-row output therefore includes all 20 accepted people. The fix is to fall back to the column index when the header lookup returns -1; the push here never depends on it either way, since it reads column Y by position.
+
+**People on a "(sent out)" tab are never mailed from here.** The push reads every tab whose name contains `sent out` (the convention `NotSelected.gs` already relies on, e.g. `OpenTrade (sent out)`), collects the addresses, and marks those applications `contacted_elsewhere`. They read as undecided in column Y, so without this they would be sent a waitlist notice on top of the intro they already got. They are excluded from every bucket and shown as their own count on the review page. A tab with no recognisable email column is named in the push summary rather than passed over, because a sent-out tab we can't read is the dangerous case.
+
 **Rows 414–453 are written in a different column layout** — an older version of the webhook put the email in K, M or Z instead of C. Their decision column can't be trusted either, so all ~40 are skipped and listed by row number in the push summary. They receive nothing until someone realigns those rows and pushes again. Two more rows (234, 235) are empty spacers, and rows 344–345 say `POOL`.
 
 Measured against the Sheet as of the first push: 693 readable rows → 659 people → 10 rejections, 629 waitlist, 20 accepted (not mailed), 42 skipped.

@@ -12,6 +12,16 @@
 --
 -- Safe to re-run.
 
+-- Already written to through some other channel.
+--
+-- The Sheet has tabs named "<Startup> (sent out)" listing people who were
+-- pitched to a startup by hand. Column Y still reads blank for them, so to
+-- this system they look like ordinary undecided applicants — and would be
+-- mailed a waitlist notice on top of whatever they already received. The push
+-- reads those tabs and sets this; the queue builder skips anyone carrying it.
+alter table public.applications
+  add column if not exists contacted_elsewhere boolean not null default false;
+
 create table if not exists public.email_queue (
   id uuid primary key default gen_random_uuid(),
 

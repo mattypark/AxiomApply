@@ -52,13 +52,13 @@ export async function POST(request: Request) {
   // for someone who already exists — the unique index is on
   // (lower(email), submitted_at), so a duplicate with a different timestamp
   // raises no error at all.
-  const known = new Map<string, { id: string; status: string }>();
+  const known = new Map<string, { id: string; status: string; contacted: boolean }>();
   const PAGE = 1000;
 
   for (let from = 0; ; from += PAGE) {
     const { data, error } = await supabase
       .from("applications")
-      .select("id, email, status, submitted_at")
+      .select("id, email, status, contacted_elsewhere, submitted_at")
       .order("submitted_at", { ascending: false })
       .range(from, from + PAGE - 1);
 
@@ -71,7 +71,11 @@ export async function POST(request: Request) {
       // a status change should land on — it is also the one the applicant's
       // own UI reads (lib/applications.ts takes the latest).
       if (!known.has(key)) {
-        known.set(key, { id: row.id as string, status: row.status as string });
+        known.set(key, {
+          id: row.id as string,
+          status: row.status as string,
+          contacted: row.contacted_elsewhere === true,
+        });
       }
     }
     if (!data || data.length < PAGE) break;
@@ -93,6 +97,7 @@ export async function POST(request: Request) {
         reviewer: person.reviewer,
         selected_for: person.category,
         decided_at: person.undecided ? null : decidedAt,
+        contacted_elsewhere: person.contacted,
         source: "sheet_backfill",
         submitted_at: person.submittedAt ?? decidedAt,
         sheet_row: { row: person.row, decision: person.status, category: person.category },
@@ -103,7 +108,11 @@ export async function POST(request: Request) {
     // Nothing to write when the Sheet agrees with Postgres. Skipping the
     // no-ops keeps a re-push cheap and leaves decided_at meaning "when this
     // decision was first recorded" rather than "last time anyone pushed".
-    if (existing.status === person.status) continue;
+    // The contacted flag is checked too — it can turn true on a later push,
+    // when a person is added to a "(sent out)" tab after their first push.
+    if (existing.status === person.status && existing.contacted === person.contacted) {
+      continue;
+    }
 
     const { error } = await supabase
       .from("applications")
@@ -112,6 +121,7 @@ export async function POST(request: Request) {
         reviewer: person.reviewer,
         selected_for: person.category,
         decided_at: person.undecided ? null : decidedAt,
+        contacted_elsewhere: person.contacted,
       })
       .eq("id", existing.id);
 
@@ -140,6 +150,7 @@ export async function POST(request: Request) {
       updated,
       unchanged: parsed.people.length - inserted - updated - failures.length,
       duplicatesCollapsed: parsed.duplicatesCollapsed,
+      contactedElsewhere: parsed.people.filter((p) => p.contacted).length,
       counts,
       skipped: parsed.skipped,
       failures,
