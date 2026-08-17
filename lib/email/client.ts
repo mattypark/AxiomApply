@@ -44,6 +44,22 @@ function env(name: string): string {
   return raw.replace(/^(['"])([\s\S]*)\1$/, "$2").trim();
 }
 
+/**
+ * Reply-To, as a list.
+ *
+ * More than one person reads the replies to this mail, so the env holds
+ * several addresses separated by commas. Resend's `reply_to` takes a string
+ * or an array — a single comma-joined string is neither, and it either
+ * bounces the request or produces a header no client can act on. Split it.
+ */
+function replyTo(): string[] | undefined {
+  const addresses = env("RESEND_REPLY_TO")
+    .split(",")
+    .map((address) => address.trim())
+    .filter((address) => address.includes("@"));
+  return addresses.length > 0 ? addresses : undefined;
+}
+
 function sender(mailClass: MailClass): string {
   const configured =
     mailClass === "marketing"
@@ -114,7 +130,7 @@ export async function sendEmail(input: SendInput): Promise<SendResult> {
       body: JSON.stringify({
         from,
         to: [input.to],
-        reply_to: env("RESEND_REPLY_TO") || undefined,
+        reply_to: replyTo(),
         subject: input.subject,
         text: input.text,
         headers: Object.keys(headers).length > 0 ? headers : undefined,
