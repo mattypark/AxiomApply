@@ -19,9 +19,20 @@
 --
 -- Safe to re-run.
 
--- Existing rows first: a constraint added over data that violates it fails,
--- and the failure would name the constraint rather than the row, which is a
--- miserable thing to debug twice in one day.
+-- ORDER MATTERS, and getting it wrong is not obvious.
+--
+-- The old constraint has to go BEFORE the rows are normalised. An UPDATE is
+-- checked against whatever constraint is in force at the time, so rewriting a
+-- row to 'applied' while a constraint that does not know that word is still
+-- attached fails with "new row for relation applications violates check
+-- constraint" — the same message the inserts were failing with, now coming
+-- from the fix rather than the bug.
+alter table public.applications
+  drop constraint if exists applications_status_check;
+
+-- Now the rows, unconstrained. This has to happen before the new constraint
+-- is added: a CHECK added over data that violates it fails while naming the
+-- constraint rather than the offending row.
 update public.applications
 set status = case lower(trim(coalesce(status, '')))
   when '' then 'applied'
@@ -49,9 +60,6 @@ where status is null
 update public.applications
 set status = 'applied'
 where status not in ('applied', 'waitlist', 'accepted', 'rejected', 'withdrawn');
-
-alter table public.applications
-  drop constraint if exists applications_status_check;
 
 alter table public.applications
   add constraint applications_status_check
