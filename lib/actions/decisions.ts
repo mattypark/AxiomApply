@@ -29,6 +29,19 @@ import {
  *   withdrawn           → nothing.
  */
 
+/**
+ * Failures that are about the account or the network rather than the
+ * recipient: a rate limit, a provider outage, a dropped connection. They fail
+ * identically for everyone, so the row should wait rather than be retired.
+ *
+ * A 422 or a suppression is the opposite — genuinely about that address, and
+ * retrying it forever would be its own bug.
+ */
+function isTransient(error?: string): boolean {
+  if (!error) return false;
+  return /resend-(429|5\d\d)|fetch failed|network|timeout|ECONN/i.test(error);
+}
+
 async function adminClientOrThrow() {
   const gate = await requireAdmin();
   if (!gate.ok) throw new Error("Not authorized");
@@ -154,6 +167,13 @@ export async function sendNextBatch(formData: FormData) {
       subject: row.subject as string,
       text: row.body as string,
     });
+
+    // A rate limit or a provider outage is not this person's problem, and
+    // marking them `failed` would retire them from a queue that only ever
+    // picks up `pending` — 400 people silently dropped because a daily cap
+    // was hit at number 100. Those rows stay pending, and the run stops:
+    // whatever refused this email refuses the rest of the batch identically.
+    if (!result.ok && isTransient(result.error)) break;
 
     await supabase
       .from("email_queue")

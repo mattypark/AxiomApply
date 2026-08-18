@@ -15,11 +15,15 @@ export type QueueTemplate = "notSelected" | "waitlisted";
 /**
  * Recipients per click.
  *
- * ~600 waitlist emails in one burst, from a subdomain with no sending history,
- * is the fastest way to get axiomapply.com filtered — including for the auth
- * mail the site depends on. Spreading the send across days costs nothing.
+ * ~550 waitlist emails in one burst, from a domain with no sending history, is
+ * the fastest way to get axiomapply.com filtered — including for the auth mail
+ * the site depends on. Spreading the send across days costs nothing.
+ *
+ * 90 also sits under Resend's free-plan ceiling of 100 a day, leaving room for
+ * the site's own transactional mail on the same key. Going over does not send
+ * faster: the remainder comes back 429 and waits for the next run.
  */
-export const BATCH_SIZE = 150;
+export const BATCH_SIZE = 90;
 
 /**
  * Numbers and dates that appear verbatim in the copy. Typed once per cycle by
