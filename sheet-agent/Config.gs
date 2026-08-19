@@ -78,8 +78,20 @@ var BATCH_SIZE = 90;
 var FROM = "Matthew Park <matthew@axiomapply.com>";
 var REPLY_TO = ["matthew@axiompathways.org", "frank@axiompathways.org"];
 
-/** CAN-SPAM requires a real postal address. Never a home address. */
-var POSTAL = "Axiom Pathways, PO Box 1234, Houston, TX 77002";
+/**
+ * Where the organisation is, for the footer.
+ *
+ * CAN-SPAM requires a physical address in COMMERCIAL email. These two are
+ * relationship mail — a reply to an application the recipient filed — which
+ * is exempt. Announcements and cohort news are not, and want a real street
+ * address before they go out.
+ *
+ * A region is printed until there is a mailbox worth naming. Never a home
+ * address: this reaches hundreds of minors and their parents. And never an
+ * invented PO box — one that receives no mail is worse than none, because it
+ * is a false statement in the one place a regulator would look.
+ */
+var LOCATION = "Based in Texas";
 
 var SITE = "https://www.axiomapply.com";
 

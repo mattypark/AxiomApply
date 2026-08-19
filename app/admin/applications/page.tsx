@@ -3,7 +3,7 @@ import { GlassInput } from "@/components/glass/GlassInput";
 import { GlassButton } from "@/components/glass/GlassButton";
 import { getAdminSupabase } from "@/lib/supabase/admin";
 import { emailConfigSummary, isEmailConfigured } from "@/lib/email/client";
-import { postalAddress } from "@/lib/email/templates";
+import { footerPlace } from "@/lib/email/templates";
 import { BATCH_SIZE, renderDecisionCopy, type QueueTemplate } from "@/lib/email/decision-copy";
 import { buildQueue, discardPending, sendNextBatch } from "@/lib/actions/decisions";
 
@@ -146,7 +146,7 @@ export default async function AdminDecisionsPage() {
   const { byStatus, uniquePeople, contactedElsewhere, totalRows, queueCounts, pendingSample } =
     data;
   const mail = emailConfigSummary();
-  const postal = postalAddress();
+  const place = footerPlace();
   const rejected = byStatus.rejected ?? 0;
   const undecided = (byStatus.applied ?? 0) + (byStatus.waitlist ?? 0);
   const accepted = byStatus.accepted ?? 0;
@@ -207,13 +207,13 @@ export default async function AdminDecisionsPage() {
           note={mail.replyTo ? "where replies land" : "replies will go to the From address"}
         />
         <ConfigLine
-          label="Postal"
-          value={postal.value}
-          ok={postal.configured}
+          label="Footer"
+          value={place.value}
+          ok={place.value.length > 0}
           note={
-            postal.configured
+            place.isStreetAddress
               ? "prints in every footer"
-              : "CAN-SPAM requires a real street address — this text ships as-is"
+              : "region only — fine for decision mail, which is relationship email. Announcements need a real street address"
           }
         />
       </GlassPanel>

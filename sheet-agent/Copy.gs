@@ -15,7 +15,7 @@ function greeting_(firstName) {
 }
 
 function footer_() {
-  return "\n\n--\nAxiom Pathways · " + POSTAL + "\n";
+  return "\n\n--\nAxiom Pathways · " + LOCATION + "\n";
 }
 
 /** Rejected. Says no, once, in the first line. */

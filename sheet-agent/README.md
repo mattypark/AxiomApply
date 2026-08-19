@@ -58,9 +58,13 @@ Open `Config.gs` and check every value, in this order:
   not cover `tx.axiomapply.com`. The address itself needs no mailbox.
 - `REPLY_TO` — where replies actually land. The copy says "reply to this",
   and people will.
-- `POSTAL` — a real street address you receive mail at. CAN-SPAM requires it,
-  it prints in every footer, and it must never be a home address: this mail
-  goes to hundreds of minors and their parents.
+- `LOCATION` — prints in every footer after the org name. CAN-SPAM requires a
+  physical address in **commercial** mail; these two are relationship mail — a
+  reply to an application someone filed — and are exempt, so a region is
+  enough. Announcements and cohort news are not exempt and want a real street
+  address first. Never a home address: this reaches hundreds of minors and
+  their parents. Never an invented PO box either — one that receives no mail
+  is worse than none.
 
 ## Running it
 

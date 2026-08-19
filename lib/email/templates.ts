@@ -14,17 +14,29 @@ import "server-only";
 const SITE = process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://axiomapply.com";
 
 /**
- * CAN-SPAM requires a postal address. The founder is a high schooler and this
- * mail goes to minors — use a virtual mailbox or PO box here, never a home
- * address. Left obviously unset so a placeholder cannot ship silently.
+ * Where the organisation is, for the footer.
+ *
+ * CAN-SPAM requires a physical address in COMMERCIAL email. These decision
+ * emails are relationship mail — a reply to an application the recipient
+ * filed — which is exempt. Announcements and cohort news are not, and want a
+ * real street address before they go out.
+ *
+ * Until there is a mailbox worth naming, this prints a region and nothing
+ * else. The founder is a high schooler: a home address must never reach 700
+ * strangers, and inventing a PO box that receives no mail is worse than
+ * printing none — it is a false statement in a place regulators read.
+ *
+ * Set EMAIL_POSTAL_ADDRESS to a real mailbox and it takes over automatically.
  */
-const POSTAL_ADDRESS =
-  process.env.EMAIL_POSTAL_ADDRESS?.trim() || "[postal address not configured]";
+const LOCATION = process.env.EMAIL_LOCATION?.trim() || "Based in Texas";
+const POSTAL_ADDRESS = process.env.EMAIL_POSTAL_ADDRESS?.trim() || "";
 
-/** The footer address, for the admin page to show before anything is sent. */
-export function postalAddress(): { value: string; configured: boolean } {
-  const configured = (process.env.EMAIL_POSTAL_ADDRESS?.trim() ?? "").length > 0;
-  return { value: POSTAL_ADDRESS, configured };
+/** What the footer will print, for the admin page to show before any send. */
+export function footerPlace(): { value: string; isStreetAddress: boolean } {
+  return {
+    value: POSTAL_ADDRESS || LOCATION,
+    isStreetAddress: POSTAL_ADDRESS.length > 0,
+  };
 }
 
 export type Footer = {
@@ -37,7 +49,7 @@ function footer({ unsubscribeUrl }: Footer): string {
   // organisation" signals a recipient (or a spam filter) looks for.
   const ein = process.env.NEXT_PUBLIC_ORG_EIN?.trim();
   const lines = [
-    `Axiom Pathways${ein ? ` · EIN ${ein}` : ""} · ${POSTAL_ADDRESS}`,
+    `Axiom Pathways${ein ? ` · EIN ${ein}` : ""} · ${POSTAL_ADDRESS || LOCATION}`,
   ];
   if (unsubscribeUrl) {
     lines.push(
