@@ -2,6 +2,7 @@ import { WhatSection } from "@/components/welcome/scroll/WhatSection";
 import { FeatureSection } from "@/components/welcome/scroll/FeatureSection";
 import { HowSection } from "@/components/welcome/scroll/HowSection";
 import { FaqSection } from "@/components/welcome/scroll/FaqSection";
+import { DiscordSection } from "@/components/welcome/scroll/DiscordSection";
 import { SiteFooter } from "@/components/welcome/scroll/SiteFooter";
 import { ScrollMotion } from "@/components/welcome/scroll/ScrollMotion";
 
@@ -23,6 +24,7 @@ export function WelcomeSections() {
       <FeatureSection />
       <HowSection />
       <FaqSection />
+      <DiscordSection />
       <SiteFooter />
 
       <ScrollMotion />

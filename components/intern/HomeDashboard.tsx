@@ -4,6 +4,8 @@ import type { ReactNode } from "react";
 import type { Article, Internship, Video } from "@/types/database";
 import type { ApplicationStatus } from "@/lib/applications";
 import { LocalApplicationBadge } from "@/components/intern/LocalApplicationBadge";
+import { DiscordMark } from "@/components/welcome/scroll/DiscordSection";
+import { DISCORD_INVITE_URL } from "@/lib/org";
 
 /**
  * The intern workspace home.
@@ -107,6 +109,9 @@ export function HomeDashboard({
           body="How students actually land internships, and what startups look for."
         />
       </section>
+
+      {/* community */}
+      <DiscordBanner />
 
       {/* two columns of live content */}
       <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
@@ -224,6 +229,47 @@ function SectionHead({
         </Link>
       </span>
     </div>
+  );
+}
+
+/**
+ * The Discord invite. A wide band rather than a fifth action tile: it leaves
+ * the site for an external service, and the quick-action row is for things
+ * that happen inside the workspace.
+ */
+function DiscordBanner() {
+  return (
+    <a
+      href={DISCORD_INVITE_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex flex-wrap items-center justify-between gap-5 rounded-[22px] bg-white/70 px-6 py-5 shadow-[0_1px_0_rgba(21,21,15,0.06)] transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-[var(--shadow-float)]"
+    >
+      <span className="flex items-center gap-4">
+        <span
+          aria-hidden
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-ink/[0.05] text-ink"
+        >
+          <DiscordMark className="h-[22px] w-[22px]" />
+        </span>
+        <span className="min-w-0">
+          <span className="block text-[0.95rem] font-medium text-ink">
+            Join the Discord for updates
+          </span>
+          <span className="mt-1 block text-[0.85rem] leading-relaxed text-muted">
+            New roles, deadlines and answers to application questions, posted
+            there first.
+          </span>
+        </span>
+      </span>
+
+      <span
+        aria-hidden
+        className="text-[0.9rem] text-faint transition-[color,transform] duration-300 group-hover:translate-x-0.5 group-hover:text-forest"
+      >
+        →
+      </span>
+    </a>
   );
 }
 
