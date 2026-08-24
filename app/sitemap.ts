@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getServerSupabase } from "@/lib/supabase/server";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
+import { CAREER_ROLES } from "@/lib/careers";
 
 const BASE = "https://axiomapply.com";
 
@@ -13,6 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/articles",
     "/apply",
     "/for-startups",
+    "/careers",
     "/contact",
     "/social",
     "/privacy",
@@ -29,9 +31,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: p === "" ? 1 : p === "/privacy" || p === "/terms" || p === "/cookies" ? 0.3 : 0.7,
   }));
 
-  if (!hasSupabaseEnv) return staticRoutes;
+  // Roles are static content, so they are listed whether or not Supabase is up.
+  const roleRoutes: MetadataRoute.Sitemap = CAREER_ROLES.filter((r) => r.open).map(
+    (role) => ({
+      url: `${BASE}/careers/${role.slug}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    }),
+  );
+
+  if (!hasSupabaseEnv) return [...staticRoutes, ...roleRoutes];
   const supabase = await getServerSupabase();
-  if (!supabase) return staticRoutes;
+  if (!supabase) return [...staticRoutes, ...roleRoutes];
 
   const [{ data: articles }, { data: modules }] = await Promise.all([
     supabase
@@ -44,6 +55,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     ...staticRoutes,
+    ...roleRoutes,
     ...(articles ?? []).map((a) => ({
       url: `${BASE}/articles/${a.slug}`,
       lastModified: a.updated_at as string,

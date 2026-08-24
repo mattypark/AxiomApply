@@ -19,6 +19,7 @@ const FOOTER_LINKS = [
   { label: "Internships", href: "/about/internships" },
   { label: "Learn", href: "/about/learn" },
   { label: "For startups", href: "/for-startups" },
+  { label: "Careers", href: "/careers" },
   { label: "Contact", href: "/contact" },
 ] as const;
 
