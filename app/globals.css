@@ -753,18 +753,19 @@ body {
    resting and revealed states both live in CSS and nothing animates
    from JavaScript per frame. */
 
-[data-inview] {
+/* Scoped to html.js: with scripting off, or if hydration never lands, the
+   observer never flips anything and unscoped rules would leave the page
+   blank. No JS means no reveal, not no content. */
+html.js [data-inview="false"] {
   opacity: 0;
   transform: translateY(18px);
+}
+
+[data-inview] {
   transition:
     opacity var(--duration-reveal) var(--ease-story),
     transform var(--duration-reveal) var(--ease-story);
   transition-delay: var(--inview-delay, 0ms);
-}
-
-[data-inview="true"] {
-  opacity: 1;
-  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -775,9 +776,12 @@ body {
     animation: none;
   }
 
-  [data-inview] {
+  html.js [data-inview="false"] {
     opacity: 1;
     transform: none;
+  }
+
+  [data-inview] {
     transition: none;
   }
 }
