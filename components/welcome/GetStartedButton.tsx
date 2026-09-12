@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import type { MouseEvent } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 
@@ -22,9 +23,16 @@ const DURATION = 0.2;
 export function GetStartedButton({
   href = "/onboarding",
   label = "Get started",
+  onPress,
 }: {
   href?: string;
   label?: string;
+  /**
+   * Intercepts the click. The element stays a real link to `href`, so the
+   * button still works with JavaScript off or before hydration — the overlay
+   * is an enhancement on top of a page that already exists.
+   */
+  onPress?: () => void;
 }) {
   const rootRef = useRef<HTMLAnchorElement>(null);
   const maskRef = useRef<HTMLSpanElement>(null);
@@ -66,10 +74,20 @@ export function GetStartedButton({
     };
   }, [label]);
 
+  const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (!onPress) return;
+    // Modified clicks still belong to the browser: cmd-click should open the
+    // side picker in a new tab, not open an overlay in this one.
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+    event.preventDefault();
+    onPress();
+  };
+
   return (
     <Link
       ref={rootRef}
       href={href}
+      onClick={handleClick}
       className="wel-pill inline-flex items-center rounded-full px-5 py-3 text-[0.95rem] font-medium sm:px-8 sm:py-4 sm:text-[1.05rem] shadow-[0_10px_30px_rgba(21,21,15,0.22)] transition-[transform,box-shadow] duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:text-white hover:shadow-[0_16px_44px_rgba(47,107,61,0.34)]"
     >
       <span

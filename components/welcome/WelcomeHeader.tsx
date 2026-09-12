@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { MenuPill } from "@/components/welcome/MenuPill";
 import { GetStartedButton } from "@/components/welcome/GetStartedButton";
+import { EnterFork } from "@/components/welcome/EnterFork";
 
 /**
  * The welcome-screen header: logo left, menu pill centre, auth + CTA right.
@@ -43,6 +44,7 @@ export function WelcomeHeader({
   variant?: "site" | "app";
 }) {
   const [isHidden, setIsHidden] = useState(false);
+  const [forkOpen, setForkOpen] = useState(false);
   const lastY = useRef(0);
   const isApp = variant === "app";
 
@@ -108,7 +110,17 @@ export function WelcomeHeader({
           Home
         </Link>
       ) : (
-        <GetStartedButton href={ctaHref} />
+        <>
+          {/* Enter, not Get started: the next thing that happens is a choice,
+              not a form. The href is still the side picker, so the button
+              works before hydration — the overlay only skips the page load. */}
+          <GetStartedButton
+            href={ctaHref}
+            label="Enter"
+            onPress={() => setForkOpen(true)}
+          />
+          <EnterFork open={forkOpen} onClose={() => setForkOpen(false)} />
+        </>
       )}
 
       {/* Right: the menu. Sign in moved inside it — it is for people who
