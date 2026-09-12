@@ -1,11 +1,16 @@
 import { WelcomeHero } from "@/components/welcome/WelcomeHero";
 import { WelcomeSections } from "@/components/welcome/WelcomeSections";
 import { getProfile, getUser } from "@/lib/auth";
+import { getInternshipCount } from "@/lib/internship-count";
 
 // Welcome screen. The previous landing is still reachable at /classic while
 // the two are being compared.
 export default async function WelcomePage() {
-  const [user, profile] = await Promise.all([getUser(), getProfile()]);
+  const [user, profile, internshipCount] = await Promise.all([
+    getUser(),
+    getProfile(),
+    getInternshipCount(),
+  ]);
 
   // Get started goes straight to the side picker — no email step first. The
   // account gets created later, inside the application's own gate. Signed-in
@@ -19,7 +24,7 @@ export default async function WelcomePage() {
   return (
     <>
       <WelcomeHero signedIn={Boolean(user)} ctaHref={ctaHref} />
-      <WelcomeSections />
+      <WelcomeSections internshipCount={internshipCount} />
     </>
   );
 }

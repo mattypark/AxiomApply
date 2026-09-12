@@ -1,33 +1,39 @@
-import { WhatSection } from "@/components/welcome/scroll/WhatSection";
-import { FeatureSection } from "@/components/welcome/scroll/FeatureSection";
-import { HowSection } from "@/components/welcome/scroll/HowSection";
-import { FaqSection } from "@/components/welcome/scroll/FaqSection";
-import { DiscordSection } from "@/components/welcome/scroll/DiscordSection";
+import { ProblemSection } from "@/components/sections/ProblemSection";
+import { WhatYouGetSection } from "@/components/sections/WhatYouGetSection";
+import { CountBanner } from "@/components/sections/CountBanner";
+import { HowItWorksSection } from "@/components/sections/HowItWorksSection";
+import { StartupsSection } from "@/components/sections/StartupsSection";
+import { InsideTheWorkSection } from "@/components/sections/InsideTheWorkSection";
+import { QuestionsSection } from "@/components/sections/QuestionsSection";
+import { ClosingCta } from "@/components/sections/ClosingCta";
 import { SiteFooter } from "@/components/welcome/scroll/SiteFooter";
-import { ScrollMotion } from "@/components/welcome/scroll/ScrollMotion";
 
 /**
- * Everything below the hero.
+ * Everything below the hero, in the order it is read.
  *
- * An editorial long-scroll: oversized statements, ruled splits and
- * cross-fading image grids. Imagery is placeholder for now, at the intrinsic
- * sizes the real assets will use so nothing reflows when they land.
+ * Six numbered beats and a close: the problem, what you get, the size of the
+ * feed, the mechanics, who is on the other end, what the work looks like, and
+ * the questions people actually ask. The numbers are what make it feel indexed
+ * rather than listed, so they run 01–06 unbroken — the feed band and the
+ * closing plane sit between them without taking one.
  *
- * Styles live in app/scroll-sections.css, imported by the root layout. ScrollMotion
- * wires the flash-in headlines, the cross-fading grids and the marquee fade;
- * the FAQ accordion and the footer dot field own their own behaviour.
+ * The previous stack (what / feature / how / faq / discord) lived on a second
+ * stylesheet copied from an unrelated reference, with its own ink, its own
+ * type scale and a @keyframes marquee that overrode this project's. Both are
+ * gone; these sections are Tailwind against the tokens in globals.css.
  */
-export function WelcomeSections() {
+export function WelcomeSections({ internshipCount }: { internshipCount: number }) {
   return (
-    <div className="fx-scroll relative z-10">
-      <WhatSection />
-      <FeatureSection />
-      <HowSection />
-      <FaqSection />
-      <DiscordSection />
+    <div className="relative z-10 bg-paper">
+      <ProblemSection />
+      <WhatYouGetSection />
+      <CountBanner count={internshipCount} />
+      <HowItWorksSection />
+      <StartupsSection />
+      <InsideTheWorkSection />
+      <QuestionsSection />
+      <ClosingCta />
       <SiteFooter />
-
-      <ScrollMotion />
     </div>
   );
 }

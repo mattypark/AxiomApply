@@ -3,7 +3,6 @@ import { Inter, JetBrains_Mono, Newsreader } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { LenisProvider } from "@/components/motion/LenisProvider";
 import "./globals.css";
-import "./scroll-sections.css";
 
 const inter = Inter({
   subsets: ["latin"],

@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import type { Article, Internship, Video } from "@/types/database";
 import type { ApplicationStatus } from "@/lib/applications";
 import { LocalApplicationBadge } from "@/components/intern/LocalApplicationBadge";
-import { DiscordMark } from "@/components/welcome/scroll/DiscordSection";
+import { DiscordMark } from "@/components/icons/DiscordMark";
 import { DISCORD_INVITE_URL } from "@/lib/org";
 
 /**
