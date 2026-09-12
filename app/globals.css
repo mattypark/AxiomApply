@@ -691,3 +691,93 @@ body {
     transition: none;
   }
 }
+
+/* ============================================================
+   SCROLL STORY — motion primitives
+   One namespace (ax-*) on purpose: the old scroll-sections.css
+   shipped a second @keyframes marquee that silently overrode the
+   one above. Every animation below is prefixed so a future stray
+   stylesheet cannot win that fight again.
+   ============================================================ */
+
+@theme {
+  /* The reference easing for the scroll story. Slower out than
+     --ease-glass, which is tuned for 180ms UI, not 900ms reveals. */
+  --ease-story: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-reveal: 900ms;
+}
+
+/* Vertical card rail. Content is duplicated in the markup, so the
+   loop point is exactly -50%. */
+@keyframes ax-marquee-y {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-50%); }
+}
+
+/* Circular caption ring. Very slow — it should read as drift, not spin. */
+@keyframes ax-ring-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* A single light sweep across a filled button. Runs on hover only. */
+@keyframes ax-shine {
+  from { background-position-x: 100%; }
+  to   { background-position-x: -100%; }
+}
+
+/* Ghost cards in the problem panel: breathing, never blinking. */
+@keyframes ax-skeleton {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 0.9; }
+}
+
+.ax-marquee-y { animation: ax-marquee-y 40s linear infinite; }
+.ax-ring-spin { animation: ax-ring-spin 90s linear infinite; }
+.ax-skeleton  { animation: ax-skeleton 1.4s var(--ease-story) infinite; }
+
+.ax-shine {
+  background-image: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.22) 42%,
+    transparent 64%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+}
+.ax-shine:hover { animation: ax-shine 1s linear; }
+
+/* ---------- scroll reveal ----------
+   Driven by the data-inview attribute that <InView> writes, so the
+   resting and revealed states both live in CSS and nothing animates
+   from JavaScript per frame. */
+
+[data-inview] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity var(--duration-reveal) var(--ease-story),
+    transform var(--duration-reveal) var(--ease-story);
+  transition-delay: var(--inview-delay, 0ms);
+}
+
+[data-inview="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ax-marquee-y,
+  .ax-ring-spin,
+  .ax-skeleton,
+  .ax-shine:hover {
+    animation: none;
+  }
+
+  [data-inview] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
