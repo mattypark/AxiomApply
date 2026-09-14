@@ -23,7 +23,7 @@ const THREAD = [
 
 export function ProblemSection() {
   return (
-    <section className="bg-paper py-28 sm:py-40">
+    <section className="py-28 sm:py-40">
       <SectionHead
         index="01"
         label="the problem"

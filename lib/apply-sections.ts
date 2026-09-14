@@ -146,6 +146,28 @@ export const TEXTAREA_HINT =
 
 const INTERN_SECTIONS: Section[] = [
   {
+    // The entry screen leads with GitHub and a resume, so the application
+    // opens on the same two things rather than making someone answer five
+    // questions before reaching what they were just promised.
+    id: "your-work",
+    nav: "your work",
+    title: "Your work",
+    blurb: "Start with what you have built. Links beat adjectives.",
+    questions: [
+      field("github", {
+        helpText:
+          "Your handle or a repo URL. Skip it if your work lives somewhere else — the next question takes anything.",
+      }),
+      field("other_link", {
+        label: "Anywhere else your work lives",
+        helpText: "A portfolio, a deployed site, an app in a store, a video with views.",
+      }),
+      field("resume", {
+        helpText: "Optional. PDF or DOC, up to 8MB — and it is not what we judge on.",
+      }),
+    ],
+  },
+  {
     id: "about-you",
     nav: "about you",
     title: "About you",
@@ -227,19 +249,14 @@ const INTERN_SECTIONS: Section[] = [
     nav: "links",
     title: "Links",
     blurb: "Anywhere we can see what you have made.",
-    questions: [
-      field("instagram"),
-      field("linkedin"),
-      field("github"),
-      field("other_link"),
-    ],
+    questions: [field("instagram"), field("linkedin")],
   },
   {
     id: "files",
     nav: "files",
     title: "Files",
-    blurb: "A resume helps. A link to something live helps more.",
-    questions: [field("resume"), field("extra_file")],
+    blurb: "Anything else worth attaching.",
+    questions: [field("extra_file")],
   },
 ];
 

@@ -20,7 +20,7 @@ export function CountBanner({ count }: { count: number }) {
   const digits = count.toLocaleString("en-US").split("");
 
   return (
-    <section className="bg-paper px-6">
+    <section className="px-6">
       <div className="relative mx-auto w-full max-w-[76rem] overflow-hidden rounded-[28px] bg-night py-24 text-night-text sm:py-32">
         <div
           aria-hidden="true"

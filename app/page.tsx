@@ -1,10 +1,12 @@
-import { WelcomeHero } from "@/components/welcome/WelcomeHero";
+import { GradientHero } from "@/components/hero/GradientHero";
 import { WelcomeSections } from "@/components/welcome/WelcomeSections";
 import { getProfile, getUser } from "@/lib/auth";
 import { getInternshipCount } from "@/lib/internship-count";
+import { startups } from "@/lib/site-data";
 
-// Welcome screen. The previous landing is still reachable at /classic while
-// the two are being compared.
+// Enter goes straight to the side picker — no email step first. The account is
+// created after an application is sent, not before one is started. Signed-in
+// users with a side already picked go to their HQ.
 export default async function WelcomePage() {
   const [user, profile, internshipCount] = await Promise.all([
     getUser(),
@@ -12,9 +14,6 @@ export default async function WelcomePage() {
     getInternshipCount(),
   ]);
 
-  // Get started goes straight to the side picker — no email step first. The
-  // account gets created later, inside the application's own gate. Signed-in
-  // users with a side already picked go to their HQ.
   const ctaHref = !profile?.role
     ? "/onboarding"
     : profile.role === "startup"
@@ -23,7 +22,11 @@ export default async function WelcomePage() {
 
   return (
     <>
-      <WelcomeHero signedIn={Boolean(user)} ctaHref={ctaHref} />
+      <GradientHero
+        signedIn={Boolean(user)}
+        ctaHref={ctaHref}
+        placements={startups.length}
+      />
       <WelcomeSections internshipCount={internshipCount} />
     </>
   );

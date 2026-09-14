@@ -23,7 +23,7 @@ const LIFT = ["lg:mt-10", "lg:-mt-4", "lg:mt-10"] as const;
 
 export function InsideTheWorkSection() {
   return (
-    <section className="bg-paper py-28 sm:py-40">
+    <section className="py-28 sm:py-40">
       <div className="mx-auto flex w-full max-w-[68rem] flex-col items-center px-6 text-center">
         <InView className="font-mono text-[0.8125rem] tracking-[0.08em]">
           <span className="text-forest">05</span>{" "}

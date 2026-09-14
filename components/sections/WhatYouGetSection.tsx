@@ -54,7 +54,7 @@ function Rail({ hidden }: { hidden?: boolean }) {
 
 export function WhatYouGetSection() {
   return (
-    <section className="bg-paper py-28 sm:py-40">
+    <section id="what-you-get" className="py-28 sm:py-40">
       <SectionHead
         index="02"
         label="what you get"

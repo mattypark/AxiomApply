@@ -16,7 +16,7 @@ import { DISCORD_INVITE_URL } from "@/lib/org";
 
 export function ClosingCta() {
   return (
-    <section className="bg-paper px-6 pb-6">
+    <section className="px-6 pb-6">
       <div
         className="relative overflow-hidden rounded-[28px] px-6 py-28 text-center sm:py-36"
         style={{

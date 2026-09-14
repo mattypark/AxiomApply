@@ -72,18 +72,7 @@ export default function RootLayout({
       data-theme="light"
       className={`${inter.variable} ${jetbrains.variable} ${newsreader.variable}`}
     >
-      <head>
-        {/* Scroll reveals hide their content until an observer says otherwise.
-            That resting state must never apply to a browser that will not run
-            the observer, or the page is blank — so the hidden state is scoped
-            to html.js and this is what adds it. Inline and before paint, so
-            there is no frame where revealed content shows and then hides. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `document.documentElement.classList.add("js")`,
-          }}
-        />
-      </head>
+      <head />
       <body>
         {/* AmbientBackdrop + ShapeField (the dot field) removed site-wide —
             every page is now the same flat white as the welcome screen. */}

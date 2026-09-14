@@ -58,7 +58,7 @@ export function QuestionsSection() {
 
   return (
     // The menu links to /#faq, so this id is load-bearing, not decorative.
-    <section id="faq" className="bg-paper py-28 sm:py-40">
+    <section id="faq" className="py-28 sm:py-40">
       <div className="mx-auto w-full max-w-[68rem] px-6">
         <p className="flex items-center gap-2 font-mono text-[0.8125rem] tracking-[0.08em]">
           <span className="text-forest">06</span>

@@ -12,9 +12,13 @@
   /* The page ground. Warm off-white rather than pure #fff — every full-bleed
      surface reads from this one token, so the site's paper colour changes in
      a single place. Elevated panels stay lighter so they still lift off it. */
-  --color-paper: #fef7ee;
-  --color-cream: #f2f0e9;
-  --color-card: #faf8f2;
+  /* Cream is retired. The page ground is a cool near-white so the green
+     gradient hero has something neutral to resolve into — warm paper under a
+     green sky read as two different sites stacked. Cards go pure white and
+     lift off it. */
+  --color-paper: #f7f9f8;
+  --color-cream: #eef2f0;
+  --color-card: #ffffff;
   --color-ink: #15150f;
   /* Both were below WCAG AA on paper: muted at 4.41:1 and faint at 2.38:1,
      and faint carries the section eyebrows and captions — small type doing
@@ -25,6 +29,11 @@
   --color-forest: #2f6b3d;
   --color-forest-deep: #245530;
   --color-forest-bright: #3f8f52;
+  /* The hero sky, top to bottom. Declared as tokens because the nav and the
+     section under the hero both have to resolve against the same colours. */
+  --color-sky-deep: #041a0c;
+  --color-sky-mid: #10592c;
+  --color-sky-bright: #2ba552;
   --color-night: #0e0f0d;
   --color-night-text: #f2f0e9;
   --color-night-muted: #b0aea3;
@@ -406,79 +415,12 @@ body {
   }
 }
 
-/* ---------- welcome hero: orbiting asset ring ----------
-   The ring turns clockwise as one rigid body; each tile counter-rotates at the
-   same period so the photography stays upright while it travels. Only
-   `transform` and `border-radius` animate, so the whole thing stays on the
-   compositor. */
-
-@keyframes orbit-cw {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-@keyframes orbit-ccw {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(-360deg); }
-}
-
-/* Organic squircle wobble — a rounded square that breathes. Deliberately
-   narrow range: wide percentage swings turn the tiles into circles. */
-@keyframes squircle-morph {
-  0%,
-  100% { border-radius: 34% 30% 32% 36% / 32% 36% 30% 34%; }
-  25%  { border-radius: 30% 36% 34% 30% / 36% 30% 34% 32%; }
-  50%  { border-radius: 36% 32% 30% 34% / 30% 34% 36% 30%; }
-  75%  { border-radius: 32% 34% 36% 32% / 34% 32% 32% 36%; }
-}
-
-.orbit-ring {
-  animation: orbit-cw var(--orbit-duration, 72s) linear infinite;
-}
-
-.orbit-tile {
-  animation: orbit-ccw var(--orbit-duration, 72s) linear infinite;
-}
-
-.orbit-shape {
-  animation: squircle-morph var(--morph-duration, 18s) ease-in-out infinite;
-}
-
-/* Get started — the label slides up on hover and a duplicate follows it in. */
-.rise-label {
-  display: block;
-  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.rise-trigger:hover .rise-label,
-.rise-trigger:focus-visible .rise-label {
-  /* The label holds exactly two stacked copies, so -50% advances by one
-     line. -100% would clear both and leave the pill visibly empty. */
-  transform: translateY(-50%);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .orbit-ring,
-  .orbit-tile,
-  .orbit-shape {
-    animation: none;
-  }
-
-  .orbit-shape {
-    border-radius: 32%;
-  }
-
-  .rise-label {
-    transition: none;
-  }
-}
-
 /* ---------- welcome-screen theme tokens ----------
    Scoped to the welcome page so the rest of the site keeps its cream identity
    while this surface can flip to the dark treatment from the reference. */
 
 :root {
-  --wel-bg: #fef7ee;
+  --wel-bg: #f7f9f8;
   --wel-fg: #15150f;
   --wel-fg-soft: #76746a;
   --wel-pill: #15150f;
@@ -637,38 +579,6 @@ body {
 /* ---------- hero: "passions" underline ----------
    Draws left → right after the headline reveal lands. Transform-only. */
 
-.hl-underline {
-  position: relative;
-  display: inline-block;
-}
-
-.hl-underline::after {
-  content: "";
-  position: absolute;
-  left: 0.02em;
-  right: 0.02em;
-  bottom: 0.09em;
-  height: 0.07em;
-  border-radius: 2px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: left center;
-  animation: hl-draw 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.4s forwards;
-}
-
-@keyframes hl-draw {
-  to {
-    transform: scaleX(1);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hl-underline::after {
-    animation: none;
-    transform: none;
-  }
-}
-
 /* ---------- onboarding picker: assembling hover lines ----------
    Thin rules that materialise one after another from a top corner and sweep
    across the half. State lives here rather than in utilities because each
@@ -767,12 +677,18 @@ body {
    resting and revealed states both live in CSS and nothing animates
    from JavaScript per frame. */
 
-/* Scoped to html.js: with scripting off, or if hydration never lands, the
-   observer never flips anything and unscoped rules would leave the page
-   blank. No JS means no reveal, not no content. */
-html.js [data-inview="false"] {
-  opacity: 0;
-  transform: translateY(18px);
+/* Gated on scripting rather than on a class an inline script adds.
+   The observer is what un-hides these, so with scripting off the unscoped
+   rule would leave the page permanently blank. The earlier fix set a class on
+   <html> before paint, which worked but mutated an attribute React renders —
+   a hydration mismatch on every page. A browser too old for this query
+   matches nothing, so it shows the content unanimated, which is the safe
+   direction to fail. */
+@media (scripting: enabled) {
+  [data-inview="false"] {
+    opacity: 0;
+    transform: translateY(18px);
+  }
 }
 
 [data-inview] {
@@ -790,12 +706,87 @@ html.js [data-inview="false"] {
     animation: none;
   }
 
-  html.js [data-inview="false"] {
+  [data-inview="false"] {
     opacity: 1;
     transform: none;
   }
 
   [data-inview] {
     transition: none;
+  }
+}
+
+/* ---------- the gloss button ----------
+   The reference's primary action: a filled pill with a light top edge, a
+   darker foot, and a ring that reads as depth rather than as a border. It has
+   to survive both grounds — on the green sky and on white — so the fill is a
+   gradient of the brand green in both cases, not a colour borrowed from the
+   background. */
+
+.btn-gloss {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: var(--radius-pill);
+  padding: 0.6rem 1.35rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #fff;
+  background-image: linear-gradient(
+    180deg,
+    var(--color-forest-bright) 0%,
+    var(--color-forest) 52%,
+    var(--color-forest-deep) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    inset 0 -1px 0 rgba(4, 26, 12, 0.3),
+    0 1px 2px rgba(4, 26, 12, 0.2),
+    0 8px 22px rgba(16, 89, 44, 0.32);
+  transition:
+    transform var(--duration-normal) var(--ease-story),
+    box-shadow var(--duration-normal) var(--ease-story);
+}
+
+.btn-gloss:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(4, 26, 12, 0.32),
+    0 2px 4px rgba(4, 26, 12, 0.22),
+    0 14px 34px rgba(16, 89, 44, 0.4);
+}
+
+/* The quiet twin, used beside it on the sky. Glass rather than fill, so the
+   two buttons read as one primary and one secondary instead of two primaries. */
+.btn-gloss-quiet {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: var(--radius-pill);
+  padding: 0.6rem 1.35rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 8px 22px rgba(4, 26, 12, 0.22);
+  backdrop-filter: blur(10px);
+  transition:
+    transform var(--duration-normal) var(--ease-story),
+    background-color var(--duration-normal) var(--ease-story);
+}
+
+.btn-gloss-quiet:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.22);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-gloss:hover,
+  .btn-gloss-quiet:hover {
+    transform: none;
   }
 }

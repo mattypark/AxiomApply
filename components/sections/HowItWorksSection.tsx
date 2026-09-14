@@ -30,7 +30,7 @@ const STEPS = [
 
 export function HowItWorksSection() {
   return (
-    <section className="bg-paper py-28 sm:py-40">
+    <section id="how-it-works" className="py-28 sm:py-40">
       <SectionHead
         index="03"
         label="how it works"
