@@ -125,6 +125,17 @@ export function ApplyStepper({
   const [restored, setRestored] = useState(false);
   const headingRef = useRef<HTMLDivElement>(null);
 
+  /**
+   * Spam trap. A field no person can see or tab to, and a clock.
+   *
+   * Both live outside `answers` on purpose: the wire payload is a frozen
+   * contract, so nothing here is ever sent. A bot that fills every input, or
+   * one that submits the whole thing in under three seconds, gets the success
+   * screen and no POST — telling a scraper it failed just teaches it to retry.
+   */
+  const trapRef = useRef("");
+  const startedAt = useRef(Date.now());
+
   // Flattened once per answer change: a conditional question appears and
   // disappears as its parent is answered, and the step count has to follow.
   const questions = useMemo(() => {
@@ -208,6 +219,15 @@ export function ApplyStepper({
     setSubmitting(true);
     setError(null);
 
+    const looksAutomated =
+      trapRef.current.trim() !== "" || Date.now() - startedAt.current < 3000;
+
+    if (looksAutomated) {
+      setSubmitted(true);
+      setSubmitting(false);
+      return;
+    }
+
     const result = await onSubmit(answers, files);
 
     if (!result.ok) {
@@ -242,7 +262,7 @@ export function ApplyStepper({
       : "mx-auto flex min-h-dvh w-full max-w-[42rem] flex-col px-6 py-16 sm:py-24";
 
   return (
-    <div className={`apply-${variant} ${shell}`}>
+    <div className={`apply-${variant} relative ${shell}`}>
       <div className="flex items-center justify-between gap-4">
         {backHref ? (
           <Link
@@ -346,6 +366,23 @@ export function ApplyStepper({
           Saved as you go · press Enter to continue
         </p>
       )}
+
+      {/* Off-screen rather than display:none — some bots skip hidden inputs,
+          fewer skip ones that are merely positioned away. Never focusable, and
+          never read aloud. */}
+      <div aria-hidden className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+        <label htmlFor="company-website-url">Leave this empty</label>
+        <input
+          id="company-website-url"
+          name="company-website-url"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          onChange={(event) => {
+            trapRef.current = event.target.value;
+          }}
+        />
+      </div>
     </div>
   );
 }

@@ -16,8 +16,12 @@
   --color-cream: #f2f0e9;
   --color-card: #faf8f2;
   --color-ink: #15150f;
-  --color-muted: #76746a;
-  --color-faint: #a5a398;
+  /* Both were below WCAG AA on paper: muted at 4.41:1 and faint at 2.38:1,
+     and faint carries the section eyebrows and captions — small type doing
+     real work. Darkened to 5.84:1 and 4.54:1, keeping the warm grey hue and
+     enough distance between them that the hierarchy still reads. */
+  --color-muted: #636159;
+  --color-faint: #757266;
   --color-forest: #2f6b3d;
   --color-forest-deep: #245530;
   --color-forest-bright: #3f8f52;

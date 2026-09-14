@@ -107,7 +107,7 @@ export function SiteFooter() {
               className="flex items-center gap-2.5 transition-opacity duration-300 hover:opacity-70"
             >
               <img
-                src="/axiom-mark.png"
+                src="/axiom-mark-256.png"
                 alt=""
                 width={26}
                 height={26}

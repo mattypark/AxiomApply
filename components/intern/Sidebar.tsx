@@ -81,7 +81,7 @@ export function Sidebar({
           className="flex items-center px-1 transition-opacity duration-300 hover:opacity-70"
         >
           <Image
-            src="/axiom-mark.png"
+            src="/axiom-mark-256.png"
             alt="Axiom Pathways"
             width={52}
             height={52}

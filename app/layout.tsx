@@ -40,7 +40,9 @@ export const metadata: Metadata = {
   },
   description:
     "Axiom Pathways drops high school and college students straight into real startups — building what ships, picked for passion, not credentials.",
-  icons: { icon: "/axiom-mark.png" },
+  // The favicon is app/icon.png — file-based, fingerprinted, 1KB. The old
+  // explicit entry pointed at the 1024px source and shipped 1.29MB on
+  // every page load, favicon included.
   // Declared explicitly so a scraper never has to guess. Left to its own
   // devices iMessage picked the largest image on the welcome page, which was a
   // founder's photo out of the orbiting ring — the card is the mark and the

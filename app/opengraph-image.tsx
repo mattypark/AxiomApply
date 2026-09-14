@@ -24,7 +24,7 @@ const HEADLINE = ["Connecting young talent", "to their passions."];
 
 export default async function OpengraphImage() {
   const [mark, inter, interSemi] = await Promise.all([
-    readFile(join(process.cwd(), "public/axiom-mark.png")),
+    readFile(join(process.cwd(), "public/axiom-mark-256.png")),
     loadInter(400),
     loadInter(600),
   ]);
