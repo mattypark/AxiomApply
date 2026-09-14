@@ -492,6 +492,10 @@ body {
 .wel-bg { background: var(--wel-bg); }
 .wel-fg { color: var(--wel-fg); }
 .wel-fg-soft { color: var(--wel-fg-soft); }
+/* HeadlineReveal's third tone. It lived in scroll-sections.css; the component
+   still offers `forest: true` on any line, so without this a headline that
+   asked for the brand colour would quietly render as ink. */
+.fx-forest { color: var(--color-forest); }
 .wel-pill { background: var(--wel-pill); color: var(--wel-pill-fg); }
 .wel-sheet { background: var(--wel-sheet); }
 .wel-chip { background: var(--wel-chip); color: var(--wel-fg); }
