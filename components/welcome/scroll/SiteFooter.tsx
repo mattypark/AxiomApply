@@ -99,7 +99,7 @@ export function SiteFooter() {
         {/* the bar */}
         <div
           className="mt-24 flex flex-wrap items-center justify-between gap-6 pt-7 sm:mt-32"
-          style={{ borderTop: "1px solid var(--lines)" }}
+          style={{ borderTop: "1px solid var(--color-line)" }}
         >
           <div className="flex flex-wrap items-center gap-x-7 gap-y-3">
             <Link

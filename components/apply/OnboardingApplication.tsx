@@ -61,7 +61,13 @@ const CHOICES: Choice[] = [
  * address is a real problem, not a cosmetic one, and the CAN-SPAM footer reads
  * from the same details.
  */
-const ADDRESS = ["1200 Innovation Way", "Houston, TX 77002"];
+/**
+ * A real address is a legal requirement for the decision mail, not a nice to
+ * have — but an invented one is worse than none, so the placeholder is gone
+ * and the way to reach Axiom is the way that actually works. The email
+ * footer's address comes from EMAIL_POSTAL_ADDRESS and is still unset.
+ */
+const CONTACT_EMAIL = "matthew@axiompathways.org";
 
 /**
  * The same links the menu carries. Get started lands here directly, so this
@@ -257,18 +263,14 @@ function Picker({ onPick }: { onPick: (side: Side) => void }) {
       {/* Location only. The legal links live on the pages themselves. */}
       <footer
         className="px-6 pt-6 pb-8 sm:px-12 lg:px-20"
-        style={{ borderTop: "1px solid var(--lines)" }}
+        style={{ borderTop: "1px solid var(--color-line)" }}
       >
-        <address className="flex flex-col gap-1 not-italic">
-          {ADDRESS.map((line) => (
-            <span
-              key={line}
-              className="font-mono text-[0.72rem] font-semibold tracking-[0.1em] text-ink uppercase"
-            >
-              {line}
-            </span>
-          ))}
-        </address>
+        <a
+          href={`mailto:${CONTACT_EMAIL}`}
+          className="font-mono text-[0.72rem] font-semibold tracking-[0.1em] text-ink uppercase transition-opacity duration-200 hover:opacity-60"
+        >
+          {CONTACT_EMAIL}
+        </a>
       </footer>
     </main>
   );

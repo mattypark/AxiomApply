@@ -38,6 +38,12 @@
   /* Display only — never body copy. See app/layout.tsx for why this face. */
   --font-display: var(--font-newsreader), "Iowan Old Style", Georgia, serif;
 
+  /* The hairline rule. Lived in scroll-sections.css as --lines until that
+     file was deleted, which left four components asking for an undefined
+     colour — an invalid declaration, so their borders silently disappeared.
+     Expressed as ink rather than a flat grey so it sits on paper correctly. */
+  --color-line: rgba(21, 21, 15, 0.1);
+
   --radius-glass: 24px;
   --radius-pill: 999px;
 

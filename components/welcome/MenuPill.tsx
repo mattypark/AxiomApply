@@ -52,11 +52,12 @@ const SECONDARY = [
 ] as const;
 
 /**
- * PLACEHOLDER address — not real. Must be replaced before launch: a nonprofit
- * publishing a made-up postal address is a real problem, and the CAN-SPAM
- * email footer reads the same details.
+ * A real address is a legal requirement for the decision mail, not a nice to
+ * have — but an invented one is worse than none, so the placeholder is gone
+ * and the way to reach Axiom is the way that actually works. The email
+ * footer's address comes from EMAIL_POSTAL_ADDRESS and is still unset.
  */
-const ADDRESS = ["1200 Innovation Way", "Houston, TX 77002"];
+const CONTACT_EMAIL = "matthew@axiompathways.org";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -196,18 +197,14 @@ export function MenuPill() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}
             className="px-6 pb-8 sm:px-12 lg:px-20"
-            style={{ borderTop: "1px solid var(--lines)", paddingTop: "1.75rem" }}
+            style={{ borderTop: "1px solid var(--color-line)", paddingTop: "1.75rem" }}
           >
-            <address className="flex flex-col gap-1 not-italic">
-              {ADDRESS.map((line) => (
-                <span
-                  key={line}
-                  className="font-mono text-[0.72rem] font-semibold tracking-[0.1em] text-ink uppercase"
-                >
-                  {line}
-                </span>
-              ))}
-            </address>
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="font-mono text-[0.72rem] font-semibold tracking-[0.1em] text-ink uppercase transition-opacity duration-200 hover:opacity-60"
+            >
+              {CONTACT_EMAIL}
+            </a>
           </motion.div>
 
         </motion.div>

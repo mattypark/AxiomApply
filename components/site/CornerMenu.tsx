@@ -100,7 +100,7 @@ export function CornerMenu() {
 
             <div
               className="w-full"
-              style={{ borderTop: "1px solid var(--lines)" }}
+              style={{ borderTop: "1px solid var(--color-line)" }}
             />
 
             <nav aria-label="Apply" className="flex flex-col items-end gap-1.5">
