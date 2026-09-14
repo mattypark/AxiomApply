@@ -1,10 +1,10 @@
 "use client";
 
 import {
-  ApplyEngine,
+  ApplyStepper,
   type ApplyPrefill,
   type SubmitResult,
-} from "@/components/apply/ApplyEngine";
+} from "@/components/apply/ApplyStepper";
 import { CHAPTER_SET } from "@/lib/apply-sections";
 import { submitChapterApplication } from "@/lib/actions/applications";
 
@@ -31,7 +31,7 @@ export function ChapterApplication({
   }
 
   return (
-    <ApplyEngine
+    <ApplyStepper
       set={CHAPTER_SET}
       prefill={prefill}
       backHref={backHref}

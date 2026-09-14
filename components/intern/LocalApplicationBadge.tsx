@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { submittedKey } from "@/components/apply/ApplyEngine";
+import { submittedKey } from "@/components/apply/ApplyStepper";
 
 /**
  * Fallback confirmation for an application the server cannot vouch for yet.

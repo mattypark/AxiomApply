@@ -6,7 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { InternApplication } from "@/components/apply/InternApplication";
 import { StartupApplication } from "@/components/apply/StartupApplication";
 import { ChapterApplication } from "@/components/apply/ChapterApplication";
-import type { ApplyPrefill } from "@/components/apply/ApplyEngine";
+import type { ApplyPrefill } from "@/components/apply/ApplyStepper";
 import type { Side } from "@/lib/apply-sides";
 
 /**

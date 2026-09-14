@@ -1,10 +1,10 @@
 "use client";
 
 import {
-  ApplyEngine,
+  ApplyStepper,
   type ApplyPrefill,
   type SubmitResult,
-} from "@/components/apply/ApplyEngine";
+} from "@/components/apply/ApplyStepper";
 import { STARTUP_SET } from "@/lib/apply-sections";
 import { submitStartupApplication } from "@/lib/actions/applications";
 import { postToWebhook } from "@/lib/apply-submit";
@@ -35,7 +35,7 @@ export function StartupApplication({
   }
 
   return (
-    <ApplyEngine
+    <ApplyStepper
       set={STARTUP_SET}
       prefill={prefill}
       backHref={backHref}

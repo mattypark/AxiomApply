@@ -1,10 +1,10 @@
 "use client";
 
 import {
-  ApplyEngine,
+  ApplyStepper,
   type ApplyPrefill,
   type SubmitResult,
-} from "@/components/apply/ApplyEngine";
+} from "@/components/apply/ApplyStepper";
 import { INTERN_SET } from "@/lib/apply-sections";
 import { postToWebhook } from "@/lib/apply-submit";
 import { recordApplication, syncInternProfile } from "@/lib/actions/applications";
@@ -56,7 +56,7 @@ export function InternApplication({
   }
 
   return (
-    <ApplyEngine
+    <ApplyStepper
       set={INTERN_SET}
       prefill={prefill}
       backHref={backHref}
