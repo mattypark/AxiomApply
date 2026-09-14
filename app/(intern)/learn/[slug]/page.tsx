@@ -8,6 +8,36 @@ import type { LearnModule } from "@/types/database";
 
 export const revalidate = 300;
 
+/**
+ * Every module shared the site's default title, so a search result for a track
+ * was indistinguishable from the home page. Reads the same row the page does —
+ * Next dedupes the two fetches within a render.
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  if (!hasSupabaseEnv) return { title: "Learn" };
+
+  const supabase = await getServerSupabase();
+  const { data } = (await supabase
+    ?.from("learn_modules")
+    .select("title, track")
+    .eq("slug", slug)
+    .eq("published", true)
+    .single()) ?? { data: null };
+
+  if (!data) return { title: "Learn" };
+
+  const mod = data as Pick<LearnModule, "title" | "track">;
+  return {
+    title: mod.title,
+    description: `An Axiom Pathways ${mod.track} track — finish it and it shows on your file the next time you apply.`,
+  };
+}
+
 export default async function LearnModulePage({
   params,
 }: {
