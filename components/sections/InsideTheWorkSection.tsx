@@ -1,66 +1,47 @@
 import Image from "next/image";
 import { InView } from "@/components/motion/InView";
+import { SectionHead } from "@/components/sections/SectionHead";
 import { workMedia } from "@/lib/media-manifest";
 
 /**
  * 05 — inside the work.
  *
- * The one section that is pictures rather than type: what an internship
- * actually looks like is the hardest thing on this page to say in words, and
- * the easiest to show. Three cards, the middle one forward, the outer two
- * rotated back a degree so the group reads as a stack someone put down rather
- * than as a gallery.
+ * klinn puts student testimonials here, in hairline rows: who on the left,
+ * what they said on the right. Axiom has no intern quotes it can print yet and
+ * will not invent any, so the rows carry what the work looks like instead —
+ * caption on the left, the picture on the right — in exactly the same rhythm.
+ * When real quotes exist they take the left column and nothing else moves.
  *
- * Captions sit outside the stack, small and quiet — this section should be
- * looked at before it is read.
- *
- * Sources come from lib/media-manifest.ts so the footage can be replaced
- * without touching this layout. Everything in there is a placeholder today.
+ * Sources come from lib/media-manifest.ts, all placeholders today.
  */
-
-const LEAN = ["-rotate-[1.5deg]", "rotate-0", "rotate-[1.5deg]"] as const;
-const LIFT = ["lg:mt-10", "lg:-mt-4", "lg:mt-10"] as const;
-
 export function InsideTheWorkSection() {
   return (
-    <section className="py-28 sm:py-40">
-      <div className="mx-auto flex w-full max-w-[68rem] flex-col items-center px-6 text-center">
-        <InView className="font-mono text-[0.8125rem] tracking-[0.08em]">
-          <span className="text-forest">05</span>{" "}
-          <span className="text-faint">/ inside the work</span>
-        </InView>
+    <section className="py-24 sm:py-32">
+      <SectionHead
+        index="05"
+        label="inside the work"
+        icon="quote"
+        title="not shadowing. the actual work."
+      />
 
-        <InView
-          as="h2"
-          delay={80}
-          className="mt-6 max-w-[18ch] font-display text-[clamp(2.25rem,5.5vw,4.25rem)] leading-[1.04] tracking-[-0.015em] text-ink"
-        >
-          Not shadowing. Not coffee. The actual work.
-        </InView>
-
-        <InView
-          as="p"
-          delay={160}
-          className="mt-5 max-w-[52ch] text-[1.0625rem] leading-[1.55] text-muted"
-        >
-          Interns in the network ship things that go out — to users, to
-          customers, to the founder&apos;s roadmap. This is what that has looked
-          like.
-        </InView>
-      </div>
-
-      <div className="mx-auto mt-16 grid w-full max-w-[68rem] gap-6 px-6 sm:grid-cols-3">
+      <div className="mx-auto mt-12 w-full max-w-[49.5rem] px-6">
         {workMedia.map((slot, index) => (
           <InView
             key={slot.src}
-            delay={index * 110}
-            className={`flex flex-col gap-3 ${LIFT[index] ?? ""}`}
+            delay={index * 80}
+            className="grid gap-5 border-t border-border-muted py-10 last:border-b sm:grid-cols-[14rem_1fr] sm:gap-10"
           >
-            <div
-              className={`overflow-hidden rounded-[20px] bg-card shadow-float transition-transform duration-500 ease-story hover:rotate-0 ${
-                LEAN[index] ?? ""
-              }`}
-            >
+            <div>
+              <span className="grid h-5 w-5 place-items-center rounded-full bg-accent/10 text-[10px] font-semibold text-accent">
+                {index + 1}
+              </span>
+              <p className="mt-3 text-[14px] leading-[18px] text-loud">
+                {slot.caption.toLowerCase()}
+              </p>
+              <p className="mt-1 text-[11px] text-muted">from inside the network</p>
+            </div>
+
+            <div className="overflow-hidden rounded-[14px] bg-white shadow-[0_0_0_1px_var(--color-border-faint)]">
               {slot.kind === "video" ? (
                 <video
                   src={slot.src}
@@ -70,21 +51,18 @@ export function InsideTheWorkSection() {
                   loop
                   playsInline
                   autoPlay
-                  className="h-full w-full object-cover"
+                  className="aspect-[16/9] w-full object-cover"
                 />
               ) : (
                 <Image
                   src={slot.src}
                   alt={slot.alt}
-                  width={400}
-                  height={500}
-                  className="h-full w-full object-cover"
+                  width={960}
+                  height={540}
+                  className="aspect-[16/9] w-full object-cover"
                 />
               )}
             </div>
-            <p className="px-1 font-mono text-[0.7rem] tracking-[0.08em] text-faint uppercase">
-              {slot.caption}
-            </p>
           </InView>
         ))}
       </div>

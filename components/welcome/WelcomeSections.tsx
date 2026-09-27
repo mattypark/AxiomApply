@@ -5,7 +5,6 @@ import { HowItWorksSection } from "@/components/sections/HowItWorksSection";
 import { StartupsSection } from "@/components/sections/StartupsSection";
 import { InsideTheWorkSection } from "@/components/sections/InsideTheWorkSection";
 import { QuestionsSection } from "@/components/sections/QuestionsSection";
-import { ClosingCta } from "@/components/sections/ClosingCta";
 import { SiteFooter } from "@/components/welcome/scroll/SiteFooter";
 
 /**
@@ -32,7 +31,6 @@ export function WelcomeSections({ internshipCount }: { internshipCount: number }
       <StartupsSection />
       <InsideTheWorkSection />
       <QuestionsSection />
-      <ClosingCta />
       <SiteFooter />
     </div>
   );

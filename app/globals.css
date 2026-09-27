@@ -748,7 +748,31 @@ body {
   50%      { opacity: 0.9; }
 }
 
+/* The live dot. A ring leaves it rather than the dot itself changing size, so
+   the dot never reads as a loading spinner. */
+@keyframes ax-pulse {
+  0%   { box-shadow: 0 0 0 0 rgb(208 241 0 / 0.55); }
+  80%, 100% { box-shadow: 0 0 0 7px rgb(208 241 0 / 0); }
+}
+
+/* One digit column in a rolling counter: 0–9 stacked, moved by --digit. */
+.ax-roll {
+  display: inline-flex;
+  flex-direction: column;
+  transform: translateY(calc(var(--digit, 0) * -1lh));
+  transition: transform 1.6s var(--ease-mask);
+  transition-delay: var(--roll-delay, 0ms);
+}
+
+/* A new line of text arriving in place: rises in through a mask. */
+@keyframes ax-toast-in {
+  from { opacity: 0; transform: translateY(6px); filter: blur(3px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+
+.ax-toast-in  { display: inline-block; animation: ax-toast-in 0.5s var(--ease-story) both; }
 .ax-marquee-y { animation: ax-marquee-y 40s linear infinite; }
+.ax-pulse     { animation: ax-pulse 2s var(--ease-story) infinite; }
 .ax-skeleton  { animation: ax-skeleton 1.4s var(--ease-story) infinite; }
 
 .ax-shine {
@@ -791,6 +815,8 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .ax-marquee-y,
+  .ax-pulse,
+  .ax-toast-in,
   .ax-skeleton,
   .ax-shine:hover {
     animation: none;
@@ -801,7 +827,8 @@ body {
     transform: none;
   }
 
-  [data-inview] {
+  [data-inview],
+  .ax-roll {
     transition: none;
   }
 }

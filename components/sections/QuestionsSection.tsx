@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { SectionHead } from "@/components/sections/SectionHead";
 
 /**
  * 06 — questions.
@@ -17,39 +18,39 @@ import { useState } from "react";
 
 const FAQS = [
   {
-    question: "Who is Axiom for?",
+    question: "who is axiom for?",
     answer:
-      "High schoolers and early-college students. Most of the network got in on what they had built, not where they go to school — there is no GPA cut-off and no résumé screen.",
+      "high schoolers and early-college students. most of the network got in on what they had built, not where they go to school — there is no GPA cut-off and no résumé screen.",
   },
   {
-    question: "What does it cost?",
+    question: "what does it cost?",
     answer:
-      "Nothing. Axiom is a nonprofit. The feed is open to everyone with no account, and applying to the network is free.",
+      "nothing. axiom is a nonprofit. the feed is open to everyone with no account, and applying to the network is free.",
   },
   {
-    question: "What is the difference between the feed and the network?",
+    question: "what is the difference between the feed and the network?",
     answer:
-      "The feed is thousands of live listings pulled from the best trackers and refreshed daily — apply to those yourself, we take no cut. The network is the startups we place people into by hand, and that runs through an application.",
+      "the feed is thousands of live listings pulled from the best trackers and refreshed daily — apply to those yourself, we take no cut. the network is the startups we place people into by hand, and that runs through an application.",
   },
   {
-    question: "How long does an application take to hear back?",
+    question: "how long does an application take to hear back?",
     answer:
-      "Fourteen days, either way. A person reads every one — not a filter, not a keyword scan. If we match you, the email names the startup and the role.",
+      "fourteen days, either way. a person reads every one — not a filter, not a keyword scan. if we match you, the email names the startup and the role.",
   },
   {
-    question: "What actually makes an application strong?",
+    question: "what actually makes an application strong?",
     answer:
-      "Evidence you ship. A repo, a deployed site, an app in a store, a video with views, a club you actually ran. A deployed scrappy project beats a perfect local one, every time. Links beat adjectives.",
+      "evidence you ship. a repo, a deployed site, an app in a store, a video with views, a club you actually ran. a deployed scrappy project beats a perfect local one, every time. links beat adjectives.",
   },
   {
-    question: "I am under 18. Does that matter?",
+    question: "i am under 18. does that matter?",
     answer:
-      "It is the norm here, not the exception. A parent or guardian signs the agreement at placement time, and unpaid roles have to be structured as real learning rather than free labour. We sort that with the startup before you start.",
+      "it is the norm here, not the exception. a parent or guardian signs the agreement at placement time, and unpaid roles have to be structured as real learning rather than free labour. we sort that with the startup before you start.",
   },
   {
-    question: "Can I reapply if I am not matched?",
+    question: "can i reapply if i am not matched?",
     answer:
-      "Yes, and it is not held against you — a real chunk of current interns are second-round. Applications reopen each cycle and there is no cap on attempts.",
+      "yes, and it is not held against you — a real chunk of current interns are second-round. applications reopen each cycle and there is no cap on attempts.",
   },
 ] as const;
 
@@ -58,42 +59,40 @@ export function QuestionsSection() {
 
   return (
     // The menu links to /#faq, so this id is load-bearing, not decorative.
-    <section id="faq" className="py-28 sm:py-40">
-      <div className="mx-auto w-full max-w-[68rem] px-6">
-        <p className="flex items-center gap-2 font-mono text-[0.8125rem] tracking-[0.08em]">
-          <span className="text-forest">06</span>
-          <span className="text-faint">/ questions</span>
-        </p>
+    <section id="faq" className="scroll-mt-24 py-24 sm:py-32">
+      <SectionHead index="06" label="questions" icon="help" title="questions." />
 
-        <h2 className="mt-6 font-display text-[clamp(2.25rem,5.5vw,4.25rem)] leading-[1.04] tracking-[-0.015em] text-ink">
-          Real answers.
-        </h2>
-
-        <div className="mt-14">
+      <div className="mx-auto w-full max-w-[49.5rem] px-6">
+        <div className="mt-12">
           {FAQS.map((faq, index) => {
             const isOpen = openIndex === index;
 
             return (
               <div
                 key={faq.question}
-                className="border-t border-ink/[0.08] last:border-b"
+                className="border-t border-border-muted last:border-b"
               >
                 <button
                   type="button"
                   aria-expanded={isOpen}
                   onClick={() => setOpenIndex(isOpen ? null : index)}
-                  className="flex w-full cursor-pointer items-center justify-between gap-6 py-7 text-left"
+                  className="flex w-full cursor-pointer items-center justify-between gap-6 py-5 text-left"
                 >
-                  <span className="font-display text-[clamp(1.25rem,2.6vw,1.75rem)] leading-[1.2] text-ink">
+                  <span className="text-[18px] leading-[24px] font-medium tracking-[-0.2px] text-loud sm:text-[20px] sm:leading-[26px]">
                     {faq.question}
                   </span>
-                  <span
+                  <svg
                     aria-hidden="true"
-                    className="shrink-0 text-[1.5rem] leading-none text-muted transition-transform duration-300 ease-story"
-                    style={{ transform: isOpen ? "rotate(180deg)" : undefined }}
+                    viewBox="0 0 14 14"
+                    className="h-3.5 w-3.5 shrink-0 text-secondary transition-transform duration-300 ease-button"
+                    style={{ transform: isOpen ? "rotate(45deg)" : undefined }}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.3"
+                    strokeLinecap="round"
                   >
-                    {isOpen ? "−" : "+"}
-                  </span>
+                    <path d="M7 1.5v11M1.5 7h11" />
+                  </svg>
                 </button>
 
                 <div
@@ -101,7 +100,7 @@ export function QuestionsSection() {
                   style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
                 >
                   <div className="overflow-hidden">
-                    <p className="max-w-[62ch] pb-8 text-[1.0625rem] leading-[1.6] text-muted">
+                    <p className="max-w-[62ch] pb-6 text-body-default text-muted">
                       {faq.answer}
                     </p>
                   </div>

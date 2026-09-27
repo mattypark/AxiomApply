@@ -1,170 +1,154 @@
+import Image from "next/image";
 import Link from "next/link";
-import { DotsField } from "@/components/welcome/scroll/DotsField";
+import { ClosingCta } from "@/components/sections/ClosingCta";
 import { DISCORD_INVITE_URL, einLine } from "@/lib/org";
 
 /**
- * The closing section.
+ * The closing band and footer, klinn's ending.
  *
- * Ends the page on the one thing worth saying: a gradient line, the two ways
- * in, then a thin bar carrying the mark, the links and the socials. The dot
- * field sits behind it all as texture.
+ * One inset card that surfaces out of the page as a pale green, deepens
+ * through the brand green behind the last ask and the footer, and goes almost
+ * black at the foot, where an oversized wordmark bleeds off the bottom edge.
+ * It is the hero's sky run backwards, so the page opens and closes on the same
+ * light.
  *
- * Light, on the same paper as the rest of the site — the page never goes dark,
- * so the footer should not either. The gradient runs strictly left to right
- * through the brand's greens, dark to bright, so it reads as one sweep rather
- * than a colour wash.
+ * Column labels are in the display serif's italic, the one place the footer
+ * uses it — klinn does the same, and it is what keeps the footer from reading
+ * as a sitemap.
  */
 
-const FOOTER_LINKS = [
-  { label: "Internships", href: "/about/internships" },
-  { label: "Learn", href: "/about/learn" },
-  { label: "For startups", href: "/for-startups" },
-  { label: "Careers", href: "/careers" },
-  { label: "Contact", href: "/contact" },
+const EXPLORE = [
+  { label: "how it works", href: "/#how-it-works" },
+  { label: "what you get", href: "/#what-you-get" },
+  { label: "faq", href: "/#faq" },
+  { label: "internship feed", href: "/internships" },
+  { label: "for startups", href: "/for-startups" },
 ] as const;
 
-const LEGAL_LINKS = [
-  { label: "Terms", href: "/terms" },
-  { label: "Privacy", href: "/privacy" },
-  { label: "Cookies", href: "/cookies" },
+const CONNECT = [
+  { label: "say hello", href: "/contact", external: false },
+  { label: "discord", href: DISCORD_INVITE_URL, external: true },
+  { label: "instagram", href: "https://www.instagram.com/axiompathways/", external: true },
+  { label: "linkedin", href: "https://www.linkedin.com/company/axiom-pathways/", external: true },
 ] as const;
 
-const SOCIAL_LINKS = [
-  {
-    label: "Discord",
-    href: DISCORD_INVITE_URL,
-    path: "M19.3 5.34A16.1 16.1 0 0 0 15.4 4.1a11.6 11.6 0 0 0-.51 1.05 15 15 0 0 0-4.49 0A11.4 11.4 0 0 0 9.88 4.1 16 16 0 0 0 6 5.35C3.52 9.04 2.85 12.64 3.18 16.18a16.2 16.2 0 0 0 4.92 2.5c.4-.54.75-1.11 1.05-1.71a10.5 10.5 0 0 1-1.65-.8c.14-.1.28-.21.41-.32a11.6 11.6 0 0 0 9.88 0c.13.11.27.22.41.32-.53.31-1.08.58-1.66.8.3.6.65 1.17 1.05 1.71a16.1 16.1 0 0 0 4.93-2.5c.39-4.1-.68-7.67-2.82-10.84ZM9.68 14.01c-.94 0-1.72-.87-1.72-1.94s.76-1.94 1.72-1.94 1.74.87 1.72 1.94c0 1.07-.77 1.94-1.72 1.94Zm4.64 0c-.95 0-1.72-.87-1.72-1.94s.76-1.94 1.72-1.94 1.73.87 1.72 1.94c0 1.07-.76 1.94-1.72 1.94Z",
-  },
-  {
-    label: "Instagram",
-    href: "https://www.instagram.com/axiompathways/",
-    path: "M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.17.4.37 1 .42 2.2.06 1.3.07 1.7.07 4.9s0 3.6-.07 4.9c-.05 1.2-.25 1.8-.42 2.2a3.9 3.9 0 0 1-.9 1.4c-.4.4-.8.7-1.4.9-.4.17-1 .37-2.2.42-1.3.06-1.7.07-4.9.07s-3.6 0-4.9-.07c-1.2-.05-1.8-.25-2.2-.42a3.9 3.9 0 0 1-1.4-.9 3.9 3.9 0 0 1-.9-1.4c-.17-.4-.37-1-.42-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.05-1.2.25-1.8.42-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.17 1-.37 2.2-.42C8.4 2.2 8.8 2.2 12 2.2Zm0 1.8c-3.1 0-3.5 0-4.7.07-1.1.05-1.7.24-2.1.4-.5.2-.9.44-1.3.83-.4.4-.63.8-.83 1.3-.16.4-.35 1-.4 2.1C2.6 8.5 2.6 8.9 2.6 12s0 3.5.07 4.7c.05 1.1.24 1.7.4 2.1.2.5.44.9.83 1.3.4.4.8.63 1.3.83.4.16 1 .35 2.1.4 1.2.07 1.6.07 4.7.07s3.5 0 4.7-.07c1.1-.05 1.7-.24 2.1-.4.5-.2.9-.44 1.3-.83.4-.4.63-.8.83-1.3.16-.4.35-1 .4-2.1.07-1.2.07-1.6.07-4.7s0-3.5-.07-4.7c-.05-1.1-.24-1.7-.4-2.1a3.5 3.5 0 0 0-.83-1.3 3.5 3.5 0 0 0-1.3-.83c-.4-.16-1-.35-2.1-.4C15.5 4 15.1 4 12 4Zm0 3.1a4.9 4.9 0 1 1 0 9.8 4.9 4.9 0 0 1 0-9.8Zm0 8a3.1 3.1 0 1 0 0-6.2 3.1 3.1 0 0 0 0 6.2Zm6.3-8.2a1.15 1.15 0 1 1-2.3 0 1.15 1.15 0 0 1 2.3 0Z",
-  },
-  {
-    label: "LinkedIn",
-    href: "https://www.linkedin.com/company/axiom-pathways/",
-    path: "M6.94 5a1.94 1.94 0 1 1-3.88 0 1.94 1.94 0 0 1 3.88 0ZM3.2 8.4h3.6V21H3.2V8.4Zm5.9 0h3.45v1.72h.05c.48-.9 1.65-1.86 3.4-1.86 3.63 0 4.3 2.36 4.3 5.43V21h-3.6v-6.4c0-1.53-.03-3.5-2.15-3.5-2.15 0-2.48 1.66-2.48 3.38V21H9.1V8.4Z",
-  },
+const LEGAL = [
+  { label: "terms", href: "/terms" },
+  { label: "privacy", href: "/privacy" },
+  { label: "cookies", href: "/cookies" },
 ] as const;
 
-export function SiteFooter() {
+function Column({
+  title,
+  links,
+}: {
+  title: string;
+  links: readonly { label: string; href: string; external?: boolean }[];
+}) {
   return (
-    <section className="relative overflow-hidden bg-paper text-ink">
-      {/* the dot field, as texture behind everything */}
-      {/* Texture, not content: knocked back and masked out of the middle so
-          the gradient line and the buttons sit on clean ground. */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-70"
-        style={{
-          maskImage:
-            "radial-gradient(70% 55% at 50% 42%, transparent 30%, #000 78%)",
-          WebkitMaskImage:
-            "radial-gradient(70% 55% at 50% 42%, transparent 30%, #000 78%)",
-        }}
-      >
-        <DotsField />
-      </div>
-
-      <div className="relative mx-auto flex w-full max-w-[1180px] flex-col px-6 pt-28 pb-10 sm:px-10 sm:pt-40">
-        {/* the line */}
-        <h2 className="mx-auto max-w-[16ch] text-center font-display text-[clamp(2.4rem,6vw,4.6rem)] leading-[1.06] font-normal tracking-[-0.02em]">
-          <span
-            style={{
-              backgroundImage:
-                "linear-gradient(90deg, #1d4527 0%, #2f6b3d 34%, #3f8f52 67%, #6cc47f 100%)",
-              WebkitBackgroundClip: "text",
-              backgroundClip: "text",
-              color: "transparent",
-            }}
-          >
-            Your first real startup job starts here.
-          </span>
-        </h2>
-
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-          <Link
-            href="/onboarding?side=intern"
-            className="rounded-full bg-ink px-7 py-3.5 text-[0.95rem] font-medium text-white transition-transform duration-300 hover:-translate-y-0.5"
-          >
-            Get started
-          </Link>
-          <Link
-            href="/onboarding?side=startup"
-            className="rounded-full bg-ink/[0.06] px-7 py-3.5 text-[0.95rem] font-medium text-muted transition-[transform,color] duration-300 hover:-translate-y-0.5 hover:text-ink"
-          >
-            Hire an intern
-          </Link>
-        </div>
-
-        {/* the bar */}
-        <div
-          className="mt-24 flex flex-wrap items-center justify-between gap-6 pt-7 sm:mt-32"
-          style={{ borderTop: "1px solid var(--color-line)" }}
-        >
-          <div className="flex flex-wrap items-center gap-x-7 gap-y-3">
-            <Link
-              href="/"
-              className="flex items-center gap-2.5 transition-opacity duration-300 hover:opacity-70"
-            >
-              <img
-                src="/axiom-mark-256.png"
-                alt=""
-                width={26}
-                height={26}
-                className="h-[26px] w-[26px] object-contain"
-              />
-              <span className="text-[0.95rem] font-semibold tracking-tight">
-                Axiom
-              </span>
-            </Link>
-
-            {FOOTER_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-[0.92rem] text-muted transition-colors duration-200 hover:text-ink"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-4">
-            {SOCIAL_LINKS.map((social) => (
+    <div>
+      <p className="font-display text-[14px] text-white/60 italic">{title}</p>
+      <ul className="mt-4 flex flex-col gap-3">
+        {links.map((link) => (
+          <li key={link.label}>
+            {link.external ? (
               <a
-                key={social.href}
-                href={social.href}
+                href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={social.label}
-                className="text-muted transition-colors duration-200 hover:text-ink"
+                className="text-[13px] text-white transition-opacity duration-200 hover:opacity-75"
               >
-                <svg viewBox="0 0 24 24" className="h-[22px] w-[22px]" fill="currentColor" aria-hidden>
-                  <path d={social.path} />
-                </svg>
+                {link.label} <span aria-hidden="true">↗</span>
+                <span className="sr-only"> (opens in a new tab)</span>
               </a>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-x-5 gap-y-2">
-          <div className="flex flex-wrap gap-x-5">
-            {LEGAL_LINKS.map((link) => (
+            ) : (
               <Link
-                key={link.href}
                 href={link.href}
-                className="text-[0.82rem] text-faint transition-colors duration-200 hover:text-ink"
+                className="text-[13px] text-white transition-opacity duration-200 hover:opacity-75"
               >
                 {link.label}
               </Link>
-            ))}
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export function SiteFooter() {
+  const ein = einLine();
+
+  return (
+    <footer
+      className="relative mt-16 overflow-hidden"
+      style={{ marginInline: "var(--hero-inset)", marginBottom: "var(--hero-inset)" }}
+    >
+      <div
+        className="relative overflow-hidden rounded-b-[var(--radius-hero)] pt-40 sm:pt-56"
+        style={{
+          background:
+            "linear-gradient(180deg, rgb(247 249 248 / 0) 0%, #d6f2de 5%, #7fcf95 10%, #2a9447 16%, #1b7a3a 30%, #13692f 60%, #0a4a24 78%, #000a04 100%)",
+        }}
+      >
+        <ClosingCta />
+
+        <div className="mx-auto mt-28 grid w-full max-w-[49.5rem] gap-12 px-6 sm:mt-40 sm:grid-cols-[1fr_auto_auto] sm:gap-20">
+          <div>
+            <Link href="/" className="flex items-center gap-2" aria-label="Axiom home">
+              <Image
+                src="/axiom-mark-256.png"
+                alt=""
+                width={256}
+                height={256}
+                className="h-7 w-7 object-contain brightness-0 invert"
+              />
+              <span className="text-[22px] font-semibold tracking-[-0.03em] text-white">
+                axiom
+              </span>
+            </Link>
+            <p className="mt-4 text-[13px] leading-[18px] text-white/80">
+              one application. real introductions.
+              <br />
+              your next chapter starts here.
+            </p>
           </div>
-          <p className="text-[0.82rem] text-faint">
-            © 2026 Axiom Pathways{einLine() ? ` · ${einLine()}` : ""} · A
-            nonprofit placing students into real startup work.
+          <Column title="explore" links={EXPLORE} />
+          <Column title="connect" links={CONNECT} />
+        </div>
+
+        <div className="mx-auto mt-16 flex w-full max-w-[49.5rem] flex-wrap items-center justify-between gap-x-6 gap-y-3 px-6 text-[12px] text-white/70">
+          <p>
+            © 2026 axiom pathways{ein ? ` · ${ein}` : ""}
           </p>
+          <div className="flex gap-5">
+            {LEGAL.map((link) => (
+              <Link key={link.href} href={link.href} className="transition-opacity hover:opacity-75">
+                {link.label}
+              </Link>
+            ))}
+            <span>free for everyone</span>
+          </div>
+        </div>
+
+        {/* The wordmark. Sized to the container and pushed a fifth of its own
+            height past the bottom edge so it reads as cut off by the card. */}
+        <div
+          aria-hidden="true"
+          className="mx-auto mt-16 flex w-full max-w-[49.5rem] items-end gap-[3%] px-6 select-none"
+        >
+          <Image
+            src="/axiom-mark-256.png"
+            alt=""
+            width={256}
+            height={256}
+            className="w-[27%] translate-y-[12%] object-contain opacity-90 brightness-0 invert"
+          />
+          <span className="translate-y-[20%] text-[clamp(4.5rem,21vw,12.5rem)] leading-[0.8] font-semibold tracking-[-0.06em] text-[#e6eee8]">
+            axiom
+          </span>
         </div>
       </div>
-    </section>
+    </footer>
   );
 }
