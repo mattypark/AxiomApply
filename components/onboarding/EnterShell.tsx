@@ -44,9 +44,9 @@ export function EnterShell({ children }: { children: ReactNode }) {
           <span className="text-[22px] font-semibold tracking-[-0.03em] text-white">axiom</span>
         </Link>
 
-        <div className="py-10 lg:py-0">
+        <div className="pt-8 pb-2 lg:py-0">
           <p className="text-[15px] text-white/80">your next chapter</p>
-          <p className="mt-4 max-w-[12ch] font-display text-[48px] leading-[50px] tracking-[-0.5px] text-white sm:text-[72px] sm:leading-[70px] sm:tracking-[-1px]">
+          <p className="mt-4 max-w-[12ch] font-display text-[36px] leading-[38px] tracking-[-0.4px] text-white sm:text-[72px] sm:leading-[70px] sm:tracking-[-1px]">
             good work deserves to be <em className="italic">seen.</em>
           </p>
           <p className="mt-6 hidden max-w-[36ch] text-[18px] leading-[26px] text-white/85 sm:block">

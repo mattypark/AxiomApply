@@ -73,7 +73,7 @@ export function FlowText({
           event.preventDefault();
           onEnter();
         }}
-        className="w-full border-b border-app-line-strong bg-transparent pb-3 text-[24px] leading-[32px] tracking-[-0.3px] text-app-text-1 caret-app-accent outline-none placeholder:text-app-text-3/60 focus:border-app-accent/60 focus-visible:outline-none sm:text-[28px] sm:leading-[36px]"
+        className="w-full rounded-none border-b border-app-line-strong bg-transparent pb-3 text-[24px] leading-[32px] tracking-[-0.3px] text-app-text-1 caret-app-accent outline-none placeholder:text-app-text-3/60 focus:border-app-accent/60 focus-visible:outline-none sm:text-[28px] sm:leading-[36px]"
       />
       <div className="mt-2 flex justify-end">
         <Counter value={value} max={question.maxLength} />

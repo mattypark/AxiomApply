@@ -196,10 +196,14 @@ body {
   background: rgba(47, 107, 61, 0.22);
 }
 
-:focus-visible {
-  outline: 2px solid var(--color-forest);
-  outline-offset: 3px;
-  border-radius: 8px;
+/* In the base layer so a component that draws its own focus state (the
+   question flow's inputs) can switch this off with a utility. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-forest);
+    outline-offset: 3px;
+    border-radius: 8px;
+  }
 }
 
 /* ---------- glass materials ---------- */

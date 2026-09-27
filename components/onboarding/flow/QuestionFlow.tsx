@@ -235,7 +235,9 @@ export function QuestionFlow({
 
       <div className="mx-auto grid w-full max-w-[68rem] gap-12 px-5 pb-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-20">
         <main
-          className={`relative flex flex-col justify-center py-10 ${
+          // Top-anchored on phones, where the keyboard takes the bottom half
+          // and a centred question would sit underneath it.
+          className={`relative flex flex-col justify-start pt-12 pb-10 lg:justify-center lg:py-10 ${
             chrome === "embedded" ? "min-h-[36rem]" : "min-h-[calc(100dvh-7rem)]"
           }`}
         >
