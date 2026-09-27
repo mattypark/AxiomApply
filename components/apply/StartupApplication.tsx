@@ -1,10 +1,7 @@
 "use client";
 
-import {
-  ApplyStepper,
-  type ApplyPrefill,
-  type SubmitResult,
-} from "@/components/apply/ApplyStepper";
+import { QuestionFlow } from "@/components/onboarding/flow/QuestionFlow";
+import type { ApplyPrefill, SubmitResult } from "@/components/onboarding/flow/useApplication";
 import { STARTUP_SET } from "@/lib/apply-sections";
 import { submitStartupApplication } from "@/lib/actions/applications";
 import { postToWebhook } from "@/lib/apply-submit";
@@ -18,9 +15,11 @@ import { postToWebhook } from "@/lib/apply-submit";
 export function StartupApplication({
   prefill,
   backHref,
+  chrome,
 }: {
   prefill?: ApplyPrefill;
   backHref?: string;
+  chrome?: "full" | "embedded";
 }) {
   async function handleSubmit(
     answers: Record<string, string>,
@@ -35,11 +34,12 @@ export function StartupApplication({
   }
 
   return (
-    <ApplyStepper
+    <QuestionFlow
       set={STARTUP_SET}
       prefill={prefill}
       backHref={backHref}
-      variant="dark"
+      chrome={chrome}
+      returnTo="/onboarding?side=startup"
       onSubmit={handleSubmit}
     />
   );

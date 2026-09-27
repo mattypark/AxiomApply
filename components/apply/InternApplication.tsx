@@ -1,10 +1,7 @@
 "use client";
 
-import {
-  ApplyStepper,
-  type ApplyPrefill,
-  type SubmitResult,
-} from "@/components/apply/ApplyStepper";
+import { QuestionFlow } from "@/components/onboarding/flow/QuestionFlow";
+import type { ApplyPrefill, SubmitResult } from "@/components/onboarding/flow/useApplication";
 import { INTERN_SET } from "@/lib/apply-sections";
 import { postToWebhook } from "@/lib/apply-submit";
 import { recordApplication, syncInternProfile } from "@/lib/actions/applications";
@@ -23,11 +20,14 @@ export function InternApplication({
   prefill,
   backHref,
   chrome,
+  returnTo = "/onboarding?side=intern",
 }: {
   prefill?: ApplyPrefill;
   backHref?: string;
   /** "embedded" when rendered inside the workspace shell. */
   chrome?: "full" | "embedded";
+  /** Where an OAuth round trip from inside the application lands. */
+  returnTo?: string;
 }) {
   async function handleSubmit(
     answers: Record<string, string>,
@@ -56,11 +56,12 @@ export function InternApplication({
   }
 
   return (
-    <ApplyStepper
+    <QuestionFlow
       set={INTERN_SET}
       prefill={prefill}
       backHref={backHref}
       chrome={chrome}
+      returnTo={returnTo}
       onSubmit={handleSubmit}
     />
   );

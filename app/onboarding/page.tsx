@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import { EnterShell } from "@/components/onboarding/EnterShell";
 import { EnterFlow } from "@/components/onboarding/EnterFlow";
 import { isSide } from "@/lib/apply-sides";
 import { getProfile, getUser } from "@/lib/auth";
@@ -9,8 +8,8 @@ export const metadata = { title: "Welcome" };
 /**
  * Where Enter lands.
  *
- * Public by design: nobody needs an account to apply, and the account is
- * offered rather than demanded. The side comes from ?side= — intern is the
+ * Public by design: the account is offered first (Google) but never
+ * demanded — "continue without an account" still reaches every question. The side comes from ?side= — intern is the
  * default because that is who arrives here from the homepage, and the other
  * two are a line of text inside rather than a screen of their own.
  */
@@ -35,15 +34,19 @@ export default async function OnboardingPage({
   const user = await getUser();
 
   return (
-    <EnterShell>
-      <EnterFlow
-        side={requested ?? "intern"}
-        prefill={{
-          name: profile?.display_name ?? undefined,
-          email: user?.email ?? undefined,
-          isSignedIn: Boolean(user),
-        }}
-      />
-    </EnterShell>
+    <EnterFlow
+      side={requested ?? "intern"}
+      prefill={{
+        // A fresh Google account has no profile name yet; Google's own is
+        // the best first guess, and it never overwrites a typed answer.
+        name:
+          profile?.display_name ??
+          (typeof user?.user_metadata?.full_name === "string"
+            ? user.user_metadata.full_name
+            : undefined),
+        email: user?.email ?? undefined,
+        isSignedIn: Boolean(user),
+      }}
+    />
   );
 }

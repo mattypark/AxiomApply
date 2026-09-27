@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getBrowserSupabase } from "@/lib/supabase/client";
+import { authCallbackUrl } from "@/lib/auth-callback";
 import { GlassInput } from "@/components/glass/GlassInput";
 import { GlassButton } from "@/components/glass/GlassButton";
 
@@ -29,28 +30,16 @@ function friendlyAuthError(raw: string): string {
   return "Couldn't sign you in just now — try again in a moment.";
 }
 
-/**
- * Absolute callback URL for Supabase auth.
- *
- * Prefers NEXT_PUBLIC_SITE_URL: Supabase only honours a `redirect_to` that
- * matches its Redirect URLs allowlist, and silently falls back to the
- * dashboard's Site URL otherwise — which is how people ended up on localhost.
- * Pinning the origin keeps the value predictable and easy to allowlist.
- */
-function callbackUrl(next: string): string {
-  const origin =
-    process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, "") ||
-    window.location.origin;
-  return `${origin}/auth/callback?next=${encodeURIComponent(next)}`;
-}
-
 export function AuthForm({
   next,
   mode = "signin",
+  withGoogle = true,
 }: {
   next: string;
   /** "signup" creates the account with a password; "signin" logs in */
   mode?: "signin" | "signup";
+  /** Off where a Google button already sits above the form. */
+  withGoogle?: boolean;
 }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -78,7 +67,7 @@ export function AuthForm({
     );
   }
 
-  const redirectTo = () => callbackUrl(next);
+  const redirectTo = () => authCallbackUrl(next);
 
   const google = async () => {
     await supabase.auth.signInWithOAuth({
@@ -123,16 +112,28 @@ export function AuthForm({
 
   return (
     <div className="flex w-full flex-col gap-4">
-      <GlassButton tone="forest" type="button" onClick={google} className="w-full">
-        <svg width="17" height="17" viewBox="0 0 48 48" aria-hidden="true">
-          <path fill="#fff" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z" />
-        </svg>
-        Continue with Google
-      </GlassButton>
+      {withGoogle && (
+        <>
+          <GlassButton
+            tone="forest"
+            type="button"
+            onClick={google}
+            className="w-full"
+          >
+            <svg width="17" height="17" viewBox="0 0 48 48" aria-hidden="true">
+              <path
+                fill="#fff"
+                d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"
+              />
+            </svg>
+            Continue with Google
+          </GlassButton>
 
-      <span className="text-center font-mono text-[0.64rem] tracking-[0.18em] text-faint uppercase">
-        or
-      </span>
+          <span className="text-center font-mono text-[0.64rem] tracking-[0.18em] text-faint uppercase">
+            or
+          </span>
+        </>
+      )}
 
       <form onSubmit={submitPassword} className="flex flex-col gap-3">
         <GlassInput
@@ -150,7 +151,9 @@ export function AuthForm({
           minLength={6}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder={mode === "signup" ? "Create a password (6+ characters)" : "Password"}
+          placeholder={
+            mode === "signup" ? "Create a password (6+ characters)" : "Password"
+          }
           autoComplete={mode === "signup" ? "new-password" : "current-password"}
           aria-label="Password"
         />

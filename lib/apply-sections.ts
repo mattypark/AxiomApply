@@ -149,7 +149,9 @@ const INTERN_SECTIONS: Section[] = [
     // The entry screen leads with GitHub and a resume, so the application
     // opens on the same two things rather than making someone answer five
     // questions before reaching what they were just promised.
-    id: "your-work",
+    // Section ids are layout keys, not wire names — this one was a second
+    // "your-work", which collided with the longer section further down.
+    id: "show-us",
     nav: "your work",
     title: "Your work",
     blurb: "Start with what you have built. Links beat adjectives.",
@@ -194,8 +196,8 @@ const INTERN_SECTIONS: Section[] = [
   },
   {
     id: "your-work",
-    nav: "your work",
-    title: "Your work",
+    nav: "the role",
+    title: "The role you want",
     blurb:
       "This is the part we actually read. Links beat adjectives — a repo, a deployed site, an app in a store, a video with views.",
     questions: [

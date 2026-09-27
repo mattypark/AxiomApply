@@ -63,7 +63,19 @@ function buildDots(): Dot[] {
   return dots;
 }
 
-const DOTS = buildDots();
+/**
+ * Rounded to hundredths. Server and browser trig can disagree in the last
+ * floating-point digit, and inside a client component that one digit is a
+ * hydration mismatch on every dot. Nobody can see a hundredth of a unit.
+ */
+const round = (value: number) => Math.round(value * 100) / 100;
+
+const DOTS = buildDots().map((dot) => ({
+  x: round(dot.x),
+  y: round(dot.y),
+  r: round(dot.r),
+  o: round(dot.o),
+}));
 
 export function DotArc({ className = "" }: { className?: string }) {
   return (

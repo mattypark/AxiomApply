@@ -22,6 +22,7 @@ export default async function ApplyPage() {
   return (
     <InternApplication
       chrome="embedded"
+      returnTo="/apply"
       backHref={user ? "/home" : "/"}
       prefill={{
         name: profile?.display_name ?? undefined,

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { GlassPanel } from "@/components/glass/GlassPanel";
-import { Reveal } from "@/components/motion/Reveal";
 import { AuthForm } from "@/components/auth/AuthForm";
+import { EnterShell } from "@/components/onboarding/EnterShell";
+import { GoogleButton } from "@/components/onboarding/GoogleButton";
 import { getProfile, getUser } from "@/lib/auth";
 
 export const metadata = { title: "Sign in" };
@@ -35,45 +35,44 @@ export default async function AuthPage({
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center gap-6 px-5 py-12">
-      <Reveal className="w-full">
-        <GlassPanel
-          variant="deep"
-          specular
-          className="flex w-full flex-col items-center gap-6 p-7 sm:p-9"
-        >
-          <div className="flex flex-col items-center gap-2 text-center">
-            <span className="kicker">Axiom Pathways</span>
-            <h1 className="text-2xl font-semibold tracking-tight text-ink">
-              Welcome back.
-            </h1>
-            <p className="max-w-[34ch] text-[0.9rem] leading-relaxed text-muted">
-              Sign in to pick up your application, save internships, and see
-              where you stand.
-            </p>
-          </div>
+    <EnterShell>
+      <p className="text-[15px] text-app-text-3">good to see you</p>
+      <h1 className="mt-4 font-display text-[40px] leading-[44px] tracking-[-0.4px] text-app-text-1 sm:text-[52px] sm:leading-[54px]">
+        welcome back.
+      </h1>
+      <p className="mt-5 text-[18px] leading-[27px] text-app-text-3">
+        sign in to pick up your application, save internships, and see where
+        you stand.
+      </p>
 
-          <AuthForm next={target || "/home"} />
-        </GlassPanel>
-      </Reveal>
+      <div className="mt-10">
+        <GoogleButton next={target || "/home"} />
+      </div>
 
-      <Reveal delay={0.1} className="flex flex-col items-center gap-2 text-center">
-        <p className="text-[0.9rem] text-muted">
-          First time here?{" "}
-          <Link
-            href="/onboarding"
-            className="font-medium text-forest transition-colors hover:text-forest-deep"
-          >
-            Get started →
-          </Link>
-        </p>
-        <Link
-          href="/"
-          className="text-[0.82rem] text-muted transition-colors hover:text-ink"
-        >
-          ← Everything works without an account
+      {/* Older accounts were made with an email and password. They still work;
+          they just are not the front door any more. The form keeps its light
+          card rather than being restyled for a path most people never open. */}
+      <details className="group mt-6">
+        <summary className="cursor-pointer list-none text-center text-[13px] text-app-text-3 underline underline-offset-4 transition-colors hover:text-app-text-1">
+          use email and password instead
+        </summary>
+        <div className="mt-5 rounded-[16px] bg-paper p-5">
+          <AuthForm next={target || "/home"} withGoogle={false} />
+        </div>
+      </details>
+
+      <div className="mt-12 border-t border-app-line pt-6 text-center text-[13px] text-app-text-3">
+        first time here?{" "}
+        <Link href="/onboarding" className="text-app-text-1 underline underline-offset-4">
+          get started
         </Link>
-      </Reveal>
-    </main>
+      </div>
+
+      <p className="mt-8 text-center">
+        <Link href="/" className="text-[15px] text-app-text-2 transition-colors hover:text-app-text-1">
+          ← back to home
+        </Link>
+      </p>
+    </EnterShell>
   );
 }

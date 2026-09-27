@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { Question, QuestionSet } from "@/lib/apply-sections";
 import { TEXTAREA_HINT } from "@/lib/apply-sections";
@@ -13,6 +13,21 @@ import {
   TextField,
   YesNoField,
 } from "@/components/apply/fields";
+import {
+  splitValues,
+  useApplication,
+  validate,
+  type Answers,
+  type ApplyPrefill,
+  type Files,
+  type SubmitResult,
+} from "@/components/onboarding/flow/useApplication";
+
+export {
+  submittedKey,
+  type ApplyPrefill,
+  type SubmitResult,
+} from "@/components/onboarding/flow/useApplication";
 
 /**
  * One question, one screen.
@@ -34,66 +49,11 @@ import {
  * is already submitted.
  */
 
-export type ApplyPrefill = {
-  name?: string;
-  email?: string;
-  /** True when a Supabase session already exists (Google or email login). */
-  isSignedIn?: boolean;
-};
-
-export type SubmitResult = {
-  ok: boolean;
-  error?: string;
-};
-
-type Answers = Record<string, string>;
-
-/**
- * Local record that this browser submitted an application. The server row is
- * the truth but is not always reachable — the mirror can fail, and the
- * applicant may never have signed in. Read alongside the server status, never
- * instead of it.
- */
-export const submittedKey = (setKey: string) => `axiom_submitted_${setKey}`;
-
 const HOME_BY_SET: Record<QuestionSet["key"], string> = {
   intern: "/home",
   startup: "/startup/home",
   chapter: "/chapter/home",
 };
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-/** A multi_checkbox answer is one comma-joined string on the wire. */
-const splitValues = (value: string | undefined) =>
-  value ? value.split(", ").filter(Boolean) : [];
-
-function isVisible(question: Question, answers: Answers): boolean {
-  const rule = question.conditional;
-  if (!rule) return true;
-
-  const parent = answers[rule.dependsOn] ?? "";
-  if (rule.showWhen !== undefined) return parent === rule.showWhen;
-  if (rule.showWhenOneOf) return rule.showWhenOneOf.includes(parent);
-  if (rule.showWhenIncludes) return splitValues(parent).includes(rule.showWhenIncludes);
-  return true;
-}
-
-function validate(question: Question, answers: Answers, files: Record<string, File>) {
-  const value = (answers[question.id] ?? "").trim();
-
-  if (question.type === "file") {
-    // Files are never required in any set today, and a missing optional file
-    // must not block the step.
-    return question.required && !files[question.id] ? "Add a file to continue." : null;
-  }
-
-  if (question.required && !value) return "This one is required.";
-  if (question.inputType === "email" && value && !EMAIL_PATTERN.test(value)) {
-    return "That email does not look right.";
-  }
-  return null;
-}
 
 export function ApplyStepper({
   set,
@@ -114,83 +74,26 @@ export function ApplyStepper({
    */
   variant?: "light" | "dark" | "grey";
   chrome?: "full" | "embedded";
-  onSubmit: (answers: Answers, files: Record<string, File>) => Promise<SubmitResult>;
+  onSubmit: (answers: Answers, files: Files) => Promise<SubmitResult>;
 }) {
-  const [answers, setAnswers] = useState<Answers>({});
-  const [files, setFiles] = useState<Record<string, File>>({});
+  const app = useApplication({ set, prefill, onSubmit });
+  const { answers, files, questions, submitting, submitted, trapRef } = app;
+  const storeAnswer = app.setAnswer;
   const [index, setIndex] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [restored, setRestored] = useState(false);
   const headingRef = useRef<HTMLDivElement>(null);
-
-  /**
-   * Spam trap. A field no person can see or tab to, and a clock.
-   *
-   * Both live outside `answers` on purpose: the wire payload is a frozen
-   * contract, so nothing here is ever sent. A bot that fills every input, or
-   * one that submits the whole thing in under three seconds, gets the success
-   * screen and no POST — telling a scraper it failed just teaches it to retry.
-   */
-  const trapRef = useRef("");
-  const startedAt = useRef(Date.now());
-
-  // Flattened once per answer change: a conditional question appears and
-  // disappears as its parent is answered, and the step count has to follow.
-  const questions = useMemo(() => {
-    const flat: { question: Question; section: string }[] = [];
-    for (const section of set.sections) {
-      for (const question of section.questions) {
-        if (isVisible(question, answers)) {
-          flat.push({ question, section: section.nav });
-        }
-      }
-    }
-    return flat;
-  }, [set, answers]);
-
-  // Draft restore. Files cannot survive a reload, so only answers persist —
-  // and the applicant is told as much on the files step rather than finding
-  // out by submitting without one.
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(set.storageKey);
-      if (raw) setAnswers(JSON.parse(raw) as Answers);
-    } catch {
-      // A corrupt or unreadable draft is not worth failing the page over.
-    }
-    setRestored(true);
-  }, [set.storageKey]);
-
-  // Prefill never overwrites a real answer: a restored draft is what the
-  // applicant typed, and the session's name is only a guess at it.
-  useEffect(() => {
-    if (!restored || !prefill) return;
-    setAnswers((current) => ({
-      [set.gate.nameId]: prefill.name ?? "",
-      [set.gate.emailId]: prefill.email ?? "",
-      ...current,
-    }));
-  }, [restored, prefill, set.gate.nameId, set.gate.emailId]);
-
-  useEffect(() => {
-    if (!restored) return;
-    try {
-      localStorage.setItem(set.storageKey, JSON.stringify(answers));
-    } catch {
-      // Private mode, quota — the form still works, it just will not resume.
-    }
-  }, [answers, restored, set.storageKey]);
 
   const total = questions.length;
   const onReview = index >= total;
   const current = questions[index];
 
-  const setAnswer = useCallback((id: string, value: string) => {
-    setAnswers((previous) => ({ ...previous, [id]: value }));
-    setError(null);
-  }, []);
+  const setAnswer = useCallback(
+    (id: string, value: string) => {
+      storeAnswer(id, value);
+      setError(null);
+    },
+    [storeAnswer],
+  );
 
   const goNext = useCallback(() => {
     if (onReview) return;
@@ -216,36 +119,13 @@ export function ApplyStepper({
   }, [index]);
 
   async function handleSubmit() {
-    setSubmitting(true);
     setError(null);
-
-    const looksAutomated =
-      trapRef.current.trim() !== "" || Date.now() - startedAt.current < 3000;
-
-    if (looksAutomated) {
-      setSubmitted(true);
-      setSubmitting(false);
-      return;
-    }
-
-    const result = await onSubmit(answers, files);
-
-    if (!result.ok) {
-      setError(result.error ?? "That did not send. Try once more.");
-      setSubmitting(false);
-      return;
-    }
-
-    try {
-      localStorage.setItem(submittedKey(set.key), new Date().toISOString());
-      localStorage.removeItem(set.storageKey);
-    } catch {
-      // Nothing here is load-bearing; the submission already landed.
-    }
-
-    setSubmitted(true);
-    setSubmitting(false);
+    await app.submit();
   }
+
+  // The hook owns the send; its failure message shows where the stepper
+  // always showed errors on the review screen.
+  const shownError = error ?? app.submitError;
 
   if (submitted) {
     return (
@@ -310,7 +190,7 @@ export function ApplyStepper({
               aria-live="polite"
             >
               <p className="font-mono text-[0.68rem] tracking-[0.14em] text-forest uppercase">
-                {current.section}
+                {current.section.nav}
               </p>
             </div>
 
@@ -320,14 +200,7 @@ export function ApplyStepper({
               files={files}
               error={error ?? undefined}
               onAnswer={setAnswer}
-              onFile={(id, file) =>
-                setFiles((previous) => {
-                  const next = { ...previous };
-                  if (file) next[id] = file;
-                  else delete next[id];
-                  return next;
-                })
-              }
+              onFile={app.setFile}
               onEnter={goNext}
             />
           </>
@@ -355,9 +228,9 @@ export function ApplyStepper({
         )}
       </div>
 
-      {error && onReview && (
+      {shownError && onReview && (
         <p className="mt-4 text-right font-mono text-[0.68rem] tracking-[0.08em] text-error uppercase">
-          {error}
+          {shownError}
         </p>
       )}
 
@@ -398,7 +271,7 @@ function QuestionField({
 }: {
   question: Question;
   answers: Answers;
-  files: Record<string, File>;
+  files: Files;
   error?: string;
   onAnswer: (id: string, value: string) => void;
   onFile: (id: string, file: File | null) => void;
@@ -506,9 +379,9 @@ function Review({
   files,
   onEdit,
 }: {
-  questions: { question: Question; section: string }[];
+  questions: { question: Question }[];
   answers: Answers;
-  files: Record<string, File>;
+  files: Files;
   onEdit: (index: number) => void;
 }) {
   return (
