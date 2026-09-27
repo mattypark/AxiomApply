@@ -5,22 +5,21 @@ import Image from "next/image";
 import Link from "next/link";
 
 /**
- * The floating nav.
+ * The floating nav, klinn's behaviour.
  *
- * It carries a white pill while it is over the hero — the sky is near-black
- * green at the top and a bare wordmark vanished into it — and drops the pill
- * once it is over the page body, where the ground is already white and a
- * second white surface would just be a box around nothing. The mark stays
- * Axiom green and the links stay ink in both states, so only the surface
- * animates and nothing about the type changes as you scroll.
+ * Over the sky it has no surface at all — white mark, white links — because
+ * the sky is dark enough to carry white type and a pill on it would be a box
+ * around nothing. Once the sky is gone it becomes a frosted light pill with a
+ * soft shadow and dark type. Only one thing changes at the threshold, the
+ * surface and the ink together, on klinn's theme easing.
  *
- * Position comes from the hero's measured height rather than an observer on a
- * sentinel: the sentinel version flipped state while the hero was still on
- * screen and left white type on a white page, which read as the nav
- * disappearing.
+ * Position comes from the hero's measured height, not an observer: a sentinel
+ * version flipped while sky was still behind the bar and left white type on a
+ * white page. The hero is 100svh; the sky fades out just past it, so
+ * the flip waits until the bar is over the pale end of the fade.
  */
 export function HeroNav({ signedIn, ctaHref }: { signedIn: boolean; ctaHref: string }) {
-  const [onHero, setOnHero] = useState(true);
+  const [onSky, setOnSky] = useState(true);
   const frame = useRef(0);
 
   useEffect(() => {
@@ -28,10 +27,8 @@ export function HeroNav({ signedIn, ctaHref }: { signedIn: boolean; ctaHref: str
 
     const measure = () => {
       frame.current = 0;
-      // The pill is needed for as long as any part of the sky sits behind the
-      // bar itself, not until the hero has fully left.
       const bottom = hero ? hero.offsetHeight : window.innerHeight;
-      setOnHero(window.scrollY < bottom - 96);
+      setOnSky(window.scrollY < bottom * 0.8);
     };
 
     const onScroll = () => {
@@ -52,29 +49,35 @@ export function HeroNav({ signedIn, ctaHref }: { signedIn: boolean; ctaHref: str
   const links = [
     { href: "#how-it-works", label: "how it works" },
     { href: "#what-you-get", label: "what you get" },
-    { href: "#faq", label: "questions" },
+    { href: "#faq", label: "faq" },
   ];
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4 sm:pt-6">
+    <div className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-[calc(var(--hero-inset)+6px)]">
       <nav
-        className={`pointer-events-auto flex w-full max-w-[68rem] items-center justify-between gap-4 rounded-full px-5 py-3 transition-[background-color,box-shadow,backdrop-filter] duration-500 ease-story ${
-          onHero
-            ? "bg-white/92 shadow-[0_10px_34px_rgba(4,26,12,0.22)] backdrop-blur-xl"
-            : "bg-transparent shadow-none"
+        className={`pointer-events-auto flex h-[52px] w-full max-w-[52rem] items-center justify-between gap-4 rounded-[18px] pr-2 pl-4 transition-[background-color,box-shadow,backdrop-filter] duration-500 ease-theme ${
+          onSky
+            ? "bg-transparent shadow-none"
+            : "bg-[#f3f8f4]/80 shadow-[0_1px_0_rgba(255,255,255,0.9)_inset,0_10px_30px_rgba(4,36,16,0.1)] backdrop-blur-xl"
         }`}
       >
-        <Link href="/" className="flex shrink-0 items-center gap-2.5">
+        <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="Axiom home">
           <Image
             src="/axiom-mark-256.png"
-            alt="Axiom Pathways"
+            alt=""
             width={256}
             height={256}
             priority
-            className="h-7 w-7 object-contain"
+            className={`h-6 w-6 object-contain transition-[filter] duration-500 ease-theme ${
+              onSky ? "brightness-0 invert" : ""
+            }`}
           />
-          <span className="text-[1.05rem] font-semibold tracking-tight text-ink">
-            Axiom
+          <span
+            className={`text-[17px] font-semibold tracking-[-0.02em] transition-colors duration-500 ease-theme ${
+              onSky ? "text-white" : "text-loud"
+            }`}
+          >
+            axiom
           </span>
         </Link>
 
@@ -83,19 +86,17 @@ export function HeroNav({ signedIn, ctaHref }: { signedIn: boolean; ctaHref: str
             <a
               key={link.href}
               href={link.href}
-              className="text-[0.95rem] text-ink/70 transition-colors duration-300 hover:text-ink"
+              className={`text-[13px] font-medium transition-colors duration-500 ease-theme ${
+                onSky ? "text-white/85 hover:text-white" : "text-loud/80 hover:text-loud"
+              }`}
             >
               {link.label}
             </a>
           ))}
         </div>
 
-        {/* Enter is a plain link now. The fork overlay it used to open has
-            been folded into the entry screen itself, where choosing a side is
-            one line of text rather than a full screen asked before anything
-            useful. */}
-        <Link href={signedIn ? "/home" : ctaHref} className="btn-gloss shrink-0">
-          {signedIn ? "home" : "enter"}
+        <Link href={signedIn ? "/home" : ctaHref} className="btn-gloss btn-sm shrink-0">
+          {signedIn ? "go to app" : "enter"}
         </Link>
       </nav>
     </div>

@@ -1,24 +1,17 @@
 import Link from "next/link";
-import { DotArc } from "@/components/hero/DotArc";
 import { HeroNav } from "@/components/hero/HeroNav";
 import { CookieBanner } from "@/components/welcome/CookieBanner";
 
 /**
- * The hero.
+ * The hero, klinn's layout in Axiom green.
  *
- * A green sky with a dot sphere behind it, one sentence set in the display
- * serif, and two actions. It replaces the orbiting logo ring — that hero was
- * beautiful and said nothing: a visitor learned who Axiom's partners were
- * before learning what Axiom does.
+ * The sky is an inset card with rounded top corners that runs well past the
+ * fold and fades to nothing, so section 01 surfaces out of it rather than
+ * starting under a hard edge. That is why it is absolutely positioned and
+ * taller than the header: WelcomeSections carries no background of its own and
+ * the tail of the sky shows through behind its first beat.
  *
- * The sky resolves into the page ground at the bottom rather than ending on a
- * hard edge, so the first section reads as the same document rather than as a
- * banner with a website under it.
- *
- * `hero-sentinel` is what the nav watches to know which ground it is on. It
- * sits at the foot of the sky, not at a pixel offset — hero height changes with
- * the viewport and a hard-coded threshold would invert the nav at the wrong
- * moment on a phone.
+ * `id="hero"` is what the nav measures to know when it has left the sky.
  */
 export function GradientHero({
   signedIn,
@@ -31,41 +24,41 @@ export function GradientHero({
   placements: number;
 }) {
   return (
-    <header id="hero" className="relative isolate overflow-hidden">
+    <header id="hero" className="relative isolate">
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10"
+        className="sky-down absolute -z-10 h-[calc(100svh+14vh)] rounded-t-[var(--radius-hero)]"
         style={{
-          background:
-            "linear-gradient(180deg, var(--color-sky-deep) 0%, var(--color-sky-mid) 46%, var(--color-sky-bright) 78%, var(--color-paper) 100%)",
+          top: "var(--hero-inset)",
+          left: "var(--hero-inset)",
+          right: "var(--hero-inset)",
         }}
       />
-      <DotArc className="-z-10" />
 
       <HeroNav signedIn={signedIn} ctaHref={ctaHref} />
 
-      <div className="mx-auto flex min-h-dvh w-full max-w-[68rem] flex-col items-center justify-center px-6 py-32 text-center">
-        <span className="rounded-full bg-white/12 px-4 py-1.5 text-[0.85rem] text-white/85 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)] backdrop-blur-md">
+      <div className="mx-auto flex min-h-svh w-full max-w-[52rem] flex-col items-center justify-center px-6 pt-28 pb-20 text-center">
+        <span className="rounded-full bg-white/10 px-3 py-1 text-caption text-white/85 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)] backdrop-blur-md">
           {placements}+ startups · matched by hand
         </span>
 
-        <h1 className="mt-10 max-w-[19ch] font-display text-[clamp(2.6rem,6.4vw,5.2rem)] leading-[1.04] tracking-[-0.02em] text-white">
-          Finding your passion
+        <h1 className="mt-12 font-display text-title-h1 text-white">
+          finding your passion
           <br />
-          starts at <em className="italic">Axiom</em>.
+          starts at <em className="italic">axiom.</em>
         </h1>
 
-        <p className="mt-8 max-w-[54ch] text-[clamp(1rem,1.5vw,1.18rem)] leading-[1.55] text-white/80">
-          One application. We put it in front of founders who are actually
-          hiring and make the introduction ourselves — free, because we are a
-          nonprofit.
+        <p className="mt-4 max-w-[40ch] text-body-default text-white/85">
+          one application. we put it in front of founders who are actually
+          hiring, and make the introduction ourselves.
         </p>
 
-        <div className="mt-11 flex flex-wrap items-center justify-center gap-3">
-          <Link href={ctaHref} className="btn-gloss px-7 py-3.5 text-[1.02rem]">
-            enter <span aria-hidden="true">↗</span>
+        <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+          <Link href={ctaHref} className="btn-gloss">
+            {signedIn ? "go to app" : "enter"}
+            <span aria-hidden="true">↗</span>
           </Link>
-          <a href="#how-it-works" className="btn-gloss-quiet px-7 py-3.5 text-[1.02rem]">
+          <a href="#how-it-works" className="btn-gloss-quiet">
             how it works <span aria-hidden="true">↓</span>
           </a>
         </div>

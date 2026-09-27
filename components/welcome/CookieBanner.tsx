@@ -44,13 +44,13 @@ export function CookieBanner() {
           transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1], delay: 0.9 }}
           role="dialog"
           aria-label="Cookie settings"
-          className="fixed right-5 bottom-5 z-50 w-[min(92vw,420px)] rounded-[26px] bg-[#eeece7] p-6 shadow-[0_20px_60px_rgba(21,21,15,0.14)] sm:right-8 sm:bottom-8"
+          className="fixed right-4 bottom-4 z-50 w-[min(calc(100vw-2rem),360px)] rounded-[16px] bg-white p-5 shadow-[0_0_0_1px_var(--color-border-muted),0_8px_24px_-8px_rgba(4,36,16,0.16),0_2px_6px_rgba(4,36,16,0.05)] sm:right-6 sm:bottom-6"
         >
           <button
             type="button"
             onClick={() => choose("essential")}
             aria-label="Dismiss"
-            className="absolute top-5 right-5 grid h-8 w-8 place-items-center rounded-full bg-white/70 text-muted transition-colors duration-200 hover:text-ink"
+            className="absolute top-4 right-4 grid h-7 w-7 place-items-center rounded-[8px] text-muted transition-colors duration-200 hover:bg-paper hover:text-loud"
           >
             <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
               <path
@@ -62,33 +62,33 @@ export function CookieBanner() {
             </svg>
           </button>
 
-          <h2 className="text-[1.15rem] font-semibold tracking-tight text-ink">
-            Cookie settings
+          <h2 className="text-[15px] font-semibold text-loud">
+            cookies
           </h2>
-          <p className="mt-2 max-w-[42ch] text-[0.86rem] leading-relaxed text-muted">
-            We use cookies to keep you signed in and to understand how the site
-            gets used. Nothing is sold, and we don&apos;t run advertising
+          <p className="mt-1.5 max-w-[40ch] text-[13px] leading-[19px] text-muted">
+            we use cookies to keep you signed in and to understand how the site
+            gets used. nothing is sold, and we don&apos;t run advertising
             trackers — details in our{" "}
-            <Link href="/privacy" className="text-ink underline underline-offset-2">
+            <Link href="/privacy" className="text-loud underline underline-offset-2">
               privacy policy
             </Link>
             .
           </p>
 
-          <div className="mt-5 grid grid-cols-2 gap-3">
+          <div className="mt-4 grid grid-cols-2 gap-2.5">
             <button
               type="button"
               onClick={() => choose("all")}
-              className="rounded-full bg-ink px-5 py-3 text-[0.9rem] font-medium text-white transition-transform duration-300 hover:-translate-y-0.5"
+              className="btn-gloss btn-sm"
             >
-              Accept all
+              accept all
             </button>
             <button
               type="button"
               onClick={() => choose("essential")}
-              className="rounded-full bg-white/80 px-5 py-3 text-[0.9rem] font-medium text-ink transition-transform duration-300 hover:-translate-y-0.5"
+              className="btn-gloss-light btn-sm"
             >
-              Essential only
+              essential only
             </button>
           </div>
         </motion.div>

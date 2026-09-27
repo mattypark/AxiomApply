@@ -24,7 +24,7 @@ import { SiteFooter } from "@/components/welcome/scroll/SiteFooter";
  */
 export function WelcomeSections({ internshipCount }: { internshipCount: number }) {
   return (
-    <div className="relative z-10 bg-paper">
+    <div className="relative">
       <ProblemSection />
       <WhatYouGetSection />
       <CountBanner count={internshipCount} />
