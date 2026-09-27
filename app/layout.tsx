@@ -1,31 +1,31 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Newsreader } from "next/font/google";
+import { DM_Sans, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { LenisProvider } from "@/components/motion/LenisProvider";
 import "./globals.css";
 
-const inter = Inter({
+/**
+ * The pair klinn.works is set in, which the landing, sign-in and onboarding
+ * copy one-to-one (see docs/DESIGN-REFS.md). DM Sans carries every piece of
+ * running text and UI; Instrument Serif is display only, with its italic for
+ * the one emphasised word in a headline.
+ */
+const dmSans = DM_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-dm-sans",
   display: "swap",
+  weight: ["400", "500", "600"],
 });
 
-/**
- * Display serif.
- *
- * Anthropic's own faces (Styrene, Copernicus) are licensed and cannot be
- * redistributed, so this is the closest free stand-in: a warm high-contrast
- * transitional serif with the same editorial weight. Display sizes only —
- * Inter still carries every piece of running text.
- */
-const newsreader = Newsreader({
+const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
-  variable: "--font-newsreader",
+  variable: "--font-instrument-serif",
   display: "swap",
-  weight: ["300", "400", "500"],
+  weight: "400",
   style: ["normal", "italic"],
 });
 
+/** Mono stays for the app's data layer (chips, timestamps). The landing uses none. */
 const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-jetbrains",
@@ -70,7 +70,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme="light"
-      className={`${inter.variable} ${jetbrains.variable} ${newsreader.variable}`}
+      className={`${dmSans.variable} ${instrumentSerif.variable} ${jetbrains.variable}`}
     >
       <head />
       <body>

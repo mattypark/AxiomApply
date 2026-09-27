@@ -19,13 +19,13 @@
   --color-paper: #f7f9f8;
   --color-cream: #eef2f0;
   --color-card: #ffffff;
-  --color-ink: #15150f;
+  --color-ink: #14231a;
   /* Both were below WCAG AA on paper: muted at 4.41:1 and faint at 2.38:1,
      and faint carries the section eyebrows and captions — small type doing
      real work. Darkened to 5.84:1 and 4.54:1, keeping the warm grey hue and
      enough distance between them that the hierarchy still reads. */
-  --color-muted: #636159;
-  --color-faint: #757266;
+  --color-muted: #5c6a61;
+  --color-faint: #66736b;
   --color-forest: #2f6b3d;
   --color-forest-deep: #245530;
   --color-forest-bright: #3f8f52;
@@ -40,12 +40,13 @@
   --color-mint: #a8d5b3;
   --color-error: #d23b3b;
 
-  --font-sans: "SF Pro Text", "SF Pro Display", -apple-system,
-    BlinkMacSystemFont, var(--font-inter), "Segoe UI", sans-serif;
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
   --font-mono: var(--font-jetbrains), "SF Mono", ui-monospace,
     Menlo, monospace;
   /* Display only — never body copy. See app/layout.tsx for why this face. */
-  --font-display: var(--font-newsreader), "Iowan Old Style", Georgia, serif;
+  --font-display: var(--font-instrument-serif), ui-serif, Georgia,
+    "Times New Roman", serif;
 
   /* The hairline rule. Lived in scroll-sections.css as --lines until that
      file was deleted, which left four components asking for an undefined
@@ -64,6 +65,114 @@
     0 1px 3px rgba(21, 21, 15, 0.05);
   --shadow-hover: 0 18px 60px rgba(21, 21, 15, 0.12),
     0 2px 6px rgba(21, 21, 15, 0.06);
+}
+
+/* ============================================================
+   KLINN SCALE — the landing, sign-in and onboarding are a 1:1 of
+   klinn.works in Axiom green. Values and the contrast maths behind
+   the greens are in docs/DESIGN-REFS.md; change them there first.
+   ============================================================ */
+
+@theme {
+  --color-loud: #14231a;
+  --color-secondary: #4a5a50;
+  --color-accent: #1f7a3c;
+  --color-signal: #d0f100;
+  --color-border-faint: #0c2a1a0a;
+  --color-border-muted: #0c2a1a0f;
+  --color-border-strong: #0c2a1a1f;
+
+  /* The dark app surface: sign-in right half and the question flow. */
+  --color-app-canvas: #090a09;
+  --color-app-card: #121312;
+  --color-app-sunken: #161716;
+  --color-app-hover: #1f2220;
+  --color-app-line: #1a1c1a;
+  --color-app-line-strong: #212421;
+  --color-app-text-1: #ffffff;
+  --color-app-text-2: #e3e6e4;
+  --color-app-text-3: #959795;
+  --color-app-accent: #6fcf8a;
+
+  --text-title-h1: 46px;
+  --text-title-h1--line-height: 48px;
+  --text-title-h1--letter-spacing: -0.46px;
+  --text-title-h2: 40px;
+  --text-title-h2--line-height: 42px;
+  --text-title-h2--letter-spacing: -0.4px;
+  --text-title-h3: 32px;
+  --text-title-h3--line-height: 40px;
+  --text-title-h3--letter-spacing: -0.32px;
+  --text-title-h4: 30px;
+  --text-title-h4--line-height: 30px;
+  --text-title-h4--letter-spacing: -0.42px;
+  --text-body-x-large: 20px;
+  --text-body-x-large--line-height: 26px;
+  --text-body-x-large--letter-spacing: -0.1px;
+  --text-body-large: 18px;
+  --text-body-large--line-height: 24px;
+  --text-body-large--letter-spacing: -0.09px;
+  --text-body-default: 17px;
+  --text-body-default--line-height: 22px;
+  --text-body-default--letter-spacing: -0.09px;
+  --text-body-small: 15px;
+  --text-body-small--line-height: 20px;
+  --text-caption: 13px;
+  --text-caption--line-height: 18px;
+
+  --radius-hero: 33.6px;
+  --radius-button: 14px;
+
+  --ease-button: cubic-bezier(0.6, 0.6, 0, 1);
+  --ease-theme: cubic-bezier(0.66, 0, 0.34, 1);
+  --ease-mask: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+/* klinn steps the whole scale down below tablet rather than clamping. The
+   utilities read these variables, so redefining them is the entire change. */
+@media (width < 48rem) {
+  :root {
+    --text-title-h1: 32px;
+    --text-title-h1--line-height: 36px;
+    --text-title-h1--letter-spacing: -0.32px;
+    --text-title-h2: 30px;
+    --text-title-h2--line-height: 34px;
+    --text-title-h2--letter-spacing: -0.3px;
+    --text-title-h3: 28px;
+    --text-title-h3--line-height: 32px;
+    --text-title-h3--letter-spacing: -0.28px;
+    --text-title-h4: 24px;
+    --text-title-h4--line-height: 24px;
+    --text-title-h4--letter-spacing: -0.3px;
+    --text-body-x-large: 18px;
+    --text-body-x-large--line-height: 24px;
+    --text-body-large: 17px;
+    --text-body-large--line-height: 22px;
+    --text-body-default: 16px;
+    --text-body-default--line-height: 20px;
+  }
+}
+
+:root {
+  /* klinn's sky, re-stopped in green. Declared once because the hero, the
+     sign-in card and the closing band all draw it (the band reversed). */
+  --sky: #000a04 0%, #00140a 12%, #03301a 27%, #0a4a24 38%, #13692f 50%,
+    #2a9447 66%, #7fcf95 76%, #d6f2de 85%;
+  --hero-inset: 8px;
+}
+
+@media (width >= 40rem) {
+  :root {
+    --hero-inset: 16px;
+  }
+}
+
+.sky-down {
+  background: linear-gradient(180deg, var(--sky), rgb(247 249 248 / 0) 100%);
+}
+
+.sky-up {
+  background: linear-gradient(0deg, var(--sky), rgb(247 249 248 / 0) 100%);
 }
 
 /* ---------- base ---------- */
@@ -387,18 +496,6 @@ body {
   );
 }
 
-.marquee-track {
-  display: flex;
-  gap: 12px;
-  width: max-content;
-  animation: marquee 36s linear infinite;
-}
-
-@keyframes marquee {
-  to {
-    transform: translateX(-50%);
-  }
-}
 
 /* ---------- motion hygiene ---------- */
 
@@ -638,11 +735,6 @@ body {
   to   { transform: translateY(-50%); }
 }
 
-/* Circular caption ring. Very slow — it should read as drift, not spin. */
-@keyframes ax-ring-spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
 
 /* A single light sweep across a filled button. Runs on hover only. */
 @keyframes ax-shine {
@@ -657,7 +749,6 @@ body {
 }
 
 .ax-marquee-y { animation: ax-marquee-y 40s linear infinite; }
-.ax-ring-spin { animation: ax-ring-spin 90s linear infinite; }
 .ax-skeleton  { animation: ax-skeleton 1.4s var(--ease-story) infinite; }
 
 .ax-shine {
@@ -700,7 +791,6 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .ax-marquee-y,
-  .ax-ring-spin,
   .ax-skeleton,
   .ax-shine:hover {
     animation: none;
@@ -717,76 +807,96 @@ body {
 }
 
 /* ---------- the gloss button ----------
-   The reference's primary action: a filled pill with a light top edge, a
-   darker foot, and a ring that reads as depth rather than as a border. It has
-   to survive both grounds — on the green sky and on white — so the fill is a
-   gradient of the brand green in both cases, not a colour borrowed from the
-   background. */
+   klinn's button, recipe for recipe: a vertical gradient, a lit top edge, a
+   tinted inner foot, a solid 3px ledge under it, and a soft drop. Pressing it
+   sinks it onto the ledge. The centre stop is what the label sits on, so that
+   is the stop held to AA (5.06:1 against white). */
+
+.btn-gloss,
+.btn-gloss-quiet,
+.btn-gloss-light {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 44px;
+  padding: 0 22px;
+  border-radius: var(--radius-button);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    transform 0.18s var(--ease-button),
+    box-shadow 0.18s var(--ease-button),
+    filter 0.18s var(--ease-button);
+}
 
 .btn-gloss {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  border-radius: var(--radius-pill);
-  padding: 0.6rem 1.35rem;
-  font-size: 0.95rem;
-  font-weight: 500;
   color: #fff;
-  background-image: linear-gradient(
-    180deg,
-    var(--color-forest-bright) 0%,
-    var(--color-forest) 52%,
-    var(--color-forest-deep) 100%
-  );
+  background-image: linear-gradient(180deg, #4fc070 0%, #1d7f3c 45%, #176b33 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.42),
-    inset 0 -1px 0 rgba(4, 26, 12, 0.3),
-    0 1px 2px rgba(4, 26, 12, 0.2),
-    0 8px 22px rgba(16, 89, 44, 0.32);
-  transition:
-    transform var(--duration-normal) var(--ease-story),
-    box-shadow var(--duration-normal) var(--ease-story);
+    inset 0 1px 1px rgba(255, 255, 255, 0.75),
+    inset 0 -2px 3px rgba(111, 207, 138, 0.5),
+    0 3px 0 #0e4f25,
+    0 7px 14px rgba(4, 36, 16, 0.18);
 }
 
-.btn-gloss:hover {
-  transform: translateY(-1px);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    inset 0 -1px 0 rgba(4, 26, 12, 0.32),
-    0 2px 4px rgba(4, 26, 12, 0.22),
-    0 14px 34px rgba(16, 89, 44, 0.4);
-}
-
-/* The quiet twin, used beside it on the sky. Glass rather than fill, so the
-   two buttons read as one primary and one secondary instead of two primaries. */
+/* The secondary on the sky: same body, glass instead of fill. */
 .btn-gloss-quiet {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  border-radius: var(--radius-pill);
-  padding: 0.6rem 1.35rem;
-  font-size: 0.95rem;
-  font-weight: 500;
   color: #fff;
-  background: rgba(255, 255, 255, 0.14);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.1) 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.34),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
-    0 8px 22px rgba(4, 26, 12, 0.22);
+    inset 0 1px 1px rgba(255, 255, 255, 0.55),
+    inset 0 -2px 3px rgba(255, 255, 255, 0.12),
+    0 3px 0 rgba(0, 20, 8, 0.45),
+    0 7px 14px rgba(0, 20, 8, 0.2);
   backdrop-filter: blur(10px);
-  transition:
-    transform var(--duration-normal) var(--ease-story),
-    background-color var(--duration-normal) var(--ease-story);
+  -webkit-backdrop-filter: blur(10px);
 }
 
-.btn-gloss-quiet:hover {
-  transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.22);
+/* The secondary on paper ("how it works" under 02). */
+.btn-gloss-light {
+  color: var(--color-loud);
+  background-image: linear-gradient(180deg, #ffffff 0%, #f1f6f2 100%);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 1),
+    inset 0 -2px 3px rgba(111, 207, 138, 0.18),
+    0 3px 0 #cfe2d4,
+    0 7px 14px rgba(4, 36, 16, 0.08);
+}
+
+.btn-gloss:hover,
+.btn-gloss-quiet:hover,
+.btn-gloss-light:hover {
+  filter: brightness(1.05);
+}
+
+.btn-gloss:active,
+.btn-gloss-quiet:active,
+.btn-gloss-light:active {
+  transform: translateY(2px);
+}
+
+.btn-gloss:active {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.6),
+    inset 0 -2px 3px rgba(111, 207, 138, 0.4),
+    0 1px 0 #0e4f25,
+    0 3px 8px rgba(4, 36, 16, 0.16);
+}
+
+/* Nav size. */
+.btn-sm {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 12px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .btn-gloss:hover,
-  .btn-gloss-quiet:hover {
+  .btn-gloss:active,
+  .btn-gloss-quiet:active,
+  .btn-gloss-light:active {
     transform: none;
   }
 }
