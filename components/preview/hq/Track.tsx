@@ -39,10 +39,10 @@ export function Track<T extends string>({
           role="radio"
           aria-checked={option.value === value}
           onClick={() => onChange(option.value)}
-          className="relative flex h-10 cursor-pointer items-center justify-center gap-1.5 rounded-full px-3 text-[14px] font-medium whitespace-nowrap text-ms-ink"
+          className="relative flex h-10 min-w-0 cursor-pointer items-center justify-center gap-1.5 rounded-full px-1.5 text-[14px] sm:px-3 font-medium whitespace-nowrap text-ms-ink"
         >
           {dots?.[option.value] ? (
-            <span className="h-2.5 w-2.5 rounded-full" style={{ background: dots[option.value] }} aria-hidden="true" />
+            <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: dots[option.value] }} aria-hidden="true" />
           ) : null}
           {option.label}
         </button>

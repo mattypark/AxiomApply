@@ -60,12 +60,12 @@ export function PreviewFrame({
   );
 }
 
-/** Pinned bottom-left on every prototype screen. */
+/** Pinned bottom-left on every prototype screen, clear of Next's dev indicator. */
 export function PreviewBadge() {
   return (
     <p
       role="note"
-      className="pointer-events-none fixed bottom-4 left-4 z-40 flex items-center gap-2 rounded-full bg-ms-ink px-3.5 py-2 text-[12px] font-medium text-white shadow-[0_10px_24px_-12px_rgb(23_25_28_/_0.6)]"
+      className="pointer-events-none fixed bottom-4 left-16 z-40 flex items-center gap-2 rounded-full bg-ms-ink px-3.5 py-2 text-[12px] font-medium text-white shadow-[0_10px_24px_-12px_rgb(23_25_28_/_0.6)]"
     >
       <span className="h-1.5 w-1.5 rounded-full bg-[#f5c86a]" aria-hidden="true" />
       Prototype — mock data
