@@ -1,4 +1,5 @@
 import { GradientHero } from "@/components/hero/GradientHero";
+import { RocketLayer } from "@/components/rocket/RocketLayer";
 import { WelcomeSections } from "@/components/welcome/WelcomeSections";
 import { getProfile, getUser } from "@/lib/auth";
 import { getInternshipCount } from "@/lib/internship-count";
@@ -28,6 +29,9 @@ export default async function WelcomePage() {
         placements={startups.length}
       />
       <WelcomeSections internshipCount={internshipCount} />
+      {/* The scroll-scrubbed rocket: fixed, transparent, never takes a click.
+          Its flight path is anchored to the sections above (data-rocket). */}
+      <RocketLayer />
     </>
   );
 }

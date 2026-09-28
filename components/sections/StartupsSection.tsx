@@ -50,7 +50,7 @@ const POINTS = [
 
 export function StartupsSection() {
   return (
-    <section className="py-24 sm:py-32">
+    <section data-rocket="startups" className="py-24 sm:py-32">
       <div className="mx-auto grid w-full max-w-[49.5rem] gap-12 px-6 md:grid-cols-[1fr_22rem] md:gap-10">
         <div>
           <SectionHead
