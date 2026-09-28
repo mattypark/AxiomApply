@@ -3,12 +3,13 @@
 import { Suspense, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { createLiquid, type Liquid } from "@/components/transition/liquid";
+import { createLaunch, type Launch } from "@/components/transition/rocket";
 
 /**
- * Page transitions for the whole site: click an internal link, green liquid
- * pours up over the page, the next page loads underneath it, and it drains
- * away. The Axiom mark surfaces in the middle while the screen is covered.
+ * Page transitions for the whole site: click an internal link and a green
+ * rocket launches, its exhaust cloud covering the page; the next page loads
+ * under the smoke, and the smoke clears. The Axiom mark surfaces in the
+ * middle while the screen is covered.
  *
  * One provider in the root layout; no special link component needed. A
  * capture-phase click listener picks up every same-origin <a> — Next <Link>s
@@ -16,13 +17,11 @@ import { createLiquid, type Liquid } from "@/components/transition/liquid";
  * modified clicks, downloads, hash jumps on the same page, and any link
  * marked `data-no-transition`. Reduced motion turns it off entirely.
  *
- * Browser back/forward is never intercepted; if one lands mid-pour, the
- * liquid simply drains.
+ * Browser back/forward is never intercepted; if one lands mid-launch, the
+ * smoke simply clears.
  */
 
-const FRONT = "#295337";
-const BACK = "#1a3a27";
-/** If a navigation never lands (error, same URL), the liquid drains anyway. */
+/** If a navigation never lands (error, same URL), the smoke clears anyway. */
 const SAFETY_MS = 4500;
 
 function RouteWatcher({ onRoute }: { onRoute: (key: string) => void }) {
@@ -37,10 +36,8 @@ function RouteWatcher({ onRoute }: { onRoute: (key: string) => void }) {
 
 export function PageTransition({ children }: { children: ReactNode }) {
   const router = useRouter();
-  const svgRef = useRef<SVGSVGElement>(null);
-  const backRef = useRef<SVGPathElement>(null);
-  const frontRef = useRef<SVGPathElement>(null);
-  const liquid = useRef<Liquid | null>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const launch = useRef<Launch | null>(null);
   const covering = useRef(false);
   const routeKey = useRef("");
   const safety = useRef<number | undefined>(undefined);
@@ -52,9 +49,9 @@ export function PageTransition({ children }: { children: ReactNode }) {
     if (!covering.current) return;
     covering.current = false;
     setCovered(false);
-    // One frame for the new page to paint under the liquid before it drains.
+    // One frame for the new page to paint under the smoke before it clears.
     requestAnimationFrame(() =>
-      window.setTimeout(() => liquid.current?.drain(() => setBusy(false)), 90),
+      window.setTimeout(() => launch.current?.drain(() => setBusy(false)), 90),
     );
   }, []);
 
@@ -69,8 +66,8 @@ export function PageTransition({ children }: { children: ReactNode }) {
   );
 
   useEffect(() => {
-    if (!svgRef.current || !backRef.current || !frontRef.current) return;
-    liquid.current = createLiquid(svgRef.current, backRef.current, frontRef.current);
+    if (!stageRef.current) return;
+    launch.current = createLaunch(stageRef.current);
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const onClick = (event: MouseEvent) => {
@@ -91,7 +88,7 @@ export function PageTransition({ children }: { children: ReactNode }) {
       if (covering.current) return;
       covering.current = true;
       setBusy(true);
-      liquid.current?.fill(() => {
+      launch.current?.fill(() => {
         setCovered(true);
         router.push(`${url.pathname}${url.search}${url.hash}`);
         safety.current = window.setTimeout(finish, SAFETY_MS);
@@ -106,7 +103,7 @@ export function PageTransition({ children }: { children: ReactNode }) {
       document.removeEventListener("click", onClick, true);
       window.removeEventListener("popstate", onPop);
       window.clearTimeout(safety.current);
-      liquid.current?.destroy();
+      launch.current?.destroy();
     };
   }, [router, finish]);
 
@@ -120,10 +117,7 @@ export function PageTransition({ children }: { children: ReactNode }) {
         aria-hidden="true"
         className={`fixed inset-0 z-[200] ${busy ? "pointer-events-auto" : "pointer-events-none"}`}
       >
-        <svg ref={svgRef} className="absolute inset-0 h-full w-full" style={{ visibility: "hidden" }}>
-          <path ref={backRef} fill={BACK} />
-          <path ref={frontRef} fill={FRONT} />
-        </svg>
+        <div ref={stageRef} className="absolute inset-0 overflow-hidden" style={{ visibility: "hidden" }} />
         <div
           className={`absolute inset-0 grid place-items-center transition-opacity duration-300 ${
             covered ? "opacity-100" : "opacity-0"
