@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import type { QuestionSet } from "@/lib/apply-sections";
+import { Launch } from "@/components/onboarding/flow/Launch";
+import { useFullLook } from "@/components/onboarding/flow/look";
 import { ProfileCard } from "@/components/onboarding/flow/ProfileCard";
+import { RiseWords, rise, riseEnd } from "@/components/onboarding/flow/RiseWords";
 import type { Answers, Files } from "@/components/onboarding/flow/useApplication";
 
 /**
@@ -12,6 +15,10 @@ import type { Answers, Files } from "@/components/onboarding/flow/useApplication
  * the last thing a form usually says is "thanks", which is the moment people
  * decide it went into a void. The timeline restates each set's real promise
  * (see `dates` / `note` in lib/apply-sections.ts); none of it is new.
+ *
+ * On the full-page flow the send is a launch (Launch.tsx) and the screen
+ * assembles under it like the welcome page: the headline rises word by word
+ * with their name in the path colour, then the steps and the finished card.
  */
 
 const HOME_BY_SET: Record<QuestionSet["key"], string> = {
@@ -51,6 +58,11 @@ export function Done({
   signedIn: boolean;
   firstName: string;
 }) {
+  const full = useFullLook();
+  if (full) {
+    return <FullDone set={set} answers={answers} files={files} signedIn={signedIn} firstName={firstName} />;
+  }
+
   return (
     <div className="mx-auto grid w-full max-w-[60rem] items-center gap-14 px-6 py-20 lg:grid-cols-[1fr_20rem]">
       <div className="ax-q-in">
@@ -106,5 +118,94 @@ export function Done({
         <ProfileCard setKey={set.key} answers={answers} files={files} completion={1} />
       </div>
     </div>
+  );
+}
+
+function FullDone({
+  set,
+  answers,
+  files,
+  signedIn,
+  firstName,
+}: {
+  set: QuestionSet;
+  answers: Answers;
+  files: Files;
+  signedIn: boolean;
+  firstName: string;
+}) {
+  const lead = firstName ? "A person reads this one," : "A person reads this one.";
+  const leadStart = 700;
+  const after = riseEnd(lead, leadStart) + (firstName ? 120 : 60);
+
+  return (
+    <>
+      <Launch />
+      <div className="mx-auto grid w-full max-w-[90rem] flex-1 items-center gap-12 px-6 pt-8 pb-16 sm:px-[6.5%] lg:grid-cols-2 lg:gap-20">
+        <div className="w-full max-w-[34rem] max-lg:mx-auto xl:ml-32">
+          <p
+            className="flow-rise inline-flex items-center gap-2.5 rounded-full bg-white/70 py-1.5 pr-4 pl-3 text-[14px] font-medium text-ms-ink"
+            style={rise(leadStart - 150)}
+          >
+            <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-[var(--path-em)]" />
+            Sent
+          </p>
+          <h1 className="ms-display mt-5 text-[clamp(2.9rem,5.4vw,5.2rem)] text-ms-ink">
+            <RiseWords text={lead} start={leadStart} />
+            {firstName ? (
+              <>
+                {" "}
+                <span className="text-ms-green">
+                  <RiseWords text={`${firstName}.`} start={after - 60} />
+                </span>
+              </>
+            ) : null}
+          </h1>
+
+          <ol className="mt-10 rounded-[28px] bg-white p-2 shadow-[0_24px_50px_-36px_rgb(23_25_28_/_0.45)]">
+            {NEXT_STEPS[set.key].map((step, index) => (
+              <li
+                key={step.when}
+                className="flow-rise grid grid-cols-[1.25rem_7.5rem_1fr] items-baseline gap-3 border-t border-ms-ink/[0.06] px-4 py-3.5 first:border-t-0 max-sm:grid-cols-[1.25rem_1fr]"
+                style={rise(after + 200 + index * 120)}
+              >
+                <span
+                  aria-hidden="true"
+                  className={`h-2.5 w-2.5 self-center rounded-full ${
+                    index === 0 ? "bg-[var(--path-em)]" : "bg-[var(--path-ground-2)]"
+                  }`}
+                />
+                <span className="text-[13px] text-ms-muted">{step.when}</span>
+                <span className="text-[15px] text-ms-ink max-sm:col-start-2">{step.what}</span>
+              </li>
+            ))}
+          </ol>
+
+          <div className="flow-rise mt-9 flex flex-wrap items-center gap-6" style={rise(after + 620)}>
+            {/* A signed-out applicant is offered the account here, where it buys
+                something real — a place to see the decision. */}
+            {!signedIn ? (
+              <Link href="/auth" className="ms-pill">
+                Save it to an account <span aria-hidden="true">↗</span>
+              </Link>
+            ) : null}
+            <Link
+              href={HOME_BY_SET[set.key]}
+              className={
+                signedIn
+                  ? "ms-pill"
+                  : "text-[15px] text-ms-body underline underline-offset-4 transition-opacity hover:opacity-60"
+              }
+            >
+              {signedIn ? "Go to your home" : "Look around first"}
+            </Link>
+          </div>
+        </div>
+
+        <div className="flow-rise mx-auto w-full max-w-[22rem]" style={rise(after + 350)}>
+          <ProfileCard setKey={set.key} answers={answers} files={files} completion={1} />
+        </div>
+      </div>
+    </>
   );
 }

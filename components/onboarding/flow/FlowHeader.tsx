@@ -43,7 +43,7 @@ export function FlowHeader({
         </Link>
 
         {trip ? (
-          <div className="hidden flex-1 items-center gap-6 md:flex">
+          <div className="hidden flex-1 items-center gap-6 pl-4 md:flex">
             <FlightPath {...trip} labels className="flex-1" />
             {status}
           </div>
@@ -58,7 +58,7 @@ export function FlowHeader({
       </div>
 
       {trip ? (
-        <div className="flex items-center gap-4 pb-2 md:hidden">
+        <div className="flex items-center gap-4 pb-2 pl-4 md:hidden">
           <FlightPath {...trip} className="flex-1" />
           {status}
         </div>

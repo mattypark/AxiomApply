@@ -623,20 +623,20 @@ html[data-path="chapter"] {
 /* The full-page section card holds a little longer (Interstitial.tsx). */
 .ms-flow .ax-interstitial { animation-duration: 2.1s; }
 
-/* The result screen's launch: a shiver on the pad, then up and out. */
-@keyframes flow-liftoff {
-  0%   { transform: translateY(0); }
-  8%   { transform: translateY(1px) translateX(-0.5px); }
-  16%  { transform: translateY(0) translateX(0.5px); }
-  24%  { transform: translateY(1px) translateX(-0.5px); }
-  32%  { transform: translateY(0); }
-  100% { transform: translateY(-120vh); }
+/* The result screen's launch (flow/Launch.tsx): the rocket climbs from below
+   the screen and out of the top, accelerating, flame roaring all the way. */
+@keyframes flow-climb {
+  from { transform: translateY(0); }
+  to   { transform: translateY(calc(-100vh - 260px)); }
 }
 
-@keyframes flow-flame-on {
-  0%, 10% { opacity: 0; transform: scaleY(0.3); }
-  30%     { opacity: 1; transform: scaleY(1); }
-  100%    { opacity: 1; transform: scaleY(1.2); }
+.flow-climb {
+  animation: flow-climb var(--climb, 1.7s) cubic-bezier(0.5, 0, 0.75, 0) var(--climb-delay, 0s) both;
+}
+
+.flow-climb svg > g:first-child {
+  transform-origin: 30px 76px;
+  animation: flow-flame 0.12s linear infinite alternate;
 }
 
 /* Launch smoke: a puff swells out of the pad, drifts and thins away. */
@@ -644,15 +644,6 @@ html[data-path="chapter"] {
   0%   { opacity: 0; transform: translate(0, 0) scale(0.3); }
   30%  { opacity: 0.95; }
   100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(var(--s)); }
-}
-
-.flow-liftoff {
-  animation: flow-liftoff 2.4s cubic-bezier(0.55, 0, 0.8, 0.4) 0.7s both;
-}
-
-.flow-liftoff svg > g:first-child {
-  transform-origin: 30px 76px;
-  animation: flow-flame-on 1.2s var(--ease-ms) 0.5s both;
 }
 
 .flow-puff {
@@ -678,18 +669,13 @@ html[data-path="chapter"] {
   .flow-arc,
   .flow-land { animation: none; }
   .flow-arc svg > g:first-child { animation: none; transform: scaleY(0); }
-  /* The rocket stays parked on the finished card, engine off. */
-  .flow-liftoff { animation: none; }
-  .flow-liftoff svg > g:first-child { animation: none; transform: scaleY(0); }
-  .flow-puff { display: none; }
+  /* No launch at all: the result screen is complete without it. */
+  .flow-launch { display: none; }
 }
 
-/* The section card hides the question behind it, so it must be opaque — the
-   same viewport-fixed ground makes it line up with the page, seamlessly. */
-.ms-flow .ax-interstitial {
-  background-image: var(--ms-flow-ground);
-  background-attachment: fixed;
-}
+/* The full-page section card has no ground of its own: the question is not
+   rendered while it is up, and a transformed element can't hold a fixed
+   background still anyway — it would show as a panel. */
 
 /* Instrument Serif's settings don't suit Hanken: take the home's display cut. */
 .ms-flow .font-display {

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { authCallbackUrl } from "@/lib/auth-callback";
 import { getBrowserSupabase } from "@/lib/supabase/client";
+import { useFullLook } from "@/components/onboarding/flow/look";
 
 /**
  * The GitHub step: connect it, and the handle fills itself in.
@@ -16,6 +17,9 @@ import { getBrowserSupabase } from "@/lib/supabase/client";
  *
  * The typed field underneath always works. If linking is off, or GitHub says
  * no, the applicant types the handle and nothing else changes.
+ *
+ * On the full-page flow the button is the welcome page's white GitHub pill,
+ * so it reads as the same door offered a second time.
  */
 export function GitHubConnect({
   signedIn,
@@ -27,6 +31,7 @@ export function GitHubConnect({
   returnTo: string;
   onHandle: (handle: string) => void;
 }) {
+  const full = useFullLook();
   const [handle, setHandle] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
@@ -72,6 +77,39 @@ export function GitHubConnect({
       setProblem("GitHub isn’t connecting right now — type your handle below.");
       setBusy(false);
     }
+  }
+
+  if (handle && full) {
+    return (
+      <p className="ax-toast-in flex items-center gap-2.5 rounded-full bg-white py-2 pr-4 pl-2 text-[15px] text-ms-body">
+        <span className="grid h-6 w-6 place-items-center rounded-full bg-ms-green text-[11px] font-bold text-white">
+          ✓
+        </span>
+        Connected as <span className="font-medium text-ms-ink">@{handle}</span>
+      </p>
+    );
+  }
+
+  if (full) {
+    return (
+      <div>
+        <button
+          type="button"
+          onClick={connect}
+          disabled={busy}
+          className="ms-pill w-full cursor-pointer bg-white! text-ms-ink! shadow-[inset_0_0_0_1px_rgb(23_25_28_/_0.12)] hover:bg-ms-mist! disabled:opacity-70 sm:w-auto"
+        >
+          <GitHubMark />
+          {busy ? "Opening GitHub…" : "Connect GitHub"}
+        </button>
+        {problem ? <p className="mt-3 text-[14px] text-ms-body">{problem}</p> : null}
+        <p className="mt-7 flex items-center gap-3 text-[13px] text-ms-body">
+          <span aria-hidden="true" className="h-px flex-1 bg-ms-ink/10" />
+          or type it
+          <span aria-hidden="true" className="h-px flex-1 bg-ms-ink/10" />
+        </p>
+      </div>
+    );
   }
 
   if (handle) {

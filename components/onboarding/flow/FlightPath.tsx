@@ -81,8 +81,8 @@ export function FlightPath({
         {/* Nose right, just past the trail's front. */}
         <span
           data-burning={burning}
-          className="flow-rocket absolute top-1/2 left-0 block h-7 w-3.5"
-          style={{ transform: "translate(calc(-50% - 8px), -50%) rotate(90deg)" }}
+          className="flow-rocket absolute top-1/2 left-0 block h-9 w-[18px]"
+          style={{ transform: "translate(calc(-50% - 11px), -50%) rotate(90deg)" }}
         >
           <RocketGlyph width="100%" height="100%" />
         </span>

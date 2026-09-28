@@ -2,6 +2,7 @@
 
 import type { QuestionSet } from "@/lib/apply-sections";
 import { startups } from "@/lib/site-data";
+import { useFullLook } from "@/components/onboarding/flow/look";
 import { splitValues, type Answers, type Files } from "@/components/onboarding/flow/useApplication";
 
 /**
@@ -14,6 +15,10 @@ import { splitValues, type Answers, type Files } from "@/components/onboarding/f
  *
  * Each set says which answers go where. Values are shown as typed — nothing
  * here edits or reformats what gets sent.
+ *
+ * On the full-page flow it is one of the welcome page's white cards: bigger
+ * radius, a soft drop instead of a hairline, and the path colour for the
+ * avatar, the chips and the fill.
  */
 
 type Spec = {
@@ -69,8 +74,46 @@ const SPECS: Record<QuestionSet["key"], Spec> = {
   },
 };
 
-function Skeleton({ width }: { width: string }) {
-  return <span className="inline-block h-2 rounded-full bg-app-hover" style={{ width }} />;
+/** Class sets for the two looks. Same structure, different clothes. */
+const LOOK = {
+  full: {
+    card: "rounded-[28px] bg-white p-6 shadow-[0_40px_80px_-44px_rgb(23_25_28_/_0.45)]",
+    meta: "text-[12px] text-ms-muted",
+    track: "mt-2.5 h-1.5 overflow-hidden rounded-full bg-ms-sky-soft",
+    fill: "bg-[var(--path-em)]",
+    avatar: "h-12 w-12 bg-ms-sky-soft text-[20px] font-semibold text-ms-green",
+    title: "text-[18px] font-medium tracking-[-0.02em] text-ms-ink",
+    fallback: "text-ms-muted",
+    subtitle: "text-[13px] text-ms-muted",
+    line: "text-[14px] leading-[20px] text-ms-body",
+    chip: "rounded-full bg-ms-sky-soft px-2.5 py-1 text-[12px] font-medium text-ms-green",
+    rule: "border-ms-ink/[0.07]",
+    label: "text-ms-muted",
+    value: "text-ms-ink",
+    pick: "rounded-full bg-ms-mist px-2.5 py-1 text-[12px] text-ms-ink",
+    skeleton: "bg-[var(--path-ground-2)]",
+  },
+  embedded: {
+    card: "rounded-[16px] bg-app-card p-5 shadow-[inset_0_0_0_1px_var(--color-app-line-strong),0_24px_60px_-24px_rgb(0_0_0_/_0.8)]",
+    meta: "text-[11px] text-app-text-3",
+    track: "mt-2 h-[3px] overflow-hidden rounded-full bg-app-sunken",
+    fill: "bg-app-accent",
+    avatar: "h-11 w-11 bg-app-sunken font-display text-[20px] text-app-accent",
+    title: "text-[17px] text-app-text-1",
+    fallback: "text-app-text-3",
+    subtitle: "text-[12px] text-app-text-3",
+    line: "text-[13px] leading-[19px] text-app-text-2",
+    chip: "rounded-[6px] bg-app-accent/[0.12] px-2 py-0.5 text-[11px] text-app-accent",
+    rule: "border-app-line",
+    label: "text-app-text-3",
+    value: "text-app-text-2",
+    pick: "rounded-full bg-app-sunken px-2.5 py-1 text-[11px] text-app-text-2",
+    skeleton: "bg-app-hover",
+  },
+};
+
+function Skeleton({ width, tone }: { width: string; tone: string }) {
+  return <span className={`inline-block h-2 rounded-full ${tone}`} style={{ width }} />;
 }
 
 /** Keyed on the value so each new answer arrives with the toast-in motion. */
@@ -94,6 +137,7 @@ export function ProfileCard({
   /** 0–1: share of visible questions answered. */
   completion: number;
 }) {
+  const look = LOOK[useFullLook() ? "full" : "embedded"];
   const spec = SPECS[setKey];
   const get = (id: string) => (answers[id] ?? "").trim();
 
@@ -103,74 +147,70 @@ export function ProfileCard({
   const chips = spec.chips.flatMap((id) => splitValues(get(id)));
   const picks = spec.picks ? splitValues(get(spec.picks)).filter((pick) => pick !== "Other") : [];
   const percent = Math.round(completion * 100);
+  const bar = (width: string) => <Skeleton width={width} tone={look.skeleton} />;
 
   return (
-    <div className="rounded-[16px] bg-app-card p-5 shadow-[inset_0_0_0_1px_var(--color-app-line-strong),0_24px_60px_-24px_rgb(0_0_0_/_0.8)]">
-      <div className="flex items-center justify-between text-[11px] text-app-text-3">
+    <div className={look.card}>
+      <div className={`flex items-center justify-between ${look.meta}`}>
         <span>What a founder sees</span>
         <span className="tabular-nums">{percent}%</span>
       </div>
-      <div className="mt-2 h-[3px] overflow-hidden rounded-full bg-app-sunken">
+      <div className={look.track}>
+        {/* Slides in from the left by transform, like the flight path's trail. */}
         <div
-          className="h-full rounded-full bg-app-accent transition-[width] duration-700 ease-mask"
-          style={{ width: `${percent}%` }}
+          className={`h-full rounded-full transition-transform duration-700 ease-mask ${look.fill}`}
+          style={{ transform: `translateX(${percent - 100}%)` }}
         />
       </div>
 
       <div className="mt-6 flex items-center gap-3">
-        <span
-          aria-hidden="true"
-          className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-app-sunken font-display text-[20px] text-app-accent"
-        >
+        <span aria-hidden="true" className={`grid shrink-0 place-items-center rounded-full ${look.avatar}`}>
           {title ? title[0].toUpperCase() : ""}
         </span>
         <span className="min-w-0">
-          <span className="block truncate text-[17px] text-app-text-1">
-            {title ? <Arrive value={title} /> : <span className="text-app-text-3">{spec.titleFallback}</span>}
+          <span className={`block truncate ${look.title}`}>
+            {title ? <Arrive value={title} /> : <span className={look.fallback}>{spec.titleFallback}</span>}
           </span>
-          <span className="mt-1 block truncate text-[12px] text-app-text-3">
-            {subtitle ? <Arrive value={subtitle} /> : <Skeleton width="7rem" />}
+          <span className={`mt-1 block truncate ${look.subtitle}`}>
+            {subtitle ? <Arrive value={subtitle} /> : bar("7rem")}
           </span>
         </span>
       </div>
 
       {line ? (
-        <p className="mt-4 line-clamp-3 text-[13px] leading-[19px] text-app-text-2">
+        <p className={`mt-4 line-clamp-3 ${look.line}`}>
           <Arrive value={line} />
         </p>
       ) : (
         <div className="mt-4 flex flex-col gap-2">
-          <Skeleton width="100%" />
-          <Skeleton width="70%" />
+          {bar("100%")}
+          {bar("70%")}
         </div>
       )}
 
       <div className="mt-4 flex min-h-[22px] flex-wrap gap-1.5">
         {chips.length ? (
           chips.map((chip) => (
-            <span
-              key={chip}
-              className="ax-toast-in rounded-[6px] bg-app-accent/[0.12] px-2 py-0.5 text-[11px] text-app-accent"
-            >
+            <span key={chip} className={`ax-toast-in ${look.chip}`}>
               {chip}
             </span>
           ))
         ) : (
           <>
-            <Skeleton width="3rem" />
-            <Skeleton width="4.5rem" />
+            {bar("3rem")}
+            {bar("4.5rem")}
           </>
         )}
       </div>
 
-      <dl className="mt-5 flex flex-col gap-2.5 border-t border-app-line pt-4">
+      <dl className={`mt-5 flex flex-col gap-2.5 border-t pt-4 ${look.rule}`}>
         {spec.rows.map((row) => {
           const value = row.file ? (files[row.id]?.name ?? "") : get(row.id);
           return (
             <div key={row.id} className="flex items-center justify-between gap-4 text-[12px]">
-              <dt className="shrink-0 text-app-text-3">{row.label}</dt>
-              <dd className="min-w-0 truncate text-right text-app-text-2">
-                {value ? <Arrive value={value} /> : <Skeleton width="4rem" />}
+              <dt className={`shrink-0 ${look.label}`}>{row.label}</dt>
+              <dd className={`min-w-0 truncate text-right ${look.value}`}>
+                {value ? <Arrive value={value} /> : bar("4rem")}
               </dd>
             </div>
           );
@@ -178,24 +218,19 @@ export function ProfileCard({
       </dl>
 
       {spec.picks ? (
-        <div className="mt-5 border-t border-app-line pt-4">
-          <p className="text-[11px] text-app-text-3">Wants to work at</p>
+        <div className={`mt-5 border-t pt-4 ${look.rule}`}>
+          <p className={look.meta}>Wants to work at</p>
           <div className="mt-2.5 flex min-h-[28px] flex-wrap gap-1.5">
-            {picks.length ? (
-              picks.map((pick) => {
-                const startup = startups.find((entry) => entry.name === pick);
-                return (
-                  <span
-                    key={pick}
-                    className="ax-toast-in rounded-full bg-app-sunken px-2.5 py-1 text-[11px] text-app-text-2"
-                  >
-                    {startup?.name ?? pick.replace(/^Other:\s*/, "")}
-                  </span>
-                );
-              })
-            ) : (
-              <Skeleton width="6rem" />
-            )}
+            {picks.length
+              ? picks.map((pick) => {
+                  const startup = startups.find((entry) => entry.name === pick);
+                  return (
+                    <span key={pick} className={`ax-toast-in ${look.pick}`}>
+                      {startup?.name ?? pick.replace(/^Other:\s*/, "")}
+                    </span>
+                  );
+                })
+              : bar("6rem")}
           </div>
         </div>
       ) : null}
