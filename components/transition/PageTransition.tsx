@@ -23,6 +23,8 @@ import { createLaunch, type Launch } from "@/components/transition/rocket";
 
 /** If a navigation never lands (error, same URL), the smoke clears anyway. */
 const SAFETY_MS = 4500;
+/** The mark stays up at least this long, even when the next page is instant. */
+const MARK_HOLD_MS = 650;
 
 function RouteWatcher({ onRoute }: { onRoute: (key: string) => void }) {
   const pathname = usePathname();
@@ -41,6 +43,7 @@ export function PageTransition({ children }: { children: ReactNode }) {
   const covering = useRef(false);
   const routeKey = useRef("");
   const safety = useRef<number | undefined>(undefined);
+  const coveredAt = useRef(0);
   const [busy, setBusy] = useState(false);
   const [covered, setCovered] = useState(false);
 
@@ -48,10 +51,14 @@ export function PageTransition({ children }: { children: ReactNode }) {
     window.clearTimeout(safety.current);
     if (!covering.current) return;
     covering.current = false;
-    setCovered(false);
-    // One frame for the new page to paint under the smoke before it clears.
+    // One frame for the new page to paint under the smoke, and the mark its
+    // moment on screen, before the smoke clears.
+    const hold = Math.max(90, MARK_HOLD_MS - (performance.now() - coveredAt.current));
     requestAnimationFrame(() =>
-      window.setTimeout(() => launch.current?.drain(() => setBusy(false)), 90),
+      window.setTimeout(() => {
+        setCovered(false);
+        launch.current?.drain(() => setBusy(false));
+      }, hold),
     );
   }, []);
 
@@ -89,6 +96,7 @@ export function PageTransition({ children }: { children: ReactNode }) {
       covering.current = true;
       setBusy(true);
       launch.current?.fill(() => {
+        coveredAt.current = performance.now();
         setCovered(true);
         router.push(`${url.pathname}${url.search}${url.hash}`);
         safety.current = window.setTimeout(finish, SAFETY_MS);
@@ -119,19 +127,20 @@ export function PageTransition({ children }: { children: ReactNode }) {
       >
         <div ref={stageRef} className="absolute inset-0 overflow-hidden" style={{ visibility: "hidden" }} />
         <div
-          className={`absolute inset-0 grid place-items-center transition-opacity duration-300 ${
-            covered ? "opacity-100" : "opacity-0"
+          className={`absolute inset-0 grid place-items-center transition-[opacity,transform] duration-500 ease-ms ${
+            covered ? "scale-100 opacity-100" : "scale-90 opacity-0"
           }`}
         >
-          <span className="flex items-center gap-2.5 text-white">
+          <span className="flex items-center gap-4 text-white sm:gap-7">
             <Image
               src="/axiom-mark-256.png"
               alt=""
               width={256}
               height={256}
-              className="h-9 w-9 object-contain brightness-0 invert"
+              // The mark's file has wide margins; scale past them so it matches the word.
+              className="h-20 w-20 scale-[1.7] object-contain brightness-0 invert sm:h-32 sm:w-32"
             />
-            <span className="text-[28px] font-semibold tracking-[-0.04em]">axiom</span>
+            <span className="text-[44px] font-semibold tracking-[-0.04em] sm:text-[80px]">axiom</span>
           </span>
         </div>
       </div>
