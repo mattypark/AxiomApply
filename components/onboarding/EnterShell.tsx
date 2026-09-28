@@ -1,70 +1,53 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { DotArc } from "@/components/hero/DotArc";
+import type { Paint } from "@/components/product/model";
+import { Product } from "@/components/product/Product";
 
 /**
- * The sign-in frame, klinn's /login in Axiom green.
+ * The sign-in frame, in the home page's clothes: Hanken Grotesk on the
+ * hero's light green, black pills, and the product rocket standing in the
+ * apply block's white arch. Walking in from the home should feel like the
+ * next room of the same house, not a different site.
  *
- * The whole page is the dark app canvas. On the left, an inset card carries
- * the sky, the dotted ring and one line of argument; on the right, the
- * account. It is the screen right after Enter, so the card is deliberately the
- * hero's sky again — walking through a door, not landing on a new site.
- *
- * On a phone the card collapses to a short banner: a full-height picture above
- * the button would mean scrolling past decoration to reach the only action.
+ * The rocket wears the colour of the chosen path (`paint`). On a phone the
+ * arch shrinks and sits above the words, so the button stays near the fold.
  */
-export function EnterShell({ children }: { children: ReactNode }) {
+export function EnterShell({ children, paint = "green" }: { children: ReactNode; paint?: Paint }) {
   return (
-    <div className="flex min-h-dvh flex-col gap-2 bg-app-canvas p-[var(--hero-inset)] text-app-text-1 lg:flex-row lg:gap-0">
-      <aside className="relative isolate flex shrink-0 flex-col justify-between overflow-hidden rounded-[var(--radius-hero)] px-7 py-8 lg:w-[50%] lg:px-16 lg:py-16">
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 -z-10"
-          style={{
-            background:
-              "radial-gradient(70% 60% at 70% 105%, rgb(147 187 158 / 0.55) 0%, transparent 70%), linear-gradient(180deg, #000a04 0%, #0e251a 38%, #224730 72%, #447a53 100%)",
-          }}
-        />
-        <DotArc className="-z-10 opacity-60" />
-
-        <Link
-          href="/"
-          className="flex w-fit items-center gap-2 transition-opacity duration-300 hover:opacity-75"
-          aria-label="Axiom home"
-        >
+    <div
+      className="ms flex min-h-dvh flex-col"
+      style={{
+        background:
+          "radial-gradient(45% 55% at 72% 48%, rgb(255 255 255 / 0.65) 0%, transparent 70%), linear-gradient(180deg, #bfe0c9 0%, #cfe8d6 42%, #e8f4ec 100%)",
+      }}
+    >
+      <header className="mx-auto flex h-20 w-full max-w-[90rem] items-center justify-between px-6 sm:px-[6.5%]">
+        <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="Axiom home">
           <Image
             src="/axiom-mark-256.png"
             alt=""
             width={256}
             height={256}
             priority
-            className="h-7 w-7 object-contain brightness-0 invert"
+            className="h-8 w-8 object-contain"
           />
-          <span className="text-[22px] font-semibold tracking-[-0.03em] text-white">axiom</span>
+          <span className="text-[22px] font-semibold tracking-[-0.04em] text-ms-ink">axiom</span>
         </Link>
+        <Link href="/" className="text-[15px] font-medium text-ms-body transition-opacity hover:opacity-60">
+          Back to home
+        </Link>
+      </header>
 
-        <div className="pt-8 pb-2 lg:py-0">
-          <p className="text-[15px] text-white/80">your next chapter</p>
-          <p className="mt-4 max-w-[12ch] font-display text-[36px] leading-[38px] tracking-[-0.4px] text-white sm:text-[72px] sm:leading-[70px] sm:tracking-[-1px]">
-            good work deserves to be <em className="italic">seen.</em>
-          </p>
-          <p className="mt-6 hidden max-w-[36ch] text-[18px] leading-[26px] text-white/85 sm:block">
-            one application. real startup work. a direct introduction to the
-            person doing the hiring.
-          </p>
+      <main className="mx-auto grid w-full max-w-[90rem] flex-1 items-center gap-8 px-6 pb-12 sm:px-[6.5%] lg:grid-cols-[1fr_1fr] lg:gap-20 lg:pb-20">
+        <div
+          className="relative mx-auto aspect-[0.8] w-full max-w-[13rem] overflow-hidden rounded-t-[999px] rounded-b-[28px] sm:max-w-[16rem] lg:order-last lg:max-w-[30rem] lg:rounded-b-[36px]"
+          style={{ background: "linear-gradient(180deg, #ffffff 0%, #f6f8f7 100%)" }}
+        >
+          <Product className="!absolute inset-0" scale={0.95} turn={1.2} paint={paint} />
         </div>
 
-        <p className="hidden items-center gap-3 text-[13px] text-white/80 lg:flex">
-          <span aria-hidden="true" className="text-[16px]">
-            ↗
-          </span>
-          build something that opens doors.
-        </p>
-      </aside>
-
-      <main className="flex flex-1 items-center justify-center px-5 py-12 sm:px-10 lg:py-16">
-        <div className="w-full max-w-[28rem]">{children}</div>
+        <div className="w-full max-w-[32rem] max-lg:mx-auto">{children}</div>
       </main>
     </div>
   );
