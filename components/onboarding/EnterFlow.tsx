@@ -7,6 +7,7 @@ import { ChapterApplication } from "@/components/apply/ChapterApplication";
 import { PathPicker, SIDES } from "@/components/home/PathPicker";
 import { EnterShell } from "@/components/onboarding/EnterShell";
 import { OAuthButton } from "@/components/onboarding/OAuthButton";
+import { RecommendNote } from "@/components/onboarding/RecommendNote";
 import { RocketLoop } from "@/components/onboarding/RocketLoop";
 import type { ApplyPrefill } from "@/components/onboarding/flow/useApplication";
 import type { Side } from "@/lib/apply-sides";
@@ -75,7 +76,11 @@ export function EnterFlow({ side, prefill }: { side?: Side; prefill: ApplyPrefil
       <div className="mt-6 flex flex-col gap-3">
         <OAuthButton provider="google" next={`/onboarding?side=${picked.side}`} />
         {picked.side === "intern" ? (
-          <OAuthButton provider="github" tone="secondary" next="/onboarding?side=intern" />
+          // Room above on phones, where the note sits over the button.
+          <div className="relative mt-6 xl:mt-0">
+            <OAuthButton provider="github" tone="secondary" next="/onboarding?side=intern" />
+            <RecommendNote />
+          </div>
         ) : null}
       </div>
 
