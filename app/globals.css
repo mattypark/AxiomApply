@@ -266,7 +266,15 @@
   --color-app-accent: var(--color-ms-green);
   --font-display: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
   font-family: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
-  background-image: linear-gradient(180deg, #cfe8d6 0%, #e2f1e6 38%, #eef7f1 100%);
+  --ms-flow-ground: linear-gradient(180deg, #cfe8d6 0%, #e2f1e6 38%, #eef7f1 100%);
+  background-image: var(--ms-flow-ground);
+  background-attachment: fixed;
+}
+
+/* The section card hides the question behind it, so it must be opaque — the
+   same viewport-fixed ground makes it line up with the page, seamlessly. */
+.ms-flow .ax-interstitial {
+  background-image: var(--ms-flow-ground);
   background-attachment: fixed;
 }
 
