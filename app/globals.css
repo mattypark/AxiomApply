@@ -284,6 +284,15 @@
   letter-spacing: -0.05em;
 }
 
+/* Hanken has no italic here, and the home never slants a word: the flow's
+   emphasised word goes green instead, like the home's statement. #4e9a66 is
+   the green that holds 3:1 at display size. */
+.ms-flow .font-display em,
+.ms-flow .font-display .italic {
+  font-style: normal;
+  color: #4e9a66;
+}
+
 /* The flow's green gloss button becomes the home's black pill. */
 .ms-flow .btn-gloss {
   height: 52px;
