@@ -131,16 +131,16 @@ export function PageTransition({ children }: { children: ReactNode }) {
             covered ? "scale-100 opacity-100" : "scale-90 opacity-0"
           }`}
         >
-          <span className="flex items-center gap-4 text-white sm:gap-7">
+          <span className="flex items-center gap-3 text-white sm:gap-5">
             <Image
               src="/axiom-mark-256.png"
               alt=""
               width={256}
               height={256}
               // The mark's file has wide margins; scale past them so it matches the word.
-              className="h-20 w-20 scale-[1.7] object-contain brightness-0 invert sm:h-32 sm:w-32"
+              className="h-12 w-12 scale-[1.7] object-contain brightness-0 invert sm:h-20 sm:w-20"
             />
-            <span className="text-[44px] font-semibold tracking-[-0.04em] sm:text-[80px]">axiom</span>
+            <span className="text-[32px] font-semibold tracking-[-0.04em] sm:text-[52px]">Axiom</span>
           </span>
         </div>
       </div>
