@@ -56,7 +56,6 @@ export function PathPicker({
         >
           <span className="h-3 w-3 rounded-full" style={{ background: option.dot }} />
           {option.label}
-          {index === active ? <span aria-hidden="true">✓</span> : null}
         </button>
       ))}
     </div>
