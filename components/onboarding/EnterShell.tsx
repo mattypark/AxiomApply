@@ -60,7 +60,7 @@ export function EnterShell({
         )}
 
         {/* On xl the column steps in, leaving a margin for notes like RecommendNote. */}
-        <div className="w-full max-w-[32rem] max-lg:mx-auto xl:ml-32">{children}</div>
+        <div className="w-full max-w-[32rem] max-lg:mx-auto xl:ml-16">{children}</div>
       </main>
     </div>
   );
