@@ -6,7 +6,7 @@ import { StartupApplication } from "@/components/apply/StartupApplication";
 import { ChapterApplication } from "@/components/apply/ChapterApplication";
 import { PathPicker, SIDES } from "@/components/home/PathPicker";
 import { EnterShell } from "@/components/onboarding/EnterShell";
-import { GoogleButton } from "@/components/onboarding/GoogleButton";
+import { OAuthButton } from "@/components/onboarding/OAuthButton";
 import { RocketLoop } from "@/components/onboarding/RocketLoop";
 import type { ApplyPrefill } from "@/components/onboarding/flow/useApplication";
 import type { Side } from "@/lib/apply-sides";
@@ -15,8 +15,8 @@ import { getPath, setPath } from "@/lib/path-theme";
 /**
  * Where Enter goes: the account first, then the application.
  *
- * Signed out, it is one headline, the path picker from the home, and Google
- * as the one button. Signed in — including on the way back from Google — it
+ * Signed out, it is one headline, the path picker from the home, and the
+ * account buttons — Google for everyone, and GitHub too for interns. Signed in — including on the way back from Google — it
  * skips straight into the question flow with the name and email already
  * filled. "Continue without an account" stays as a quiet link: the Sheet is
  * authoritative and nobody is ever blocked from applying by an OAuth screen.
@@ -70,8 +70,13 @@ export function EnterFlow({ side, prefill }: { side?: Side; prefill: ApplyPrefil
 
       <PathPicker active={active} onChange={pick} className="mt-9" />
 
-      <div className="mt-6">
-        <GoogleButton next={`/onboarding?side=${picked.side}`} />
+      {/* Interns can bring GitHub, where their work lives; startups and
+          chapters sign in with Google. */}
+      <div className="mt-6 flex flex-col gap-3">
+        <OAuthButton provider="google" next={`/onboarding?side=${picked.side}`} />
+        {picked.side === "intern" ? (
+          <OAuthButton provider="github" tone="secondary" next="/onboarding?side=intern" />
+        ) : null}
       </div>
 
       <button

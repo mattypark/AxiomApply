@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AuthForm } from "@/components/auth/AuthForm";
 import { EnterShell } from "@/components/onboarding/EnterShell";
-import { GoogleButton } from "@/components/onboarding/GoogleButton";
+import { OAuthButton } from "@/components/onboarding/OAuthButton";
 import { getProfile, getUser } from "@/lib/auth";
 
 export const metadata = { title: "Sign in" };
@@ -44,7 +44,7 @@ export default async function AuthPage({
       <p className="ms-rise mt-5 text-[19px] text-ms-body">Pick up where you left off.</p>
 
       <div className="mt-9">
-        <GoogleButton next={target || "/home"} />
+        <OAuthButton provider="google" next={target || "/home"} />
       </div>
 
       {/* Older accounts were made with an email and password. They still work;

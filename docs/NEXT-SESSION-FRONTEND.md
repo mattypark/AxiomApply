@@ -44,7 +44,7 @@ work here.
   is now the home's `.ms` system — hero green ground, white arch with the
   product rocket (`paint` follows the path). `EnterFlow` = "Welcome to Axiom",
   one line per side, `components/home/PathPicker.tsx` (shared with ApplyBlock;
-  syncs `?side=` via `history.replaceState`), Google as a black `ms-pill`,
+  syncs `?side=` via `history.replaceState`), Google as a black `ms-pill` (`OAuthButton`; interns also get a white GitHub pill),
   "or continue without an account". `/auth` = "Welcome back" + Google + the
   email/password `<details>`.
 - **Question flow** (full-page only): `.ms-flow` in `app/globals.css` re-points
