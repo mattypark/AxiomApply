@@ -18,9 +18,10 @@ import { gsap } from "gsap";
 const FILL_S = 0.9;
 const DRAIN_S = 0.75;
 
-const SMOKE = "#295337";
-const SMOKE_DEEP = "#1a3a27";
-const SMOKE_LIT = "#366645";
+// The path colour (PATH COLOUR in app/globals.css): green, blue or near-black.
+const SMOKE = "var(--launch-smoke)";
+const SMOKE_DEEP = "var(--launch-smoke-deep)";
+const SMOKE_LIT = "var(--launch-smoke-lit)";
 
 /** The rocket leaves the top of the screen at this share of the fill. */
 const ROCKET_EXIT = 0.62;
@@ -38,16 +39,16 @@ const COVERED = BODY_TOP + BODY_FADE + 0.08;
 const ROCKET_SVG = `
 <svg viewBox="0 0 60 120" width="100%" height="100%" aria-hidden="true">
   <g data-flame style="transform-origin: 30px 76px">
-    <path d="M21 76 Q30 122 39 76 Z" fill="#e2f1e6" opacity="0.95" />
+    <path d="M21 76 Q30 122 39 76 Z" style="fill: var(--color-ms-sky-soft)" opacity="0.95" />
     <path d="M25.5 76 Q30 102 34.5 76 Z" fill="#ffffff" />
   </g>
-  <path d="M18 50 L6 72 L8 76 L21 68 Z" fill="#2c5a3c" />
-  <path d="M42 50 L54 72 L52 76 L39 68 Z" fill="#2c5a3c" />
-  <path d="M30 4 C36 10 43 22 43.6 40 C44 55 42 64 38 70 L22 70 C18 64 16 55 16.4 40 C17 22 24 10 30 4 Z" fill="#3f7a52" />
+  <path d="M18 50 L6 72 L8 76 L21 68 Z" style="fill: var(--launch-fins)" />
+  <path d="M42 50 L54 72 L52 76 L39 68 Z" style="fill: var(--launch-fins)" />
+  <path d="M30 4 C36 10 43 22 43.6 40 C44 55 42 64 38 70 L22 70 C18 64 16 55 16.4 40 C17 22 24 10 30 4 Z" style="fill: var(--launch-body)" />
   <path d="M30 4 C33.5 7.5 36.5 12 38 17 L22 17 C23.5 12 26.5 7.5 30 4 Z" fill="#f6f8f7" />
   <circle cx="30" cy="33" r="5.5" fill="#bfe6ff" stroke="#f6f8f7" stroke-width="2" />
   <path d="M24 70 L36 70 L38 76 L22 76 Z" fill="#2a3130" />
-  <path d="M28.6 54 L28.6 77 L31.4 77 L31.4 54 Z" fill="#2c5a3c" />
+  <path d="M28.6 54 L28.6 77 L31.4 77 L31.4 54 Z" style="fill: var(--launch-fins)" />
 </svg>`;
 
 type Puff = {
@@ -100,10 +101,9 @@ const clamp = (v: number) => Math.min(1, Math.max(0, v));
 const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
 const easeOut = (t: number) => 1 - (1 - t) ** 3;
 
-/** `#rrggbb` + alpha → `rgb(r g b / a)`. */
-function tint(hex: string, alpha: number) {
-  const n = Number.parseInt(hex.slice(1), 16);
-  return `rgb(${n >> 16} ${(n >> 8) & 255} ${n & 255} / ${alpha})`;
+/** A colour (a CSS var here) at some opacity. */
+function tint(color: string, alpha: number) {
+  return `color-mix(in srgb, ${color} ${Math.round(alpha * 100)}%, transparent)`;
 }
 
 function puffEl(r: number, tone: "lit" | "deep") {
