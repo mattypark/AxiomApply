@@ -5,22 +5,24 @@ import { useEffect, useRef } from "react";
 /**
  * Moonshot's "Say it. / See what happens." beat, read with the scroll: two
  * lines, nothing else. The section pins for a stretch; "Apply once." stays
- * black, and "We take it from there." — set larger — turns from black to
- * Axiom green one word at a time as you scroll through it. Scroll back and
- * the words go black again.
+ * black, and "We take it from there." — set larger — waits in a faded grey
+ * and turns light green one word at a time as you scroll through it. Scroll
+ * back and the words fade to grey again.
  *
  * Colour is written straight to the DOM from one rAF-throttled scroll
  * handler, never through React state. Reduced motion shows it already green
  * and does not pin.
  */
 
-const INK = [23, 25, 28];
-/** Light green that still reads on white at this size (3.4:1). */
-const GREEN = [78, 154, 102];
+/** Unlit: a faded grey, so the line reads as waiting to be lit. */
+const GREY = [200, 205, 209];
+/** Lit: Matthew asked for a light green over the darker 3.4:1 one; at this
+ *  display size it is decoration more than body text (about 2:1 on white). */
+const GREEN = [124, 196, 147];
 const SECOND = "We take it from there.".split(" ");
 
 const mix = (t: number) =>
-  `rgb(${INK.map((from, i) => Math.round(from + (GREEN[i] - from) * t)).join(" ")})`;
+  `rgb(${GREY.map((from, i) => Math.round(from + (GREEN[i] - from) * t)).join(" ")})`;
 
 export function Statement() {
   const sectionRef = useRef<HTMLElement>(null);
