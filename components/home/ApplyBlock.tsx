@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { PathPicker, SIDES } from "@/components/home/PathPicker";
 import { Product } from "@/components/product/Product";
 import type { Side } from "@/lib/apply-sides";
+import { usePath } from "@/lib/path-theme";
 
 /**
  * Moonshot's pre-order block, turned into the way in: the product standing
@@ -36,7 +36,10 @@ const COPY: Record<Side, { cta: string; when: string; note: string }> = {
 };
 
 export function ApplyBlock() {
-  const [active, setActive] = useState(0);
+  // The visitor's path is the picker's state: pick here and the whole site
+  // recolours; come back later and it is still picked.
+  const current = usePath();
+  const active = Math.max(0, SIDES.findIndex((option) => option.side === current));
   const path = { ...SIDES[active], ...COPY[SIDES[active].side] };
 
   return (
@@ -59,7 +62,7 @@ export function ApplyBlock() {
           <p className="mt-5 text-[19px] text-ms-body">Free. About seven minutes. Save and finish later.</p>
 
           <p className="mt-10 text-[15px] font-medium text-ms-body">Choose your path</p>
-          <PathPicker active={active} onChange={setActive} className="mt-3" />
+          <PathPicker active={active} className="mt-3" />
 
           <div className="mt-8 flex items-end justify-between gap-6 border-t border-ms-ink/10 pt-6">
             <div key={path.side} className="ms-rise">

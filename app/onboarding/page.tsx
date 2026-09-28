@@ -35,7 +35,7 @@ export default async function OnboardingPage({
 
   return (
     <EnterFlow
-      side={requested ?? "intern"}
+      side={requested}
       prefill={{
         // A fresh Google account has no profile name yet; Google's own is
         // the best first guess, and it never overwrites a typed answer.

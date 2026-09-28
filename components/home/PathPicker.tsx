@@ -2,20 +2,22 @@
 
 import type { Paint } from "@/components/product/model";
 import type { Side } from "@/lib/apply-sides";
+import { PATH_PAINT, setPath } from "@/lib/path-theme";
 
 /**
  * Moonshot's colour picker, used here to pick an application: three options
  * in a soft track, a white thumb that slides to the chosen one. Each side has
- * its own colour, and the product rocket wears it (see `paint`).
+ * its own colour, and the product rocket wears it (see `paint`). Picking one
+ * also makes it the whole site's secondary colour (lib/path-theme.ts).
  *
  * Shared by the home's apply block and the welcome page so the choice looks
  * and moves the same in both places.
  */
 
 export const SIDES: { side: Side; label: string; dot: string; paint: Paint }[] = [
-  { side: "intern", label: "Intern", dot: "#366645", paint: "green" },
-  { side: "startup", label: "Startup", dot: "#4f6fc9", paint: "blue" },
-  { side: "chapter", label: "Chapter", dot: "#26292d", paint: "black" },
+  { side: "intern", label: "Intern", dot: "#366645", paint: PATH_PAINT.intern },
+  { side: "startup", label: "Startup", dot: "#4f6fc9", paint: PATH_PAINT.startup },
+  { side: "chapter", label: "Chapter", dot: "#26292d", paint: PATH_PAINT.chapter },
 ];
 
 export function PathPicker({
@@ -25,7 +27,7 @@ export function PathPicker({
   className = "",
 }: {
   active: number;
-  onChange: (index: number) => void;
+  onChange?: (index: number) => void;
   label?: string;
   className?: string;
 }) {
@@ -46,7 +48,10 @@ export function PathPicker({
           type="button"
           role="radio"
           aria-checked={index === active}
-          onClick={() => onChange(index)}
+          onClick={() => {
+            setPath(option.side);
+            onChange?.(index);
+          }}
           className="relative flex h-12 cursor-pointer items-center justify-center gap-2 rounded-full text-[16px] font-medium text-ms-ink"
         >
           <span className="h-3 w-3 rounded-full" style={{ background: option.dot }} />

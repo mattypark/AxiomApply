@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { InternApplication } from "@/components/apply/InternApplication";
 import { StartupApplication } from "@/components/apply/StartupApplication";
 import { ChapterApplication } from "@/components/apply/ChapterApplication";
@@ -9,6 +9,7 @@ import { EnterShell } from "@/components/onboarding/EnterShell";
 import { GoogleButton } from "@/components/onboarding/GoogleButton";
 import type { ApplyPrefill } from "@/components/onboarding/flow/useApplication";
 import type { Side } from "@/lib/apply-sides";
+import { getPath, setPath } from "@/lib/path-theme";
 
 /**
  * Where Enter goes: the account first, then the application.
@@ -26,9 +27,17 @@ const LINE: Record<Side, string> = {
   chapter: "Bring Axiom to your school.",
 };
 
-export function EnterFlow({ side, prefill }: { side: Side; prefill: ApplyPrefill }) {
+export function EnterFlow({ side, prefill }: { side?: Side; prefill: ApplyPrefill }) {
   const [started, setStarted] = useState(Boolean(prefill.isSignedIn));
   const [active, setActive] = useState(() => Math.max(0, SIDES.findIndex((option) => option.side === side)));
+
+  // A ?side= in the link wins and becomes the site colour; without one, the
+  // path the visitor picked last time is already the colour, so follow it.
+  useEffect(() => {
+    if (side) setPath(side);
+    else setActive(Math.max(0, SIDES.findIndex((option) => option.side === getPath())));
+  }, [side]);
+
   const picked = SIDES[active];
 
   if (started) {
