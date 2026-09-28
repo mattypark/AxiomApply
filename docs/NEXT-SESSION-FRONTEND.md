@@ -1,7 +1,7 @@
 # Next frontend session — Axiom Pathways
 
-Written 2026-09-28; updated the same day after the rocket transition and the
-welcome/sign-in/flow redesign shipped (all committed, nothing pushed).
+Written 2026-09-28; updated the same day after the rocket transition, the welcome/sign-in/flow
+redesign, path colours and the dead-code sweep (all committed, nothing pushed).
 Read this whole file before touching code. The backend move to Cloudflare is a
 **separate** session: `nextsessions/backend-cloudflare.md`. Do not do backend
 work here.
@@ -49,9 +49,23 @@ work here.
   email/password `<details>`.
 - **Question flow** (full-page only): `.ms-flow` in `app/globals.css` re-points
   the dark `--color-app-*` tokens + `--font-display` to the light system,
-  turns `.btn-gloss` into a black pill and `em` into green. Embedded
-  (`chrome="embedded"`, dark workspace) is untouched. Copy is still the
-  lowercase klinn voice — ask Matthew before sentence-casing it.
+  turns `.btn-gloss` into a black pill and `em` into the path colour. Embedded
+  (`chrome="embedded"`, dark workspace) keeps its colours. Copy is sentence
+  case now (contract placeholders get their capital in `field()` in
+  `lib/apply-sections.ts` — the contract itself is untouched).
+- **Path colour** (Matthew, 2026-09-28): the picked path is the whole site's
+  secondary colour — intern green (default), startup blue, chapter black and
+  white. `lib/path-theme.ts` (`usePath`, `setPath`, `PATH_PAINT`) stores it on
+  `<html data-path>` + localStorage `axiom_path`; `lib/path-boot.ts` is the
+  inline `<head>` script that applies it before paint (on `/onboarding`,
+  `?side=` wins). "PATH COLOUR" in `globals.css` holds every token: grounds
+  (`.ms-ground`), `ms-sky/ms-green`, bento tiles, statement lit/unlit, launch
+  smoke + rocket, flow canvas, and the older pages' forest/sky/mint/accent.
+  Any `PathPicker` click sets it; the 3D `Product` wears it unless given `paint`.
+- **Welcome picture**: `components/onboarding/RocketLoop.tsx` — the flat rocket
+  (`components/rocket-glyph.ts`, shared with the transition) loops Start →
+  Intern → Full time → Founder (startup: Post → Interview → Hire; chapter:
+  Found → Recruit → Lead), lighting each stop. `/auth` keeps the 3D rocket.
 
 ## Rules that bite (read before editing)
 
@@ -81,17 +95,8 @@ work here.
 
 ## Open items to ask Matthew about (don't just do them)
 
-- **Delete dead code?** Unused since the Moonshot home:
-  `components/welcome/WelcomeSections.tsx`, `welcome/MenuPill.tsx`,
-  `welcome/scroll/{SiteFooter,DotsField}.tsx`, `components/hero/{GradientHero,HeroNav}.tsx`,
-  `components/story/StorySection.tsx`, `components/rocket/*` (particle story),
-  `components/sections/{ProblemSection,WhatYouGetSection,InsideTheWorkSection,
-  CountBanner,HowItWorksSection,StartupsSection,QuestionsSection,ClosingCta,IntroToast,SectionIcon}.tsx`,
-  `lib/media-manifest.ts`. Now also unused: `components/transition/liquid.ts` (replaced by rocket.ts) and
-  `hero/DotArc` (EnterShell dropped it). Still live:
-  `sections/SectionHead` (for-startups etc.), `welcome/CookieBanner` (home),
-  `apply/ApplyStepper` (re-exports `submittedKey` for LocalApplicationBadge).
-  Grep before deleting; deletion needs his OK.
+- `/about` has no `page.tsx` (404) — pre-existing, only `about/internships` and
+  `about/learn` exist.
 - Supabase: GitHub linking in the flow needs "manual linking" enabled (his toggle).
 - The 20-item launch checklist (`~/.claude/rules/10-launch-checklist.md`) has
   not been walked for this design.
