@@ -4,22 +4,25 @@ import { useEffect, useRef } from "react";
 import { RocketGlyph } from "@/components/RocketGlyph";
 import { GLYPH_NOZZLE } from "@/components/rocket-glyph";
 import type { Side } from "@/lib/apply-sides";
+import { randomInvestor } from "@/lib/investor-logos";
 
 /**
  * The welcome page's picture: the path as a journey. A small rocket flies a
  * circle through four stops — for an intern, Start → Intern → Full time →
  * Founder → back to Start (a startup: Post → Interview → Hire; a chapter:
  * Found → Recruit → Lead). Each time it lands, that stop's name lights up and
- * its picture pops up in the middle of the circle: an icon, or for an intern's
- * first stop, the startups in the network. Pick another path and the stops
- * change and it starts again from Start.
+ * its picture pops up in the middle of the circle: an icon, or at an intern's
+ * first stop an accelerator's mark, a different one each lap when there are
+ * several (lib/investor-logos.ts). Pick another path and the stops change and
+ * it starts again from Start.
  *
- * The rocket stays upright and only banks into the turns. Frames are written
- * straight to the DOM from one rAF loop; React only renders the stops.
- * Reduced motion parks it at Start with every stop named.
+ * The rocket flies nose-first and leaves real exhaust: puffs that bloom out of
+ * the nozzle and fade, with the flame roaring while it moves and idling at a
+ * stop. Frames are written straight to the DOM from one rAF loop; React only
+ * renders the stops. Reduced motion parks it at Start with every stop named.
  */
 
-type Picture = { icon: string[] } | { logos: true };
+type Picture = { icon: string[] } | { investor: true };
 type Stop = { name: string; picture: Picture };
 
 // Stroke icons on a 24-unit grid, drawn for this picture.
@@ -48,7 +51,7 @@ const ICON = {
 const STOPS: Record<Side, [Stop, Stop, Stop, Stop]> = {
   intern: [
     { name: "Start", picture: { icon: ICON.flag } },
-    { name: "Intern", picture: { logos: true } },
+    { name: "Intern", picture: { investor: true } },
     { name: "Full time", picture: { icon: ICON.briefcase } },
     { name: "Founder", picture: { icon: ICON.bulb } },
   ],
@@ -66,15 +69,6 @@ const STOPS: Record<Side, [Stop, Stop, Stop, Stop]> = {
   ],
 };
 
-/** Startups already named on the site (lib/site-data.ts): the file's pixel
- *  size, the part of it that is logo (TypeOS ships with wide margins), and
- *  how tall to draw that part. */
-const LOGOS = [
-  { href: "/logos/finaldose.png", file: [320, 93], crop: [0, 0, 320, 93], height: 32 },
-  { href: "/logos/typeos.png", file: [320, 213], crop: [70, 72, 180, 46], height: 30 },
-  { href: "/logos/corgi.png", file: [320, 180], crop: [0, 0, 320, 180], height: 46 },
-];
-
 /** Wider than tall so the side stops' names fit beside the circle. */
 const W = 500;
 const H = 460;
@@ -89,50 +83,47 @@ const STOP_POINTS = [
   { x: CX, y: CY - R },
   { x: CX + R, y: CY },
 ];
-// Clear of the parked rocket: its nose reaches ~38 above a stop, its flame
-// ~58 below, and it is ~24 either side.
+// Clear of the parked rocket, which lies along the circle: ~48 either way
+// along it, ~24 across it.
 const LABELS: { x: number; y: number; anchor: "start" | "middle" | "end" }[] = [
-  { x: CX, y: CY + R + 80, anchor: "middle" },
+  { x: CX, y: CY + R + 64, anchor: "middle" },
   { x: CX - R - 36, y: CY + 8, anchor: "end" },
-  { x: CX, y: CY - R - 54, anchor: "middle" },
+  { x: CX, y: CY - R - 44, anchor: "middle" },
   { x: CX + R + 36, y: CY + 8, anchor: "start" },
 ];
+
+/** The investor card in the middle, and the logo's height inside it. */
+const CARD = { width: 200, height: 76, logo: 40 };
 
 const TRAVEL_MS = 1200;
 const DWELL_MS = 1150;
 const LEG_MS = TRAVEL_MS + DWELL_MS;
 const ROCKET_H = 96;
-/** Most the rocket leans into a turn, in degrees. */
-const BANK = 24;
-/** How much of the loop behind the rocket shows as exhaust, as a fraction. */
-const TRAIL = 0.14;
+const SCALE = ROCKET_H / 120;
+/** Nozzle mouth, from the rocket's centre along its tail, in viewbox units. */
+const NOZZLE = (GLYPH_NOZZLE.y - 48) * SCALE + 6;
+
+/** The exhaust: a pool of puffs reused round-robin. */
+const PUFFS = 44;
+const PUFF_EVERY_MS = 20;
+const PUFF_LIFE_MS = 900;
 
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
 function StopPicture({ picture }: { picture: Picture }) {
-  if ("logos" in picture) {
-    const gap = 16;
-    let y = CY - (LOGOS.reduce((sum, logo) => sum + logo.height, 0) + gap * (LOGOS.length - 1)) / 2;
+  if ("investor" in picture) {
     return (
       <>
-        <rect x={CX - 82} y={CY - 76} width={164} height={152} rx={28} fill="#ffffff" />
-        {LOGOS.map(({ href, file, crop, height }) => {
-          const width = (crop[2] / crop[3]) * height;
-          const top = y;
-          y += height + gap;
-          return (
-            <svg
-              key={href}
-              x={CX - width / 2}
-              y={top}
-              width={width}
-              height={height}
-              viewBox={crop.join(" ")}
-            >
-              <image href={href} width={file[0]} height={file[1]} />
-            </svg>
-          );
-        })}
+        <rect
+          x={CX - CARD.width / 2}
+          y={CY - CARD.height / 2}
+          width={CARD.width}
+          height={CARD.height}
+          rx={CARD.height / 2}
+          fill="#ffffff"
+        />
+        {/* href and width are set each time it shows: a random investor. */}
+        <image data-investor x={CX} y={CY - CARD.logo / 2} height={CARD.logo} />
       </>
     );
   }
@@ -157,7 +148,7 @@ function StopPicture({ picture }: { picture: Picture }) {
 
 export function RocketLoop({ side, className = "" }: { side: Side; className?: string }) {
   const trackRef = useRef<SVGPathElement>(null);
-  const trailRef = useRef<SVGPathElement>(null);
+  const exhaustRef = useRef<SVGGElement>(null);
   const rocketRef = useRef<SVGGElement>(null);
   const flameRef = useRef<SVGGElement>(null);
   const labelsRef = useRef<(SVGTextElement | null)[]>([]);
@@ -166,12 +157,15 @@ export function RocketLoop({ side, className = "" }: { side: Side; className?: s
 
   useEffect(() => {
     const track = trackRef.current;
-    const trail = trailRef.current;
+    const exhaust = exhaustRef.current;
     const rocket = rocketRef.current;
-    if (!track || !trail || !rocket) return;
+    if (!track || !exhaust || !rocket) return;
 
     const total = track.getTotalLength();
-    const scale = ROCKET_H / 120;
+    const puffs = Array.from(exhaust.querySelectorAll<SVGCircleElement>("circle"));
+    const born = puffs.map(() => -Infinity);
+    let nextPuff = 0;
+    let lastPuff = 0;
     let lit = -1;
     let shown = -1;
 
@@ -184,30 +178,67 @@ export function RocketLoop({ side, className = "" }: { side: Side; className?: s
     const show = (index: number) => {
       if (index === shown) return;
       shown = index;
+      const logo = picturesRef.current[index]?.querySelector<SVGImageElement>("[data-investor]");
+      if (logo) {
+        const investor = randomInvestor();
+        const width = (investor.width / investor.height) * CARD.logo;
+        logo.setAttribute("href", investor.href);
+        logo.setAttribute("width", String(width));
+        logo.setAttribute("x", String(CX - width / 2));
+      }
       picturesRef.current.forEach((picture, i) => picture?.setAttribute("data-on", String(i === index)));
     };
 
-    const place = (distance: number, time: number) => {
-      const at = track.getPointAtLength(distance);
+    /** Where the rocket is, and which way its nose points (unit vector). */
+    const at = (distance: number) => {
+      const point = track.getPointAtLength(distance);
       const ahead = track.getPointAtLength((distance + 1) % total);
-      const heading = ahead.x - at.x;
-      const lean = Math.max(-1, Math.min(1, heading)) * BANK;
+      const dx = ahead.x - point.x;
+      const dy = ahead.y - point.y;
+      const length = Math.hypot(dx, dy) || 1;
+      return { x: point.x, y: point.y, ux: dx / length, uy: dy / length };
+    };
+
+    const place = (distance: number, time: number, thrust: number) => {
+      const { x, y, ux, uy } = at(distance);
+      const angle = (Math.atan2(uy, ux) * 180) / Math.PI + 90;
       rocket.setAttribute(
         "transform",
-        `translate(${at.x.toFixed(1)} ${at.y.toFixed(1)}) rotate(${lean.toFixed(1)}) scale(${scale}) translate(-30 -48)`,
+        `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${angle.toFixed(1)}) scale(${SCALE}) translate(-30 -48)`,
       );
+      // The flame roars in flight and idles at a stop.
+      const burn = (0.45 + thrust * 1.05) * (1 + Math.sin(time / 40) * 0.14);
       flameRef.current?.setAttribute(
         "transform",
-        `translate(${GLYPH_NOZZLE.x} ${GLYPH_NOZZLE.y}) scale(1 ${(1 + Math.sin(time / 45) * 0.16).toFixed(3)}) translate(${-GLYPH_NOZZLE.x} ${-GLYPH_NOZZLE.y})`,
+        `translate(${GLYPH_NOZZLE.x} ${GLYPH_NOZZLE.y}) scale(${(0.9 + thrust * 0.25).toFixed(3)} ${burn.toFixed(3)}) translate(${-GLYPH_NOZZLE.x} ${-GLYPH_NOZZLE.y})`,
       );
-      const trailLength = total * TRAIL;
-      trail.style.strokeDasharray = `${trailLength} ${total}`;
-      trail.style.strokeDashoffset = String(trailLength - distance);
+
+      // Exhaust: a new puff at the nozzle every few frames while it thrusts.
+      if (thrust > 0.15 && time - lastPuff > PUFF_EVERY_MS) {
+        lastPuff = time;
+        const puff = puffs[nextPuff];
+        born[nextPuff] = time;
+        const jitter = (Math.random() - 0.5) * 6;
+        puff.setAttribute("cx", (x - ux * NOZZLE - uy * jitter).toFixed(1));
+        puff.setAttribute("cy", (y - uy * NOZZLE + ux * jitter).toFixed(1));
+        puff.dataset.drift = String((Math.random() - 0.5) * 10);
+        nextPuff = (nextPuff + 1) % puffs.length;
+      }
+      puffs.forEach((puff, i) => {
+        const age = (time - born[i]) / PUFF_LIFE_MS;
+        if (age >= 1 || age < 0) {
+          puff.style.opacity = "0";
+          return;
+        }
+        const grow = 1 - (1 - age) ** 2;
+        puff.setAttribute("r", (4 + grow * 17).toFixed(1));
+        puff.style.opacity = ((1 - age) ** 1.4 * 0.55).toFixed(3);
+        puff.style.transform = `translate(0px, ${(Number(puff.dataset.drift) * age).toFixed(1)}px)`;
+      });
     };
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      place(0.01, 0);
-      trail.style.opacity = "0";
+      place(0.01, 0, 0);
       labelsRef.current.forEach((label) => label?.setAttribute("data-on", "true"));
       show(0);
       return;
@@ -221,7 +252,9 @@ export function RocketLoop({ side, className = "" }: { side: Side; className?: s
       const inLeg = elapsed % LEG_MS;
       const travel = Math.min(1, inLeg / TRAVEL_MS);
       const distance = ((leg + easeInOut(travel)) / 4) * total;
-      place(distance % total, now);
+      // Full thrust mid-flight, easing off on the way in to land.
+      const thrust = travel < 1 ? Math.sin(Math.PI * Math.min(1, travel * 1.15)) ** 0.6 : 0;
+      place(distance % total, now, thrust);
       const arrived = travel >= 0.97;
       light(arrived ? (leg + 1) % 4 : leg);
       show(arrived ? (leg + 1) % 4 : -1);
@@ -246,15 +279,6 @@ export function RocketLoop({ side, className = "" }: { side: Side; className?: s
         strokeOpacity={0.14}
         strokeWidth={2}
         strokeDasharray="2 9"
-        strokeLinecap="round"
-      />
-      <path
-        ref={trailRef}
-        d={LOOP}
-        fill="none"
-        stroke="var(--launch-body)"
-        strokeOpacity={0.35}
-        strokeWidth={7}
         strokeLinecap="round"
       />
 
@@ -290,6 +314,17 @@ export function RocketLoop({ side, className = "" }: { side: Side; className?: s
           {stop.name}
         </text>
       ))}
+
+      {/* A light blur melts the puffs into one plume. */}
+      <g ref={exhaustRef} style={{ filter: "blur(2.5px)" }}>
+        {Array.from({ length: PUFFS }, (_, index) => (
+          <circle
+            key={index}
+            r={0}
+            style={{ opacity: 0, fill: index % 3 === 0 ? "var(--color-ms-sky)" : "var(--launch-smoke-lit)" }}
+          />
+        ))}
+      </g>
 
       <g ref={rocketRef}>
         <RocketGlyph flameRef={flameRef} />
