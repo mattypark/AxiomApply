@@ -176,7 +176,7 @@ export function QuestionFlow({
   const frame =
     chrome === "embedded"
       ? "relative overflow-hidden rounded-[20px] bg-app-canvas text-app-text-1"
-      : "relative min-h-dvh bg-app-canvas text-app-text-1";
+      : "ms-flow relative min-h-dvh bg-app-canvas text-app-text-1";
 
   if (app.submitted) {
     return (

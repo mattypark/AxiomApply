@@ -249,6 +249,55 @@
   .ms-pill:hover, .ms-pill:active { transform: none; }
 }
 
+/* The question flow in the home's clothes. The flow is built on the dark
+   app tokens; rather than fork every component, `.ms-flow` re-points those
+   tokens at the light-green system for the full-page flow only — the same
+   components embedded in the dark workspace keep their own look. */
+.ms-flow {
+  --color-app-canvas: #e8f4ec;
+  --color-app-card: #ffffff;
+  --color-app-sunken: #eef5f0;
+  --color-app-hover: #dde9e0;
+  --color-app-line: #d9e5dc;
+  --color-app-line-strong: #cbd9ce;
+  --color-app-text-1: var(--color-ms-ink);
+  --color-app-text-2: var(--color-ms-body);
+  --color-app-text-3: var(--color-ms-muted);
+  --color-app-accent: var(--color-ms-green);
+  --font-display: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+  background-image: linear-gradient(180deg, #cfe8d6 0%, #e2f1e6 38%, #eef7f1 100%);
+  background-attachment: fixed;
+}
+
+/* Instrument Serif's settings don't suit Hanken: take the home's display cut. */
+.ms-flow .font-display {
+  font-weight: 500;
+  letter-spacing: -0.05em;
+}
+
+/* The flow's green gloss button becomes the home's black pill. */
+.ms-flow .btn-gloss {
+  height: 52px;
+  padding: 0 26px;
+  border-radius: 999px;
+  background: var(--color-ms-ink);
+  background-image: none;
+  box-shadow: none;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.ms-flow .btn-gloss:hover {
+  filter: none;
+  background: #000;
+}
+
+.ms-flow .btn-gloss:active {
+  box-shadow: none;
+  transform: translateY(1px) scale(0.99);
+}
+
 /* ---------- base ---------- */
 
 html {
