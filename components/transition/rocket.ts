@@ -94,6 +94,15 @@ const padY = (h: number, rocketH: number) => h - rocketH * 0.72;
 const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
 const easeOut = (t: number) => 1 - (1 - t) ** 3;
 
+/** Slow swirl for puff `i` at time `now` (s): drift and a breath, scaled by `amount`. */
+function churn(i: number, now: number, R: number, amount: number) {
+  return {
+    dx: Math.sin(now * 1.5 + i * 1.37) * R * 0.22 * amount,
+    dy: Math.cos(now * 1.2 + i * 0.83) * R * 0.16 * amount,
+    s: 1 + Math.sin(now * 1.9 + i * 2.1) * 0.07 * amount,
+  };
+}
+
 /** A colour (a CSS var here) at some opacity. */
 function tint(color: string, alpha: number) {
   return `color-mix(in srgb, ${color} ${Math.round(alpha * 100)}%, transparent)`;
@@ -258,14 +267,16 @@ export function createLaunch(root: HTMLDivElement): Launch {
     plume.style.opacity = "1";
     body.style.opacity = "1";
 
-    // The edge boils: each puff swells in as it comes up, and keeps breathing.
+    // The edge boils: each puff swells in as it comes up, and keeps churning.
+    const now = performance.now() / 1000;
     for (const [i, puff] of edge.entries()) {
-      const breathe = 1 + Math.sin(p * 9 + i * 1.7) * 0.05;
-      place(puff.el, puff.x, puff.y, puff.r, (0.55 + 0.45 * easeOut(level)) * breathe);
+      const c = churn(i, now, R, easeOut(level));
+      place(puff.el, puff.x + c.dx, puff.y + c.dy, puff.r, (0.55 + 0.45 * easeOut(level)) * c.s);
       puff.el.style.opacity = "1";
     }
-    for (const puff of inner) {
-      place(puff.el, puff.x, puff.y, puff.r, 1);
+    for (const [i, puff] of inner.entries()) {
+      const c = churn(i + 50, now, R, easeOut(level));
+      place(puff.el, puff.x + c.dx, puff.y + c.dy, puff.r, c.s);
       puff.el.style.opacity = "1";
     }
 
@@ -293,17 +304,34 @@ export function createLaunch(root: HTMLDivElement): Launch {
     // The solid body goes first, so the page shows through between the puffs.
     body.style.opacity = (1 - clamp(d / 0.3)).toFixed(3);
 
-    for (const puff of [...edge, ...inner]) {
+    // It clears from the churning state, so nothing freezes at the handover.
+    const now = performance.now() / 1000;
+    for (const [i, puff] of [...edge, ...inner].entries()) {
       const t = clamp((d - puff.delay) / 0.5);
-      const x = puff.x + puff.side * puff.speed * t * 60;
-      const y = puff.y - puff.speed * t * h * 0.18;
-      place(puff.el, x, y, puff.r, 1 + easeOut(t) * 0.35);
+      const c = churn(i < edge.length ? i : i - edge.length + 50, now, R, 1);
+      const x = puff.x + c.dx + puff.side * puff.speed * t * 60;
+      const y = puff.y + c.dy - puff.speed * t * h * 0.18;
+      place(puff.el, x, y, puff.r, c.s * (1 + easeOut(t) * 0.35));
       puff.el.style.opacity = (1 - easeOut(t)).toFixed(3);
     }
   };
 
   let mode: "fill" | "drain" = "fill";
   const draw = () => (mode === "fill" ? drawFill() : drawDrain());
+
+  // Frames come from gsap's ticker for as long as the smoke is up — through
+  // the fill, the wait for the next page, and the clear — so the cloud keeps
+  // churning while the route loads instead of freezing on the last frame.
+  let running = false;
+  const run = () => {
+    if (running) return;
+    running = true;
+    gsap.ticker.add(draw);
+  };
+  const stop = () => {
+    running = false;
+    gsap.ticker.remove(draw);
+  };
 
   const fill = (onComplete: () => void) => {
     gsap.killTweensOf(state);
@@ -312,7 +340,8 @@ export function createLaunch(root: HTMLDivElement): Launch {
     state.drain = 0;
     root.style.visibility = "visible";
     drawFill();
-    gsap.to(state, { fill: 1, duration: FILL_S, ease: "none", onUpdate: drawFill, onComplete });
+    run();
+    gsap.to(state, { fill: 1, duration: FILL_S, ease: "none", onComplete });
   };
 
   const drain = (onComplete?: () => void) => {
@@ -320,12 +349,13 @@ export function createLaunch(root: HTMLDivElement): Launch {
     mode = "drain";
     state.drain = 0;
     drawDrain();
+    run();
     gsap.to(state, {
       drain: 1,
       duration: DRAIN_S,
       ease: "power1.in",
-      onUpdate: drawDrain,
       onComplete: () => {
+        stop();
         root.style.visibility = "hidden";
         onComplete?.();
       },
@@ -338,12 +368,14 @@ export function createLaunch(root: HTMLDivElement): Launch {
     (window as unknown as { __axiomLaunch?: unknown }).__axiomLaunch = {
       pose: (phase: "fill" | "drain", t: number) => {
         gsap.killTweensOf(state);
+        stop();
         mode = phase;
         state[phase] = t;
         root.style.visibility = t >= 1 && phase === "drain" ? "hidden" : "visible";
         draw();
       },
       hide: () => {
+        stop();
         root.style.visibility = "hidden";
       },
     };
@@ -361,6 +393,7 @@ export function createLaunch(root: HTMLDivElement): Launch {
     drain,
     destroy: () => {
       gsap.killTweensOf(state);
+      stop();
       window.removeEventListener("resize", onResize);
       root.replaceChildren();
     },
