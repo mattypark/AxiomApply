@@ -435,8 +435,16 @@ export function QuestionFlow({
             ) : null}
           </main>
 
-          <aside className={full ? "hidden items-center justify-center lg:flex" : "hidden lg:block"}>
-            <div className={full ? "sticky top-28 w-full max-w-[22rem]" : "sticky top-24"}>
+          {/* Full page: the card starts level with a centred question and
+              sticks there, so a long review scrolls past it. */}
+          <aside className={full ? "hidden items-start justify-center lg:flex" : "hidden lg:block"}>
+            <div
+              className={
+                full
+                  ? "sticky top-[max(6rem,calc(50dvh-14rem))] mt-[max(1rem,calc(50dvh-19rem))] w-full max-w-[22rem]"
+                  : "sticky top-24"
+              }
+            >
               <ProfileCard setKey={set.key} answers={answers} files={files} completion={completion} />
             </div>
           </aside>

@@ -398,7 +398,7 @@ export function FlowPicks({
 
   const tile = (isOn: boolean) =>
     full
-      ? `relative flex aspect-square cursor-pointer flex-col items-center justify-center gap-2.5 rounded-[24px] px-2 transition-[transform,background-color,box-shadow] duration-300 ease-ms hover:-translate-y-0.5 active:scale-[0.97] ${
+      ? `relative flex aspect-square cursor-pointer flex-col items-center justify-center gap-2 rounded-[22px] px-1.5 transition-[transform,background-color,box-shadow] duration-300 ease-ms hover:-translate-y-0.5 active:scale-[0.97] ${
           isOn
             ? "bg-white shadow-[inset_0_0_0_2px_var(--color-ms-green),0_14px_28px_-16px_rgb(23_25_28_/_0.45)]"
             : "bg-white/55 hover:bg-white/85"
@@ -414,7 +414,7 @@ export function FlowPicks({
       role="group"
       aria-labelledby={`q-${question.id}`}
       onKeyDown={walkOptions}
-      className={`grid grid-cols-3 sm:grid-cols-4 ${full ? "gap-2.5 lg:grid-cols-4" : "gap-2 lg:grid-cols-5"}`}
+      className={`grid grid-cols-3 gap-2 ${full ? "sm:grid-cols-5" : "sm:grid-cols-4 lg:grid-cols-5"}`}
     >
       {options.map((option) => {
         const startup = startups.find((entry) => entry.name === option.value);
@@ -434,7 +434,7 @@ export function FlowPicks({
                 aria-hidden="true"
                 className={
                   full
-                    ? "ax-toast-in absolute top-2.5 right-2.5 grid h-5 w-5 place-items-center rounded-full bg-ms-green text-[10px] font-bold text-white"
+                    ? "ax-toast-in absolute top-2 right-2 grid h-5 w-5 place-items-center rounded-full bg-ms-green text-[10px] font-bold text-white"
                     : "ax-toast-in absolute top-2 right-2 grid h-4 w-4 place-items-center rounded-full bg-app-accent text-[9px] font-bold text-app-canvas"
                 }
               >
@@ -470,7 +470,7 @@ export function FlowPicks({
             <span
               className={
                 full
-                  ? "text-center text-[12px] leading-[15px] font-medium text-ms-ink"
+                  ? "text-center text-[11.5px] leading-[14px] font-medium text-ms-ink"
                   : "text-center text-[11px] leading-[14px] text-app-text-2"
               }
             >
