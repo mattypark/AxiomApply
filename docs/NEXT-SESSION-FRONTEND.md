@@ -47,12 +47,11 @@ work here.
   syncs `?side=` via `history.replaceState`), Google as a black `ms-pill` (`OAuthButton`; interns also get a white GitHub pill),
   "or continue without an account". `/auth` = "Welcome back" + Google + the
   email/password `<details>`.
-- **Question flow** (full-page only): `.ms-flow` in `app/globals.css` re-points
-  the dark `--color-app-*` tokens + `--font-display` to the light system,
-  turns `.btn-gloss` into a black pill and `em` into the path colour. Embedded
-  (`chrome="embedded"`, dark workspace) keeps its colours. Copy is sentence
-  case now (contract placeholders get their capital in `field()` in
-  `lib/apply-sections.ts` — the contract itself is untouched).
+- **Question flow** — redesigned 2026-09-28 to feel like the welcome page (see
+  "Question flow design" below). Embedded (`chrome="embedded"`, dark
+  workspace at `/apply`) keeps its old look. Copy is sentence case (contract
+  placeholders get their capital in `field()` in `lib/apply-sections.ts` —
+  the contract itself is untouched).
 - **Path colour** (Matthew, 2026-09-28): the picked path is the whole site's
   secondary colour — intern green (default), startup blue, chapter black and
   white. `lib/path-theme.ts` (`usePath`, `setPath`, `PATH_PAINT`) stores it on
@@ -81,6 +80,54 @@ work here.
   path colour as it passes, and it lands upright as the full stop.
 - **Transition**: 1.35s cover / 1s clear; the rocket ignites on the pad in its
   own smoke before lifting; the Axiom mark is ~80px and held ≥650ms.
+
+## Question flow design (2026-09-28)
+
+What you see after "Continue with Google" / "or continue without an
+account". Everything is in path-colour tokens (`--path-em` for dots/trails,
+`ms-green` for accent text, `ms-sky-soft` / `--path-ground-*` for fills), so
+green / blue / black-and-white come free. All motion is transform / opacity /
+filter; every class has a `prefers-reduced-motion` fallback (`flow-*` block in
+`globals.css`, right after `.ms-flow`).
+
+- **How the two looks coexist**: `QuestionFlow` provides `FlowLookContext`
+  (`flow/look.ts`); each piece calls `useFullLook()` and picks its classes.
+  Embedded branches keep the old classes verbatim. `.ms-flow` still sets the
+  ground + font and re-points the dark app tokens as a safety net, but style
+  new full-page pieces with the `ms-*` classes directly.
+- **Header** (`FlowHeader.tsx`): EnterShell's bar — Axiom mark, "Save and
+  exit" (the draft is already in localStorage). Between them
+  `FlightPath.tsx`: the path picker's soft track, a path-coloured trail, and
+  the flat `RocketGlyph` (nose right) riding its front. One evenly spaced stop
+  per section (the last is the send); a stop pops and lights when reached,
+  section names under it go quiet → ink (`lg` up only). Flame roars ~0.9s
+  after each move. On phones the track is its own row under the bar.
+- **Question** (`FullQuestion.tsx`): dot + section name (+ "Optional"), the
+  label in `.ms-display` rising word by word (`RiseWords.tsx`, `.flow-rise`,
+  comes down from above when going Back), help line, answer, black `ms-pill`
+  OK + underlined Back. Reactions are a small white pill; errors a white pill
+  in `#b3261e`.
+- **Inputs**: text = white pill the size of the welcome's Continue buttons;
+  textarea = white 28px card with the hint inside; file = dashed soft card →
+  white card with a path-coloured ✓. `choices.tsx`: single choice is the
+  PathPicker track with one white thumb sliding by whole cells (`.flow-thumb`;
+  2 options inline, >5 two columns from `sm`); multi gives each pick its own
+  thumb that springs in (`.flow-pop`); startup picks are soft tiles that lift
+  on hover. Letter keys pick, arrow keys walk focus, Enter on a focused option
+  selects. Single choice advances after 420ms so the thumb lands first.
+- **Section card** (`Interstitial.tsx` → `Landing`): the RocketLoop landing —
+  a dotted route of stops, the rocket hops (arc + flame) from the last stop to
+  this one, the stop pops, the title rises word by word. 2.1s, any key/tap
+  skips; not shown under reduced motion (unchanged). It has no ground of its
+  own: the question isn't rendered behind it, and a transformed element can't
+  hold a fixed background.
+- **Founder card** (`ProfileCard.tsx`, `LOOK` map): white 28px card, sticky
+  and centred beside the question (and through the long review).
+- **Review**: "Read it *back.*" rising, one white card per section.
+- **Result** (`Done.tsx` → `FullDone`, `Launch.tsx`): the rocket climbs from
+  below the screen and out of the top through a smoke column (fixed overlay,
+  no clicks, hidden under reduced motion), then "A person reads this one,
+  *Name*." rises in, the steps card, the pills, and the finished card.
 
 ## Rules that bite (read before editing)
 
