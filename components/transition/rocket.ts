@@ -1,9 +1,10 @@
 import { gsap } from "gsap";
+import { glyphSvg } from "@/components/rocket-glyph";
 
 /**
  * The launch — the page transition as a rocket blasting off.
  *
- * A small green rocket (the product rocket's silhouette, flat) fires up from
+ * A small green rocket (components/rocket-glyph.ts) fires up from
  * the bottom of the screen and leaves a trail of exhaust puffs. Behind it the
  * launch cloud piles up off the pad: a solid body of smoke with a billowing
  * edge of big puffs, rising until it covers the screen. The route changes
@@ -36,20 +37,7 @@ const BODY_FADE = 0.4;
 /** Plume offset (in R) at which the body is solid at the screen's top. */
 const COVERED = BODY_TOP + BODY_FADE + 0.08;
 
-const ROCKET_SVG = `
-<svg viewBox="0 0 60 120" width="100%" height="100%" aria-hidden="true">
-  <g data-flame style="transform-origin: 30px 76px">
-    <path d="M21 76 Q30 122 39 76 Z" style="fill: var(--color-ms-sky-soft)" opacity="0.95" />
-    <path d="M25.5 76 Q30 102 34.5 76 Z" fill="#ffffff" />
-  </g>
-  <path d="M18 50 L6 72 L8 76 L21 68 Z" style="fill: var(--launch-fins)" />
-  <path d="M42 50 L54 72 L52 76 L39 68 Z" style="fill: var(--launch-fins)" />
-  <path d="M30 4 C36 10 43 22 43.6 40 C44 55 42 64 38 70 L22 70 C18 64 16 55 16.4 40 C17 22 24 10 30 4 Z" style="fill: var(--launch-body)" />
-  <path d="M30 4 C33.5 7.5 36.5 12 38 17 L22 17 C23.5 12 26.5 7.5 30 4 Z" fill="#f6f8f7" />
-  <circle cx="30" cy="33" r="5.5" fill="#bfe6ff" stroke="#f6f8f7" stroke-width="2" />
-  <path d="M24 70 L36 70 L38 76 L22 76 Z" fill="#2a3130" />
-  <path d="M28.6 54 L28.6 77 L31.4 77 L31.4 54 Z" style="fill: var(--launch-fins)" />
-</svg>`;
+const ROCKET_SVG = glyphSvg();
 
 type Puff = {
   el: HTMLDivElement;
