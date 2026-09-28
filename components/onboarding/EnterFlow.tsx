@@ -17,10 +17,12 @@ import { getPath, setPath } from "@/lib/path-theme";
  * Where Enter goes: the account first, then the application.
  *
  * Signed out, it is one headline, the path picker from the home, and the
- * account buttons — Google for everyone, and GitHub too for interns. Signed in — including on the way back from Google — it
- * skips straight into the question flow with the name and email already
- * filled. "Continue without an account" stays as a quiet link: the Sheet is
- * authoritative and nobody is ever blocked from applying by an OAuth screen.
+ * account buttons — Google for everyone, and GitHub too for interns. Signed
+ * in — including on the way back from Google — it skips straight into the
+ * question flow with the name and email already filled. "Continue without an
+ * account" stays as a quiet link: the Sheet is authoritative and nobody is
+ * ever blocked from applying by an OAuth screen. `start` (?start=1, from the
+ * home's apply block) means that choice was already made: straight in.
  */
 
 const LINE: Record<Side, string> = {
@@ -29,8 +31,16 @@ const LINE: Record<Side, string> = {
   chapter: "Bring Axiom to your school.",
 };
 
-export function EnterFlow({ side, prefill }: { side?: Side; prefill: ApplyPrefill }) {
-  const [started, setStarted] = useState(Boolean(prefill.isSignedIn));
+export function EnterFlow({
+  side,
+  prefill,
+  start = false,
+}: {
+  side?: Side;
+  prefill: ApplyPrefill;
+  start?: boolean;
+}) {
+  const [started, setStarted] = useState(Boolean(prefill.isSignedIn) || start);
   const [active, setActive] = useState(() => Math.max(0, SIDES.findIndex((option) => option.side === side)));
 
   // A ?side= in the link wins and becomes the site colour; without one, the

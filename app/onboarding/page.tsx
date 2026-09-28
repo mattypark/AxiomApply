@@ -16,9 +16,9 @@ export const metadata = { title: "Welcome" };
 export default async function OnboardingPage({
   searchParams,
 }: {
-  searchParams: Promise<{ side?: string }>;
+  searchParams: Promise<{ side?: string; start?: string }>;
 }) {
-  const { side } = await searchParams;
+  const { side, start } = await searchParams;
   const requested = isSide(side) ? side : undefined;
 
   const profile = await getProfile();
@@ -36,6 +36,8 @@ export default async function OnboardingPage({
   return (
     <EnterFlow
       side={requested}
+      // ?start=1: the home's apply block already chose "without an account".
+      start={start === "1"}
       prefill={{
         // A fresh Google account has no profile name yet; Google's own is
         // the best first guess, and it never overwrites a typed answer.

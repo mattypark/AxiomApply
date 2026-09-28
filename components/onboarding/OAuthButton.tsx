@@ -22,10 +22,13 @@ export function OAuthButton({
   provider,
   next,
   tone = "primary",
+  label,
 }: {
   provider: OAuthProvider;
   next: string;
   tone?: "primary" | "secondary";
+  /** Replaces "Continue with …", e.g. "Apply as an intern with Google". */
+  label?: string;
 }) {
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
@@ -64,7 +67,7 @@ export function OAuthButton({
         }`}
       >
         {provider === "google" ? <GoogleMark /> : <GitHubMark />}
-        {busy ? `Opening ${name}…` : `Continue with ${name}`}
+        {busy ? `Opening ${name}…` : (label ?? `Continue with ${name}`)}
       </button>
       {problem ? (
         <p role="alert" className="mt-3 text-center text-[14px] text-ms-body">
