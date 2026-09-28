@@ -62,10 +62,25 @@ work here.
   (`.ms-ground`), `ms-sky/ms-green`, bento tiles, statement lit/unlit, launch
   smoke + rocket, flow canvas, and the older pages' forest/sky/mint/accent.
   Any `PathPicker` click sets it; the 3D `Product` wears it unless given `paint`.
-- **Welcome picture**: `components/onboarding/RocketLoop.tsx` — the flat rocket
-  (`components/rocket-glyph.ts`, shared with the transition) loops Start →
-  Intern → Full time → Founder (startup: Post → Interview → Hire; chapter:
-  Found → Recruit → Lead), lighting each stop. `/auth` keeps the 3D rocket.
+- **Welcome picture**: `components/onboarding/RocketLoop.tsx` — a true circle
+  straight on the ground (no arch). The flat rocket (`components/RocketGlyph.tsx`
+  over `rocket-glyph.ts`, shared with the transition and the Statement) flies
+  nose-first with a blurred puff plume through Start → Intern → Full time →
+  Founder (startup: Post → Interview → Hire; chapter: Found → Recruit → Lead);
+  each landing lights the name and pops a picture in the centre (icons; the
+  Intern stop shows a random mark from `lib/investor-logos.ts`). `/auth` keeps
+  the 3D rocket.
+- **Investor marks**: `lib/investor-logos.ts` is the one list (YC only today).
+  Used by the loop and by `components/product/logoBurst.ts` (click the Apply
+  block's 3D rocket → a logo card shoots out). **Adding a16z or any other firm
+  is Matthew's call** — it reads as that firm backing Axiom — file in
+  `public/logos/` + one line.
+- **Statement** (`components/home/Statement.tsx`, pinned 340svh): "Apply",
+  "once." rise one by one, swirl apart and fade; "We take it from there" rises
+  grey, a rocket flies along the baseline drawing an underline, words take the
+  path colour as it passes, and it lands upright as the full stop.
+- **Transition**: 1.35s cover / 1s clear; the rocket ignites on the pad in its
+  own smoke before lifting; the Axiom mark is ~80px and held ≥650ms.
 
 ## Rules that bite (read before editing)
 
