@@ -1,6 +1,7 @@
 # Next frontend session — Axiom Pathways
 
-Written 2026-09-28 at the end of a long session, so the next one starts warm.
+Written 2026-09-28; updated the same day after the rocket transition and the
+welcome/sign-in/flow redesign shipped (all committed, nothing pushed).
 Read this whole file before touching code. The backend move to Cloudflare is a
 **separate** session: `nextsessions/backend-cloudflare.md`. Do not do backend
 work here.
@@ -31,54 +32,26 @@ work here.
 - **Page transition**: `components/transition/PageTransition.tsx` (mounted once
   in `app/layout.tsx`) catches every same-origin link click, runs a cover
   animation, `router.push`es, and reveals when the route key changes.
-  `components/transition/liquid.ts` is the current cover (green liquid, ported
-  from Matthew's portfolio). Reduced motion, new tabs, modified clicks and
-  same-page hash links are skipped. 4.5s safety drain.
-
-## Task 1 — the transition should feel like a rocket blasting off
-
-Matthew loves the page transition but wants it to read as **a rocket ship
-blasting**, not liquid. Keep it **green** (current fills `#295337` front /
-`#1a3a27` back; the home's light green is `#cfe8d6`).
-
-Direction that fits what exists (pick and build one, show him, iterate):
-- Click → a green rocket (reuse the silhouette, as SVG, or the three product)
-  launches from bottom-centre; its **exhaust plume** billows out behind it as
-  big soft puffs that grow, merge and **cover the screen bottom → top** as the
-  rocket exits the top. The Axiom mark can sit on the covered frame, as now.
-- Route changes under the smoke; then the smoke **thins and clears** (puffs
-  scale/fade upward, or part in the middle) to reveal the page.
-- ~0.9s cover, ~0.75s reveal (today's timings). GSAP is installed. A canvas or
-  SVG with ~30–60 puff circles plus a blur/gooey filter is the usual way to get
-  merging smoke; keep it transform/opacity-only per frame.
-- Keep all the click-capture rules in `PageTransition.tsx`; only replace what
-  `createLiquid()` does (same `fill(onComplete)` / `drain(onComplete)` shape).
-- `prefers-reduced-motion`: no transition at all (current behaviour).
-
-## Task 2 — redesign the sign-in / welcome page (`/onboarding`, `/auth`)
-
-Matthew: "not what I want it to look like — same fonts as the home page, more
-simple, less text, change something up for the UI."
-
-Today: `components/onboarding/EnterShell.tsx` (dark split screen, green sky card
-with dot ring on the left, "good work deserves to be seen.") +
-`EnterFlow.tsx` (welcome copy, `GoogleButton`, "continue without an account",
-cross-links to startup/chapter, back link). `/auth` reuses the shell.
-
-Make it feel like the home page:
-- Wrap in `.ms` → Hanken Grotesk, light green ground, black `ms-pill` buttons.
-- **Much less text**: one headline, one short line, the Google button, a small
-  "continue without an account". Drop the paragraph-long intro, the "one
-  account for…" line, "your next chapter", "build something that opens doors".
-- Side choice (intern / startup / chapter) as the same sliding picker the
-  ApplyBlock uses, instead of a sentence of links — and repaint the product
-  rocket with it, like the home does. The product rocket is a good hero here.
-- Keep the behaviour: `GoogleButton` → `signInWithOAuth({provider:"google"})`
-  via `authCallbackUrl(next)`; signed-in users skip straight into the flow;
-  "continue without an account" must still reach every question.
-- Probably also restyle the question flow (`components/onboarding/flow/`, dark
-  canvas, Instrument Serif) to match — **ask Matthew first**, he only named the
-  welcome page.
+  `components/transition/rocket.ts` is the cover (2026-09-28): a flat green
+  rocket launches bottom-centre with an exhaust trail, the launch cloud (solid
+  body + billowing soft-edged puffs, seeded layout) rises to cover, then the
+  body fades and the puffs swell/drift/dissolve from the middle out. 0.9s
+  cover, 0.75s clear, transform/opacity only. Reduced motion, new tabs,
+  modified clicks and same-page hash links are skipped. 4.5s safety drain.
+  **Dev-only** `window.__axiomLaunch.pose("fill"|"drain", 0..1)` / `.hide()`
+  poses any frame — gsap keeps its own rAF, so headless checks can't freeze it.
+- **Sign-in / welcome** (`/onboarding`, `/auth`): `components/onboarding/EnterShell.tsx`
+  is now the home's `.ms` system — hero green ground, white arch with the
+  product rocket (`paint` follows the path). `EnterFlow` = "Welcome to Axiom",
+  one line per side, `components/home/PathPicker.tsx` (shared with ApplyBlock;
+  syncs `?side=` via `history.replaceState`), Google as a black `ms-pill`,
+  "or continue without an account". `/auth` = "Welcome back" + Google + the
+  email/password `<details>`.
+- **Question flow** (full-page only): `.ms-flow` in `app/globals.css` re-points
+  the dark `--color-app-*` tokens + `--font-display` to the light system,
+  turns `.btn-gloss` into a black pill and `em` into green. Embedded
+  (`chrome="embedded"`, dark workspace) is untouched. Copy is still the
+  lowercase klinn voice — ask Matthew before sentence-casing it.
 
 ## Rules that bite (read before editing)
 
@@ -114,7 +87,8 @@ Make it feel like the home page:
   `components/story/StorySection.tsx`, `components/rocket/*` (particle story),
   `components/sections/{ProblemSection,WhatYouGetSection,InsideTheWorkSection,
   CountBanner,HowItWorksSection,StartupsSection,QuestionsSection,ClosingCta,IntroToast,SectionIcon}.tsx`,
-  `lib/media-manifest.ts`. Still live: `hero/DotArc` (EnterShell),
+  `lib/media-manifest.ts`. Now also unused: `components/transition/liquid.ts` (replaced by rocket.ts) and
+  `hero/DotArc` (EnterShell dropped it). Still live:
   `sections/SectionHead` (for-startups etc.), `welcome/CookieBanner` (home),
   `apply/ApplyStepper` (re-exports `submittedKey` for LocalApplicationBadge).
   Grep before deleting; deletion needs his OK.
