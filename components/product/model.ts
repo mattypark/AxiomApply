@@ -13,6 +13,8 @@ import * as THREE from "three";
 export type ProductParts = {
   root: THREE.Group;
   spin: THREE.Group;
+  /** The two painted surfaces — the body and the fins — for re-tinting. */
+  paint: { body: THREE.MeshStandardMaterial; fins: THREE.MeshStandardMaterial };
   rings: { tilt: THREE.Group; pivot: THREE.Group; material: THREE.MeshBasicMaterial }[];
 };
 
@@ -117,9 +119,23 @@ export function buildProductRocket(): ProductParts {
   return {
     root,
     spin,
+    paint: { body: green, fins: deep },
     rings: [ring(2.0, 1.2, 0.35, 0.55), ring(2.45, 0.6, -0.55, 0.35)],
   };
 }
+
+/**
+ * Paint jobs. The apply block re-tints the rocket to match the path picked:
+ * Axiom green for interns, the startup blue from the picker's dot, near-black
+ * for chapters. The white bands and the metal nozzle never change.
+ */
+export const PAINT = {
+  green: { body: 0x3f7a52, fins: 0x2c5a3c },
+  blue: { body: 0x4f6fc9, fins: 0x3b56a3 },
+  black: { body: 0x26292d, fins: 0x15171a },
+} as const;
+
+export type Paint = keyof typeof PAINT;
 
 export function disposeProduct(root: THREE.Object3D) {
   root.traverse((node) => {

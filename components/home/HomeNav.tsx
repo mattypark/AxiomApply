@@ -50,9 +50,8 @@ export function HomeNav({ ctaHref, signedIn }: { ctaHref: string; signedIn: bool
           </a>
         </div>
 
-        <Link href={signedIn ? "/home" : ctaHref} className="ms-pill h-11 shrink-0 px-5 text-[15px]">
+        <Link href={signedIn ? "/home" : ctaHref} className="ms-pill h-11 shrink-0 px-6 text-[15px]">
           {signedIn ? "Your home" : "Apply"}
-          <span className="text-white/60">{signedIn ? "→" : "free"}</span>
         </Link>
       </nav>
     </div>

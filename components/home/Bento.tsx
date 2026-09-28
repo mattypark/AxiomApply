@@ -162,14 +162,14 @@ export function Bento({ internshipCount }: { internshipCount: number }) {
         <div className="mt-12 grid gap-4 lg:grid-cols-12">
           <Tile
             className="min-h-[34rem] lg:col-span-4 lg:row-span-2"
-            tone="bg-[linear-gradient(170deg,#cfe3f3_0%,#dfe9e1_100%)]"
+            tone="bg-[linear-gradient(170deg,#d3e8d9_0%,#e6efe2_100%)]"
           >
             <Title>Apply once.</Title>
             <Caption>One form. Every startup in the network.</Caption>
             <ApplicationSketch />
           </Tile>
 
-          <Tile className="min-h-[21rem] lg:col-span-5" tone="bg-[#c9ddf0]" delay={80}>
+          <Tile className="min-h-[21rem] lg:col-span-5" tone="bg-[#cfe3d5]" delay={80}>
             <Title>
               A person
               <br />
@@ -202,7 +202,7 @@ export function Bento({ internshipCount }: { internshipCount: number }) {
           <Tile className="lg:col-span-6" tone="bg-[#e9edd3]" delay={80} href="/internships">
             <p className="text-[16px] font-medium text-ms-body">Live internships in the feed</p>
             <p className="ms-display mt-6 text-[clamp(4rem,7vw,6.5rem)] text-ms-ink">
-              ≈<RollingNumber value={internshipCount} />
+              ≈<RollingNumber value={internshipCount} bounceEvery={7000} />
             </p>
             <p className="mt-2 text-[15px] text-ms-body">Open to everyone. Pulled daily. No cut. →</p>
           </Tile>
@@ -210,7 +210,7 @@ export function Bento({ internshipCount }: { internshipCount: number }) {
           <Tile className="lg:col-span-6" tone="bg-[#e5e4ee]" delay={160}>
             <p className="text-[16px] font-medium text-ms-body">Time to an answer</p>
             <p className="ms-display mt-6 text-[clamp(4rem,7vw,6.5rem)] text-ms-ink">
-              ≈14
+              ≈<RollingNumber value={14} bounceEvery={7000} />
               <span className="ml-3 text-[0.4em] tracking-[-0.03em]">days</span>
             </p>
             <p className="mt-2 text-[15px] text-ms-body">Either way. A person reads every one.</p>

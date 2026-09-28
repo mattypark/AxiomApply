@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { addProductLights, buildProductRocket, disposeProduct } from "@/components/product/model";
+import { addProductLights, buildProductRocket, disposeProduct, PAINT, type Paint } from "@/components/product/model";
 
 /**
  * The product, on its own: a canvas that fills whatever box it is put in and
@@ -15,9 +15,23 @@ import { addProductLights, buildProductRocket, disposeProduct } from "@/componen
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
-export default function ProductRocket({ scale = 1, turn = 0 }: { scale?: number; turn?: number }) {
+export default function ProductRocket({
+  scale = 1,
+  turn = 0,
+  paint = "green",
+}: {
+  scale?: number;
+  turn?: number;
+  /** Re-tints smoothly when it changes; the scene is never rebuilt for it. */
+  paint?: Paint;
+}) {
   const hostRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const paintRef = useRef<Paint>(paint);
+
+  useEffect(() => {
+    paintRef.current = paint;
+  }, [paint]);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -45,6 +59,10 @@ export default function ProductRocket({ scale = 1, turn = 0 }: { scale?: number;
 
     const product = buildProductRocket();
     product.root.scale.setScalar(scale);
+    product.paint.body.color.setHex(PAINT[paintRef.current].body);
+    product.paint.fins.color.setHex(PAINT[paintRef.current].fins);
+    const bodyTarget = new THREE.Color();
+    const finTarget = new THREE.Color();
     product.root.rotation.z = -0.18;
     scene.add(product.root);
 
@@ -75,6 +93,12 @@ export default function ProductRocket({ scale = 1, turn = 0 }: { scale?: number;
       const t = time * 0.001;
       look.x = lerp(look.x, look.tx, 0.05);
       look.y = lerp(look.y, look.ty, 0.05);
+
+      // Paint eases toward the chosen colour over about half a second.
+      bodyTarget.setHex(PAINT[paintRef.current].body);
+      finTarget.setHex(PAINT[paintRef.current].fins);
+      product.paint.body.color.lerp(bodyTarget, reduce ? 1 : 0.08);
+      product.paint.fins.color.lerp(finTarget, reduce ? 1 : 0.08);
 
       product.spin.rotation.y = turn + (reduce ? 0.6 : t * 0.35);
       product.root.rotation.x = 0.08 + look.y * 0.22;

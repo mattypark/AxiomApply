@@ -5,7 +5,7 @@ import { Product } from "@/components/product/Product";
  * Moonshot's hero, beat for beat: a small pill, a line of normal size, one
  * enormous word, two short lines of what it does, a black pill and a
  * whispered footnote beside it — and the product filling the right half
- * against a clear sky. The product is the rocket until Axiom has a real one.
+ * against a light green ground (Moonshot's is sky blue). The product is the rocket until Axiom has a real one.
  */
 export function Hero({ ctaHref, placements }: { ctaHref: string; placements: number }) {
   return (
@@ -13,7 +13,7 @@ export function Hero({ ctaHref, placements }: { ctaHref: string; placements: num
       className="relative isolate min-h-svh overflow-hidden"
       style={{
         background:
-          "radial-gradient(45% 55% at 72% 48%, rgb(255 255 255 / 0.65) 0%, transparent 70%), linear-gradient(180deg, #a7d4f7 0%, #bce1fb 42%, #dcefff 100%)",
+          "radial-gradient(45% 55% at 72% 48%, rgb(255 255 255 / 0.65) 0%, transparent 70%), linear-gradient(180deg, #bfe0c9 0%, #cfe8d6 42%, #e8f4ec 100%)",
       }}
     >
       <Product

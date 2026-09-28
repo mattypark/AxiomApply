@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import type { Paint } from "@/components/product/model";
 import { Product } from "@/components/product/Product";
 import type { Side } from "@/lib/apply-sides";
 
@@ -9,16 +10,26 @@ import type { Side } from "@/lib/apply-sides";
  * Moonshot's pre-order block, turned into the way in: the product standing
  * in an arch on the left; on the right a headline, a picker where Moonshot
  * picks a colour (here: which application), the promise for that path, and
- * one black button. The picker's thumb slides; the button's words follow.
+ * one black button. The picker's thumb slides, the button's words follow,
+ * and the rocket repaints itself in the path's colour.
  *
  * Each path's promise is the one already written in lib/apply-sections.ts.
  */
 
-const PATHS: { side: Side; label: string; dot: string; cta: string; when: string; note: string }[] = [
+const PATHS: {
+  side: Side;
+  label: string;
+  dot: string;
+  paint: Paint;
+  cta: string;
+  when: string;
+  note: string;
+}[] = [
   {
     side: "intern",
     label: "Intern",
     dot: "#366645",
+    paint: "green",
     cta: "Apply as an intern",
     when: "An answer within 14 days",
     note: "Rolling — a person reads every one",
@@ -26,7 +37,8 @@ const PATHS: { side: Side; label: string; dot: string; cta: string; when: string
   {
     side: "startup",
     label: "Startup",
-    dot: "#5b7fd6",
+    dot: "#4f6fc9",
+    paint: "blue",
     cta: "Bring your startup in",
     when: "Reviewed by hand in a few days",
     note: "Then browse intern profiles and request people",
@@ -34,7 +46,8 @@ const PATHS: { side: Side; label: string; dot: string; cta: string; when: string
   {
     side: "chapter",
     label: "Chapter",
-    dot: "#17191c",
+    dot: "#26292d",
+    paint: "black",
     cta: "Start a chapter",
     when: "Reviewed within a week",
     note: "Chapters are approved one at a time",
@@ -52,7 +65,7 @@ export function ApplyBlock() {
           className="relative mx-auto aspect-[0.8] w-full max-w-[34rem] overflow-hidden rounded-t-[999px] rounded-b-[36px]"
           style={{ background: "linear-gradient(180deg, #efe7dc 0%, #e6dccd 100%)" }}
         >
-          <Product className="!absolute inset-0" scale={0.95} turn={1.2} />
+          <Product className="!absolute inset-0" scale={0.95} turn={1.2} paint={path.paint} />
         </div>
 
         <div>
