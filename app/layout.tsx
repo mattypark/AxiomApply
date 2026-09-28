@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { DM_Sans, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import { DM_Sans, Hanken_Grotesk, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { LenisProvider } from "@/components/motion/LenisProvider";
+import { PageTransition } from "@/components/transition/PageTransition";
 import "./globals.css";
 
 /**
@@ -23,6 +24,17 @@ const instrumentSerif = Instrument_Serif({
   display: "swap",
   weight: "400",
   style: ["normal", "italic"],
+});
+
+/**
+ * The home page's face — Moonshot's (moonshot.computer), which the home copies.
+ * Scoped to `.ms` in globals.css; the rest of the site keeps DM Sans.
+ */
+const hanken = Hanken_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-hanken",
+  display: "swap",
+  weight: ["400", "500", "600"],
 });
 
 /** Mono stays for the app's data layer (chips, timestamps). The landing uses none. */
@@ -70,13 +82,15 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme="light"
-      className={`${dmSans.variable} ${instrumentSerif.variable} ${jetbrains.variable}`}
+      className={`${dmSans.variable} ${instrumentSerif.variable} ${hanken.variable} ${jetbrains.variable}`}
     >
       <head />
       <body>
         {/* AmbientBackdrop + ShapeField (the dot field) removed site-wide —
             every page is now the same flat white as the welcome screen. */}
-        <LenisProvider>{children}</LenisProvider>
+        <LenisProvider>
+          <PageTransition>{children}</PageTransition>
+        </LenisProvider>
         <Analytics />
       </body>
     </html>
