@@ -9,13 +9,7 @@ import { Product } from "@/components/product/Product";
  */
 export function Hero({ ctaHref }: { ctaHref: string }) {
   return (
-    <section
-      className="relative isolate min-h-svh overflow-hidden"
-      style={{
-        background:
-          "radial-gradient(45% 55% at 72% 48%, rgb(255 255 255 / 0.65) 0%, transparent 70%), linear-gradient(180deg, #bfe0c9 0%, #cfe8d6 42%, #e8f4ec 100%)",
-      }}
-    >
+    <section className="ms-ground relative isolate min-h-svh overflow-hidden">
       <Product
         className="ms-rise pointer-events-none !absolute top-[8%] right-0 bottom-0 left-[42%] max-lg:top-auto max-lg:left-0 max-lg:h-[46svh]"
         scale={1.05}

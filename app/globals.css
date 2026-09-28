@@ -194,6 +194,142 @@
   --ease-ms: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* ============================================================
+   PATH COLOUR — the path someone picks (lib/path-theme.ts) is the site's
+   secondary colour: intern green (the default), startup blue, chapter
+   black and white. <html data-path> re-points the tokens below; every
+   green on the site reads from one of them. The ground stops and accents
+   are registered so a switch cross-fades instead of snapping.
+   ============================================================ */
+
+@property --path-ground-1 { syntax: "<color>"; inherits: true; initial-value: #bfe0c9; }
+@property --path-ground-2 { syntax: "<color>"; inherits: true; initial-value: #cfe8d6; }
+@property --path-ground-3 { syntax: "<color>"; inherits: true; initial-value: #e8f4ec; }
+@property --color-ms-sky { syntax: "<color>"; inherits: true; initial-value: #cfe8d6; }
+@property --color-ms-sky-soft { syntax: "<color>"; inherits: true; initial-value: #e2f1e6; }
+@property --color-ms-green { syntax: "<color>"; inherits: true; initial-value: #366645; }
+
+:root {
+  --path-ground-1: #bfe0c9;
+  --path-ground-2: #cfe8d6;
+  --path-ground-3: #e8f4ec;
+  /* Display-size accent on white, and the statement's lit / unlit words. */
+  --path-em: #4e9a66;
+  --path-lit: #7cc493;
+  --path-unlit: #c8cdd1;
+  /* The launch cloud and the little rocket in it. */
+  --launch-smoke: #295337;
+  --launch-smoke-deep: #1a3a27;
+  --launch-smoke-lit: #366645;
+  --launch-body: #3f7a52;
+  --launch-fins: #2c5a3c;
+  /* The home bento's tinted tiles. */
+  --path-tile-1: #d3e8d9;
+  --path-tile-2: #e6efe2;
+  --path-tile-3: #cfe3d5;
+  --path-tile-4: #dde7df;
+  --path-tile-5: #e9edd3;
+  /* The light question flow. */
+  --flow-canvas: #e8f4ec;
+  --flow-sunken: #eef5f0;
+  --flow-hover: #cadccf;
+  --flow-line: #d9e5dc;
+  --flow-line-strong: #cbd9ce;
+
+  transition:
+    --path-ground-1 0.6s var(--ease-ms),
+    --path-ground-2 0.6s var(--ease-ms),
+    --path-ground-3 0.6s var(--ease-ms),
+    --color-ms-sky 0.6s var(--ease-ms),
+    --color-ms-sky-soft 0.6s var(--ease-ms),
+    --color-ms-green 0.6s var(--ease-ms);
+}
+
+html[data-path="startup"] {
+  --path-ground-1: #c3d3f0;
+  --path-ground-2: #d3def5;
+  --path-ground-3: #e9eff9;
+  --path-em: #4f6fc9;
+  --path-lit: #86a0e6;
+  --path-tile-1: #d6e0f5;
+  --path-tile-2: #e8edf8;
+  --path-tile-3: #d1dcf3;
+  --path-tile-4: #dfe5f3;
+  --path-tile-5: #e4e8f5;
+  --launch-smoke: #2b3f7a;
+  --launch-smoke-deep: #1c2a55;
+  --launch-smoke-lit: #3b5bb5;
+  --launch-body: #4f6fc9;
+  --launch-fins: #33488f;
+  --flow-canvas: #e8eefa;
+  --flow-sunken: #eef2fa;
+  --flow-hover: #cbd6ee;
+  --flow-line: #d9e1f2;
+  --flow-line-strong: #c9d3ea;
+  --color-ms-sky: #d3def5;
+  --color-ms-sky-soft: #e5ecf9;
+  --color-ms-green: #3b5bb5;
+  /* The older pages' greens, in blue. */
+  --color-forest: #3a4f8f;
+  --color-forest-deep: #2d3e72;
+  --color-forest-bright: #5068ad;
+  --color-sky-deep: #070b18;
+  --color-sky-mid: #1f2f5c;
+  --color-sky-bright: #4a66b0;
+  --color-mint: #b7c5e6;
+  --color-accent: #34509c;
+  --color-signal: #a9bff0;
+  --color-app-accent: #8ea6e0;
+}
+
+html[data-path="chapter"] {
+  --path-ground-1: #dcdcdc;
+  --path-ground-2: #e6e6e6;
+  --path-ground-3: #f3f3f3;
+  --path-em: #17191c;
+  --path-lit: #17191c;
+  --path-tile-1: #e1e1e1;
+  --path-tile-2: #eeeeee;
+  --path-tile-3: #dcdcdc;
+  --path-tile-4: #e6e6e6;
+  --path-tile-5: #ebebeb;
+  --launch-smoke: #1d1f22;
+  --launch-smoke-deep: #0f1012;
+  --launch-smoke-lit: #2c2f33;
+  --launch-body: #26292d;
+  --launch-fins: #0f1012;
+  --flow-canvas: #ececec;
+  --flow-sunken: #f2f2f2;
+  --flow-hover: #d4d4d4;
+  --flow-line: #dedede;
+  --flow-line-strong: #cfcfcf;
+  --color-ms-sky: #e6e6e6;
+  --color-ms-sky-soft: #efefef;
+  --color-ms-green: #17191c;
+  --color-forest: #2a2c2f;
+  --color-forest-deep: #1b1c1e;
+  --color-forest-bright: #4a4d52;
+  --color-sky-deep: #050505;
+  --color-sky-mid: #1f2022;
+  --color-sky-bright: #55585c;
+  --color-mint: #cfd1d3;
+  --color-accent: #26292d;
+  --color-signal: #d4d4d4;
+  --color-app-accent: #bdbdbd;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { transition: none; }
+}
+
+/* The light-green ground the home hero, the welcome page and the flow share. */
+.ms-ground,
+.ms.ms-ground {
+  background:
+    radial-gradient(45% 55% at 72% 48%, rgb(255 255 255 / 0.65) 0%, transparent 70%),
+    linear-gradient(180deg, var(--path-ground-1) 0%, var(--path-ground-2) 42%, var(--path-ground-3) 100%);
+}
+
 .ms {
   font-family: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
   color: var(--color-ms-ink);
@@ -254,19 +390,19 @@
    tokens at the light-green system for the full-page flow only — the same
    components embedded in the dark workspace keep their own look. */
 .ms-flow {
-  --color-app-canvas: #e8f4ec;
+  --color-app-canvas: var(--flow-canvas);
   --color-app-card: #ffffff;
-  --color-app-sunken: #eef5f0;
-  --color-app-hover: #cadccf;
-  --color-app-line: #d9e5dc;
-  --color-app-line-strong: #cbd9ce;
+  --color-app-sunken: var(--flow-sunken);
+  --color-app-hover: var(--flow-hover);
+  --color-app-line: var(--flow-line);
+  --color-app-line-strong: var(--flow-line-strong);
   --color-app-text-1: var(--color-ms-ink);
   --color-app-text-2: var(--color-ms-body);
   --color-app-text-3: var(--color-ms-muted);
   --color-app-accent: var(--color-ms-green);
   --font-display: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
   font-family: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
-  --ms-flow-ground: linear-gradient(180deg, #cfe8d6 0%, #e2f1e6 38%, #eef7f1 100%);
+  --ms-flow-ground: linear-gradient(180deg, var(--color-ms-sky) 0%, var(--color-ms-sky-soft) 38%, var(--path-ground-3) 100%);
   background-image: var(--ms-flow-ground);
   background-attachment: fixed;
 }
@@ -285,12 +421,11 @@
 }
 
 /* Hanken has no italic here, and the home never slants a word: the flow's
-   emphasised word goes green instead, like the home's statement. #4e9a66 is
-   the green that holds 3:1 at display size. */
+   emphasised word takes the path colour instead, like the home's statement. */
 .ms-flow .font-display em,
 .ms-flow .font-display .italic {
   font-style: normal;
-  color: #4e9a66;
+  color: var(--path-em);
 }
 
 /* The flow's green gloss button becomes the home's black pill. */

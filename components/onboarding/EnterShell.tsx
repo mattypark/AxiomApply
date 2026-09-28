@@ -10,18 +10,13 @@ import { Product } from "@/components/product/Product";
  * apply block's white arch. Walking in from the home should feel like the
  * next room of the same house, not a different site.
  *
- * The rocket wears the colour of the chosen path (`paint`). On a phone the
+ * The rocket wears the colour of the chosen path (`paint`, else the one
+ * the visitor last picked). On a phone the
  * arch shrinks and sits above the words, so the button stays near the fold.
  */
-export function EnterShell({ children, paint = "green" }: { children: ReactNode; paint?: Paint }) {
+export function EnterShell({ children, paint }: { children: ReactNode; paint?: Paint }) {
   return (
-    <div
-      className="ms flex min-h-dvh flex-col"
-      style={{
-        background:
-          "radial-gradient(45% 55% at 72% 48%, rgb(255 255 255 / 0.65) 0%, transparent 70%), linear-gradient(180deg, #bfe0c9 0%, #cfe8d6 42%, #e8f4ec 100%)",
-      }}
-    >
+    <div className="ms ms-ground flex min-h-dvh flex-col">
       <header className="mx-auto flex h-20 w-full max-w-[90rem] items-center justify-between px-6 sm:px-[6.5%]">
         <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="Axiom home">
           <Image
