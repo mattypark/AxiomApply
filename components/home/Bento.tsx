@@ -162,14 +162,14 @@ export function Bento({ internshipCount }: { internshipCount: number }) {
         <div className="mt-12 grid gap-4 lg:grid-cols-12">
           <Tile
             className="min-h-[34rem] lg:col-span-4 lg:row-span-2"
-            tone="bg-[linear-gradient(170deg,#d3e8d9_0%,#e6efe2_100%)]"
+            tone="bg-[linear-gradient(170deg,var(--path-tile-1)_0%,var(--path-tile-2)_100%)]"
           >
             <Title>Apply once.</Title>
             <Caption>One form. Every startup in the network.</Caption>
             <ApplicationSketch />
           </Tile>
 
-          <Tile className="min-h-[21rem] lg:col-span-5" tone="bg-[#cfe3d5]" delay={80}>
+          <Tile className="min-h-[21rem] lg:col-span-5" tone="bg-[var(--path-tile-3)]" delay={80}>
             <Title>
               A person
               <br />
@@ -193,13 +193,13 @@ export function Bento({ internshipCount }: { internshipCount: number }) {
             <IntroThread />
           </Tile>
 
-          <Tile className="min-h-[21rem] lg:col-span-4" tone="bg-[#dde7df]" delay={200}>
+          <Tile className="min-h-[21rem] lg:col-span-4" tone="bg-[var(--path-tile-4)]" delay={200}>
             <Title>The network.</Title>
             <Caption>{startups.length} startups hiring right now.</Caption>
             <Roster />
           </Tile>
 
-          <Tile className="lg:col-span-6" tone="bg-[#e9edd3]" delay={80} href="/internships">
+          <Tile className="lg:col-span-6" tone="bg-[var(--path-tile-5)]" delay={80} href="/internships">
             <p className="text-[16px] font-medium text-ms-body">Live internships in the feed</p>
             <p className="ms-display mt-6 text-[clamp(4rem,7vw,6.5rem)] text-ms-ink">
               ≈<RollingNumber value={internshipCount} bounceEvery={7000} />
