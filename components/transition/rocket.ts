@@ -28,10 +28,12 @@ const ROCKET_EXIT = 0.62;
 const CLOUD_START = 0.16;
 /** Launch curve: <2 so it clears the pad quickly but still visibly accelerates. */
 const THRUST = 1.7;
-/** Where the solid body starts inside the plume, in edge-puff radii. */
-const BODY_TOP = 1.35;
-/** Plume offset (in R) at which the body's top has passed the screen's top. */
-const COVERED = BODY_TOP + 0.08;
+/** Where the body starts inside the plume, in edge-puff radii… */
+const BODY_TOP = 1.1;
+/** …and how deep its top fades in, so it never shows a straight line. */
+const BODY_FADE = 0.4;
+/** Plume offset (in R) at which the body is solid at the screen's top. */
+const COVERED = BODY_TOP + BODY_FADE + 0.08;
 
 const ROCKET_SVG = `
 <svg viewBox="0 0 60 120" width="100%" height="100%" aria-hidden="true">
@@ -139,15 +141,16 @@ function build(root: HTMLDivElement): Layout {
   const plume = document.createElement("div");
   plume.style.cssText = `position:absolute;left:0;top:0;width:${w}px;height:${h + R * 2}px;will-change:transform`;
   const body = document.createElement("div");
-  // Its top sits below the edge puffs' solid cores, so no straight line shows.
-  body.style.cssText = `position:absolute;left:0;right:0;top:${R * BODY_TOP}px;bottom:0;background:${SMOKE}`;
+  // Its top sits under the edge puffs and fades in, so no straight line shows.
+  body.style.cssText = `position:absolute;left:0;right:0;top:${R * BODY_TOP}px;bottom:0;background:linear-gradient(180deg, ${tint(SMOKE, 0)} 0px, ${SMOKE} ${R * BODY_FADE}px)`;
   plume.append(body);
 
   const edge: Puff[] = [];
   const edgeCount = Math.ceil(w / (R * 0.95)) + 2;
   for (let i = 0; i < edgeCount; i += 1) {
     const r = R * (0.8 + random() * 0.45);
-    const x = (i - 0.5) * (w / (edgeCount - 2)) + (random() - 0.5) * R * 0.5;
+    // The first sits just inside the left edge so the body never peeks there.
+    const x = (i - 0.3) * (w / (edgeCount - 2)) + (random() - 0.5) * R * 0.3;
     const y = R + (random() - 0.5) * R * 0.4;
     const el = puffEl(r, random() > 0.3 ? "lit" : "deep");
     plume.append(el);
