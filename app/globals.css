@@ -563,6 +563,11 @@ html[data-path="chapter"] {
 /* The flat rocket's flame (the glyph's first group): a low idle, and a
    flickering roar while it is moving. Scale only — RocketGlyph sets the
    flame's opacity inline. */
+/* A thin white halo keeps the rocket legible over its own-coloured trail. */
+.flow-rocket {
+  filter: drop-shadow(0 0 0.8px #ffffff) drop-shadow(0 0 0.8px #ffffff);
+}
+
 .flow-rocket svg > g:first-child {
   transform-origin: 30px 76px;
   transform: scaleY(0.4);

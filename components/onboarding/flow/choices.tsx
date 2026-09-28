@@ -63,11 +63,12 @@ function useLetterKeys(count: number, onLetter: (index: number) => void) {
   });
 }
 
+/** yes_no keeps its lowercase wire values; only the labels take a capital. */
 function choiceOptions(question: Question): Option[] {
   if (question.type === "yes_no") {
     return [
-      { value: "yes", label: "yes" },
-      { value: "no", label: "no" },
+      { value: "yes", label: "Yes" },
+      { value: "no", label: "No" },
     ];
   }
   return question.options ?? [];
