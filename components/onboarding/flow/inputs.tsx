@@ -65,7 +65,7 @@ export function FlowText({
         type={type}
         value={value}
         maxLength={question.maxLength}
-        placeholder={question.placeholder ?? "type your answer"}
+        placeholder={question.placeholder ?? "Type your answer"}
         autoComplete={question.autocomplete}
         onChange={(event) => onChange(event.target.value)}
         onKeyDown={(event) => {
@@ -113,7 +113,7 @@ export function FlowTextArea({
         rows={3}
         value={value}
         maxLength={question.maxLength}
-        placeholder={question.placeholder ?? "take your time"}
+        placeholder={question.placeholder ?? "Take your time"}
         onChange={(event) => onChange(event.target.value)}
         onKeyDown={(event) => {
           if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
@@ -124,7 +124,7 @@ export function FlowTextArea({
         className="max-h-[42vh] min-h-[7.5rem] w-full resize-none rounded-[12px] bg-app-card px-4 py-3.5 text-[17px] leading-[26px] text-app-text-1 caret-app-accent shadow-[inset_0_0_0_1px_var(--color-app-line-strong)] outline-none placeholder:text-app-text-3/60 focus-visible:outline-none focus:shadow-[inset_0_0_0_1px_rgb(135_183_148_/_0.5)]"
       />
       <div className="mt-2 flex items-center justify-between gap-4 text-[12px] text-app-text-3">
-        <span>⌘ + enter to continue</span>
+        <span>⌘ + Enter to continue</span>
         <Counter value={value} max={question.maxLength} />
       </div>
     </div>
@@ -234,7 +234,7 @@ export function FlowChoice({
         <ChoiceCard
           key={option.value}
           letter={LETTERS[index]}
-          label={option.label.toLowerCase()}
+          label={option.label}
           selected={value === option.value}
           onClick={() => pick(option.value)}
         />
@@ -281,7 +281,7 @@ export function FlowMulti({
           key={option.value}
           multi
           letter={LETTERS[index]}
-          label={option.label.toLowerCase()}
+          label={option.label}
           selected={selected.includes(option.value)}
           onClick={() => toggle(option.value)}
         />
@@ -359,7 +359,7 @@ export function FlowPicks({
               </span>
             )}
             <span className="text-center text-[11px] leading-[14px] text-app-text-2">
-              {startup ? startup.name : "other / open"}
+              {startup ? startup.name : "Other / open"}
             </span>
             {startup?.yc ? (
               <span className="-mt-1.5 text-[10px] text-app-text-3">{startup.yc}</span>
@@ -390,7 +390,7 @@ export function FlowFile({
   function take(candidate: File | undefined | null) {
     if (!candidate) return;
     if (candidate.size > MAX_FILE) {
-      setError("that file is over 8MB — pick a smaller one.");
+      setError("That file is over 8MB — pick a smaller one.");
       onFile(null);
       return;
     }
@@ -428,10 +428,10 @@ export function FlowFile({
           {file ? "✓" : "↥"}
         </span>
         <span className="text-[15px] text-app-text-1">
-          {file ? file.name : "drop a file, or click to choose"}
+          {file ? file.name : "Drop a file, or click to choose"}
         </span>
         <span className="text-[12px] text-app-text-3">
-          {question.accept?.includes("image") ? "pdf, word or an image" : "pdf or word"}, up
+          {question.accept?.includes("image") ? "PDF, Word or an image" : "PDF or Word"}, up
           to 8MB
         </span>
       </label>

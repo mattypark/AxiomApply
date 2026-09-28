@@ -106,6 +106,14 @@ const CONTRACT_TYPE_TO_QUESTION: Record<ApplyField["type"], QuestionType> = {
  * a question is *presented* (label copy, help text, placeholder) but never the
  * id — that is the wire name and it is taken from the contract only.
  */
+
+/** The contract's placeholders are written lowercase and the contract is
+ *  frozen, so the capital goes on here. Handles and URLs stay as they are. */
+function sentenceCase(text: string | undefined) {
+  if (!text || /^(@|https?:)/.test(text)) return text;
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 function field(
   name: string,
   overrides: Partial<Omit<Question, "id">> = {},
@@ -123,7 +131,7 @@ function field(
     label: source.label,
     type: CONTRACT_TYPE_TO_QUESTION[source.type],
     required: source.required,
-    placeholder: source.placeholder,
+    placeholder: sentenceCase(source.placeholder),
     helpText: source.hint,
     accept: source.accept,
     autocomplete: source.autocomplete,
@@ -152,7 +160,7 @@ const INTERN_SECTIONS: Section[] = [
     // Section ids are layout keys, not wire names — this one was a second
     // "your-work", which collided with the longer section further down.
     id: "show-us",
-    nav: "your work",
+    nav: "Your work",
     title: "Your work",
     blurb: "Start with what you have built. Links beat adjectives.",
     questions: [
@@ -171,7 +179,7 @@ const INTERN_SECTIONS: Section[] = [
   },
   {
     id: "about-you",
-    nav: "about you",
+    nav: "About you",
     title: "About you",
     blurb: "The basics. Thirty seconds.",
     questions: [
@@ -184,7 +192,7 @@ const INTERN_SECTIONS: Section[] = [
   },
   {
     id: "where-you-fit",
-    nav: "where you fit",
+    nav: "Where you fit",
     title: "Where you fit",
     blurb: "What you want to work on, and where you are.",
     questions: [
@@ -196,7 +204,7 @@ const INTERN_SECTIONS: Section[] = [
   },
   {
     id: "your-work",
-    nav: "the role",
+    nav: "The role",
     title: "The role you want",
     blurb:
       "This is the part we actually read. Links beat adjectives — a repo, a deployed site, an app in a store, a video with views.",
@@ -241,21 +249,21 @@ const INTERN_SECTIONS: Section[] = [
   },
   {
     id: "why",
-    nav: "why",
+    nav: "Why",
     title: "Why",
     blurb: "Optional — but it is the thing people remember you by.",
     questions: [field("letter"), field("comments")],
   },
   {
     id: "links",
-    nav: "links",
+    nav: "Links",
     title: "Links",
     blurb: "Anywhere we can see what you have made.",
     questions: [field("instagram"), field("linkedin")],
   },
   {
     id: "files",
-    nav: "files",
+    nav: "Files",
     title: "Files",
     blurb: "Anything else worth attaching.",
     questions: [field("extra_file")],
@@ -265,8 +273,8 @@ const INTERN_SECTIONS: Section[] = [
 export const INTERN_SET: QuestionSet = {
   key: "intern",
   storageKey: "axiom_apply_intern",
-  heading: "axiom application",
-  dates: "rolling — first batch reviewed within 14 days",
+  heading: "Axiom application",
+  dates: "Rolling — first batch reviewed within 14 days",
   note: "We read every application. We select on what you have shipped, not on GPA, school, or how the resume looks. Every applicant hears back either way.",
   gate: { nameId: "name", emailId: "email" },
   sections: INTERN_SECTIONS,
@@ -307,7 +315,7 @@ const FIELD_OPTIONS: Option[] = [
 const STARTUP_SECTIONS: Section[] = [
   {
     id: "the-company",
-    nav: "the company",
+    nav: "The company",
     title: "The company",
     blurb: "Who you are, in the shortest version that is still true.",
     questions: [
@@ -357,7 +365,7 @@ const STARTUP_SECTIONS: Section[] = [
   },
   {
     id: "who-you-are",
-    nav: "who you are",
+    nav: "Who you are",
     title: "Who you are",
     blurb: "The person we will be emailing.",
     questions: [
@@ -388,7 +396,7 @@ const STARTUP_SECTIONS: Section[] = [
         label: "LinkedIn",
         type: "url",
         required: true,
-        placeholder: "profile URL",
+        placeholder: "Profile URL",
       },
       {
         id: "socials",
@@ -400,7 +408,7 @@ const STARTUP_SECTIONS: Section[] = [
   },
   {
     id: "the-work",
-    nav: "the work",
+    nav: "The work",
     title: "The work",
     blurb:
       "The founders who get the most out of this hand an intern one narrow, real, shippable thing in week one.",
@@ -464,7 +472,7 @@ const STARTUP_SECTIONS: Section[] = [
         label: "What does it pay?",
         type: "short_text",
         required: true,
-        placeholder: "hourly, stipend, or equity",
+        placeholder: "Hourly, stipend, or equity",
         conditional: { dependsOn: "paid", showWhen: "yes" },
       },
       {
@@ -472,13 +480,13 @@ const STARTUP_SECTIONS: Section[] = [
         label: "When would they start?",
         type: "short_text",
         required: true,
-        placeholder: "e.g. within a month, or September",
+        placeholder: "E.g. within a month, or September",
       },
     ],
   },
   {
     id: "working-with-minors",
-    nav: "minors",
+    nav: "Minors",
     title: "Working with minors",
     blurb:
       "Most of the network is in high school or early college. A parent or guardian signs the agreement.",
@@ -494,7 +502,7 @@ const STARTUP_SECTIONS: Section[] = [
         label: "Who on your team would they report to?",
         type: "short_text",
         required: true,
-        placeholder: "name and role",
+        placeholder: "Name and role",
       },
       {
         id: "anything_else",
@@ -509,8 +517,8 @@ const STARTUP_SECTIONS: Section[] = [
 export const STARTUP_SET: QuestionSet = {
   key: "startup",
   storageKey: "axiom_apply_startup",
-  heading: "startup application",
-  dates: "reviewed by hand — usually within a few days",
+  heading: "Startup application",
+  dates: "Reviewed by hand — usually within a few days",
   note: "Matthew reads every startup application before it goes live. Once you are approved you can browse intern profiles and request people by hand.",
   gate: { nameId: "contact_name", emailId: "contact_email" },
   sections: STARTUP_SECTIONS,
@@ -530,7 +538,7 @@ export const STARTUP_SET: QuestionSet = {
 const CHAPTER_SECTIONS: Section[] = [
   {
     id: "about-you",
-    nav: "you",
+    nav: "You",
     title: "Start with you",
     blurb: "The person who would be running it.",
     questions: [
@@ -582,7 +590,7 @@ const CHAPTER_SECTIONS: Section[] = [
         id: "linkedin",
         label: "LinkedIn",
         type: "url",
-        placeholder: "profile URL",
+        placeholder: "Profile URL",
       },
       {
         id: "other_link",
@@ -595,7 +603,7 @@ const CHAPTER_SECTIONS: Section[] = [
   },
   {
     id: "your-school",
-    nav: "your school",
+    nav: "Your school",
     title: "Where the chapter would live",
     blurb:
       "Chapters run inside a real school, which means real constraints. We would rather know them now.",
@@ -658,7 +666,7 @@ const CHAPTER_SECTIONS: Section[] = [
         label: "Who?",
         type: "short_text",
         required: true,
-        placeholder: "name and what they teach",
+        placeholder: "Name and what they teach",
         conditional: {
           dependsOn: "advisor_status",
           showWhenOneOf: ["Yes, confirmed", "Someone in mind"],
@@ -676,7 +684,7 @@ const CHAPTER_SECTIONS: Section[] = [
   },
   {
     id: "why-you",
-    nav: "why you",
+    nav: "Why you",
     title: "Why you, specifically",
     blurb:
       "Chapters are run by one person for a long time before anyone shows up. This section is most of the decision.",
@@ -712,7 +720,7 @@ const CHAPTER_SECTIONS: Section[] = [
   },
   {
     id: "the-plan",
-    nav: "the plan",
+    nav: "The plan",
     title: "What actually happens when you start one",
     blurb:
       "Specific beats ambitious. A plan for ten people you can name is stronger than a plan for a hundred you cannot.",
@@ -765,7 +773,7 @@ const CHAPTER_SECTIONS: Section[] = [
   },
   {
     id: "commitment",
-    nav: "commitment",
+    nav: "Commitment",
     title: "The part people skip",
     blurb: "Most chapters die from time, not from ideas.",
     questions: [
@@ -837,8 +845,8 @@ const CHAPTER_SECTIONS: Section[] = [
 export const CHAPTER_SET: QuestionSet = {
   key: "chapter",
   storageKey: "axiom_apply_chapter",
-  heading: "chapter application",
-  dates: "reviewed by hand — usually within a week",
+  heading: "Chapter application",
+  dates: "Reviewed by hand — usually within a week",
   note: "Chapters are approved one at a time, by a person, because a chapter that fails is worse than a school with none. Starting one does not stop you applying as an intern or bringing a startup in.",
   gate: { nameId: "name", emailId: "email" },
   sections: CHAPTER_SECTIONS,

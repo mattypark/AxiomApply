@@ -22,19 +22,19 @@ const HOME_BY_SET: Record<QuestionSet["key"], string> = {
 
 const NEXT_STEPS: Record<QuestionSet["key"], { when: string; what: string }[]> = {
   intern: [
-    { when: "today", what: "it is in, and a person has it." },
-    { when: "within 14 days", what: "you hear back, either way." },
-    { when: "if it fits", what: "the email names the startup and the role." },
+    { when: "Today", what: "It is in, and a person has it." },
+    { when: "Within 14 days", what: "You hear back, either way." },
+    { when: "If it fits", what: "The email names the startup and the role." },
   ],
   startup: [
-    { when: "today", what: "it is in." },
-    { when: "within a few days", what: "matthew reads it by hand before it goes live." },
-    { when: "once approved", what: "you browse intern profiles and request people." },
+    { when: "Today", what: "It is in." },
+    { when: "Within a few days", what: "Matthew reads it by hand before it goes live." },
+    { when: "Once approved", what: "You browse intern profiles and request people." },
   ],
   chapter: [
-    { when: "today", what: "it is in." },
-    { when: "within a week", what: "a person reviews it — chapters are approved one at a time." },
-    { when: "if approved", what: "we plan your first thirty days together." },
+    { when: "Today", what: "It is in." },
+    { when: "Within a week", what: "A person reviews it — chapters are approved one at a time." },
+    { when: "If approved", what: "We plan your first thirty days together." },
   ],
 };
 
@@ -56,13 +56,13 @@ export function Done({
       <div className="ax-q-in">
         <p className="flex items-center gap-2 text-[13px] text-app-accent">
           <span className="ax-pulse h-1.5 w-1.5 rounded-full bg-signal" />
-          sent
+          Sent
         </p>
         <h1 className="mt-4 font-display text-[44px] leading-[48px] tracking-[-0.46px] text-app-text-1 sm:text-[56px] sm:leading-[58px]">
-          a person reads this one
+          A person reads this one
           {firstName ? (
             <>
-              , <em className="italic">{firstName.toLowerCase()}.</em>
+              , <em className="italic">{firstName}.</em>
             </>
           ) : (
             "."
@@ -90,14 +90,14 @@ export function Done({
               something real — a place to see the decision. */}
           {!signedIn ? (
             <Link href="/auth" className="btn-gloss">
-              save it to an account <span aria-hidden="true">↗</span>
+              Save it to an account <span aria-hidden="true">↗</span>
             </Link>
           ) : null}
           <Link
             href={HOME_BY_SET[set.key]}
             className={signedIn ? "btn-gloss" : "text-[14px] text-app-text-3 underline underline-offset-4 transition-colors hover:text-app-text-1"}
           >
-            {signedIn ? "go to your home" : "look around first"}
+            {signedIn ? "Go to your home" : "Look around first"}
           </Link>
         </div>
       </div>

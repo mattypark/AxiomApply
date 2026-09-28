@@ -30,18 +30,18 @@ export function Review({
 
   return (
     <div className="ax-q-in">
-      <p className="text-[13px] text-app-accent">review</p>
+      <p className="text-[13px] text-app-accent">Review</p>
       <h2 className="mt-3 font-display text-[40px] leading-[44px] tracking-[-0.4px] text-app-text-1">
-        read it <em className="italic">back.</em>
+        Read it <em className="italic">back.</em>
       </h2>
       <p className="mt-3 text-[16px] leading-[24px] text-app-text-3">
-        tap anything to change it. nothing is sent until you send it.
+        Tap anything to change it. Nothing is sent until you send it.
       </p>
 
       <div className="mt-10 flex flex-col gap-8">
         {groups.map((group) => (
           <section key={group.section.id + group.items[0].position}>
-            <h3 className="text-[12px] text-app-text-3 lowercase">{group.section.title}</h3>
+            <h3 className="text-[12px] text-app-text-3">{group.section.title}</h3>
             <dl className="mt-2">
               {group.items.map(({ flat, position }) => {
                 const { question } = flat;
@@ -56,7 +56,7 @@ export function Review({
                       onClick={() => onEdit(position)}
                       className="flex w-full cursor-pointer items-baseline justify-between gap-6 py-3 text-left transition-colors duration-150 hover:bg-app-card/60"
                     >
-                      <dt className="max-w-[45%] shrink-0 text-[13px] text-app-text-3 lowercase">
+                      <dt className="max-w-[45%] shrink-0 text-[13px] text-app-text-3">
                         {question.label}
                       </dt>
                       <dd

@@ -36,24 +36,24 @@ export function reactionFor(id: string, answers: Answers): string | null {
 
   switch (id) {
     case "github":
-      return "a link to real work puts you ahead of most of the pile.";
+      return "A link to real work puts you ahead of most of the pile.";
 
     case "other_link":
-      return "noted — we open every link.";
+      return "Noted — we open every link.";
 
     case "school":
-      return "we have never turned anyone down for where they go to school.";
+      return "We have never turned anyone down for where they go to school.";
 
     case "grade":
-      if (/9th|10th/.test(value)) return "starting this early is the whole point.";
-      if (/12th|College/.test(value)) return "good timing — most roles open for the summer.";
+      if (/9th|10th/.test(value)) return "Starting this early is the whole point.";
+      if (/12th|College/.test(value)) return "Good timing — most roles open for the summer.";
       return null;
 
     case "interest": {
       const keywords = INTEREST_SECTORS[value];
-      if (!keywords) return "we will read for it — the network grows toward what people ask for.";
+      if (!keywords) return "We will read for it — the network grows toward what people ask for.";
       const matches = rosterMatching(keywords);
-      if (!matches.length) return `nobody in ${value.toLowerCase()} yet — asking is how that changes.`;
+      if (!matches.length) return `Nobody in ${value.toLowerCase()} yet — asking is how that changes.`;
       return `${plural(matches.length, "startup", "startups")} in the network ${
         matches.length === 1 ? "works" : "work"
       } near ${value.toLowerCase()} right now.`;
@@ -62,38 +62,38 @@ export function reactionFor(id: string, answers: Answers): string | null {
     case "chapter":
     case "city":
       return /online|remote/i.test(value)
-        ? "most of the network is remote, so online is a real answer."
-        : `we will look for who is near ${value.toLowerCase()}.`;
+        ? "Most of the network is remote, so online is a real answer."
+        : `We will look for who is near ${value}.`;
 
     case "startup_picks": {
       const picks = splitValues(value).filter((pick) => pick !== "Other");
-      if (!picks.length) return "open to anything is a real answer.";
+      if (!picks.length) return "Open to anything is a real answer.";
       return `${plural(picks.length, "pick", "picks")}. we match on these first.`;
     }
 
     case "letter":
-      return "that is the part people remember you by.";
+      return "That is the part people remember you by.";
 
     case "stage":
       return value === "Idea"
-        ? "an idea-stage team can still hand someone one real thing to ship."
+        ? "An idea-stage team can still hand someone one real thing to ship."
         : null;
 
     case "paid":
       return value === "no"
-        ? "unpaid is allowed — we will help you shape it into real learning."
+        ? "Unpaid is allowed — we will help you shape it into real learning."
         : null;
 
     case "minors_ok":
       return value === "yes"
-        ? "most of the network is under 18, so that opens the whole pool."
-        : "noted — we will only send you people who are 18 or over.";
+        ? "Most of the network is under 18, so that opens the whole pool."
+        : "Noted — we will only send you people who are 18 or over.";
 
     case "advisor_status":
-      return value === "Yes, confirmed" ? "good — that is one less thing to sort out." : null;
+      return value === "Yes, confirmed" ? "Good — that is one less thing to sort out." : null;
 
     case "cofounders":
-      return value === "yes" ? "noted — we will want to meet them too." : null;
+      return value === "yes" ? "Noted — we will want to meet them too." : null;
 
     default:
       return null;

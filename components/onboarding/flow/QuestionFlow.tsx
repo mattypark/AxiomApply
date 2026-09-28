@@ -148,9 +148,9 @@ export function QuestionFlow({
   useEffect(() => {
     if (!liveRef.current) return;
     liveRef.current.textContent = onReview
-      ? "review your answers"
+      ? "Review your answers"
       : current
-        ? `question ${index + 1} of ${total}: ${current.question.label}`
+        ? `Question ${index + 1} of ${total}: ${current.question.label}`
         : "";
   }, [index, total, onReview, current]);
 
@@ -204,7 +204,7 @@ export function QuestionFlow({
           href={backHref}
           className="flex shrink-0 items-center gap-1.5 text-[13px] text-app-text-3 transition-colors hover:text-app-text-1"
         >
-          <span aria-hidden="true">←</span> {set.heading.toLowerCase()}
+          <span aria-hidden="true">←</span> {set.heading}
         </Link>
 
         <div className="flex flex-1 gap-1" aria-hidden="true">
@@ -229,7 +229,7 @@ export function QuestionFlow({
         </div>
 
         <span className="shrink-0 text-[12px] text-app-text-3 tabular-nums">
-          {onReview ? "review" : `${index + 1} of ${total} · ~${minutesLeft} min`}
+          {onReview ? "Review" : `${index + 1} of ${total} · ~${minutesLeft} min`}
         </span>
       </header>
 
@@ -265,14 +265,14 @@ export function QuestionFlow({
                   disabled={app.submitting}
                   className="btn-gloss disabled:opacity-70"
                 >
-                  {app.submitting ? "sending…" : "send it"} <span aria-hidden="true">↗</span>
+                  {app.submitting ? "Sending…" : "Send it"} <span aria-hidden="true">↗</span>
                 </button>
                 <button
                   type="button"
                   onClick={goBack}
                   className="cursor-pointer text-[14px] text-app-text-3 transition-colors hover:text-app-text-1"
                 >
-                  back
+                  Back
                 </button>
               </div>
               {app.submitError ? (
@@ -298,21 +298,21 @@ export function QuestionFlow({
 
               <p className="flex items-center gap-2 text-[13px] text-app-text-3">
                 <span className="text-app-accent">{String(currentSegment + 1).padStart(2, "0")}</span>
-                <span className="lowercase">/ {current.section.nav}</span>
+                <span>/ {current.section.nav}</span>
                 <span className="ml-1 rounded-[5px] bg-app-card px-1.5 py-0.5 text-[11px]">
-                  {current.question.required ? "required" : "optional"}
+                  {current.question.required ? "Required" : "Optional"}
                 </span>
               </p>
 
               <h2
                 id={`q-${current.question.id}`}
-                className="mt-4 font-display text-[34px] leading-[38px] tracking-[-0.34px] text-app-text-1 lowercase sm:text-[44px] sm:leading-[48px] sm:tracking-[-0.44px]"
+                className="mt-4 font-display text-[34px] leading-[38px] tracking-[-0.34px] text-app-text-1 sm:text-[44px] sm:leading-[48px] sm:tracking-[-0.44px]"
               >
                 <label htmlFor={`f-${current.question.id}`}>{current.question.label}</label>
               </h2>
 
               {current.question.helpText || current.question.type === "textarea" ? (
-                <p className="mt-3 max-w-[52ch] text-[15px] leading-[22px] text-app-text-3 lowercase">
+                <p className="mt-3 max-w-[52ch] text-[15px] leading-[22px] text-app-text-3">
                   {current.question.helpText ?? TEXTAREA_HINT}
                 </p>
               ) : null}
@@ -349,7 +349,7 @@ export function QuestionFlow({
 
               <div className="mt-9 flex items-center gap-5">
                 <button type="button" onClick={goNext} className="btn-gloss">
-                  {index === total - 1 ? "review" : "ok"}
+                  {index === total - 1 ? "Review" : "OK"}
                   <span aria-hidden="true" className="text-white/70">
                     ↵
                   </span>
@@ -360,11 +360,11 @@ export function QuestionFlow({
                     onClick={goBack}
                     className="cursor-pointer text-[14px] text-app-text-3 transition-colors hover:text-app-text-1"
                   >
-                    back
+                    Back
                   </button>
                 ) : null}
                 <span className="ml-auto hidden text-[12px] text-app-text-3 sm:block">
-                  saved as you go
+                  Saved as you go
                 </span>
               </div>
             </div>

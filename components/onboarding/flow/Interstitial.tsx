@@ -43,22 +43,22 @@ export function Interstitial({
       className="ax-interstitial absolute inset-0 z-20 flex cursor-pointer flex-col items-start justify-center bg-app-canvas text-left"
     >
       <span role="status" className="sr-only">
-        part {position} of {total}: {section.title}
+        Part {position} of {total}: {section.title}
       </span>
       <span aria-hidden="true" className="font-display text-[88px] leading-[1] text-app-accent sm:text-[120px]">
         {String(position).padStart(2, "0")}
         <span className="text-app-text-3/50">/{String(total).padStart(2, "0")}</span>
       </span>
-      <span aria-hidden="true" className="mt-5 font-display text-[36px] leading-[40px] tracking-[-0.36px] text-app-text-1 lowercase sm:text-[44px] sm:leading-[48px]">
+      <span aria-hidden="true" className="mt-5 font-display text-[36px] leading-[40px] tracking-[-0.36px] text-app-text-1 sm:text-[44px] sm:leading-[48px]">
         {section.title}
       </span>
       {section.blurb ? (
-        <span aria-hidden="true" className="mt-3 max-w-[44ch] text-[16px] leading-[24px] text-app-text-3 lowercase">
+        <span aria-hidden="true" className="mt-3 max-w-[44ch] text-[16px] leading-[24px] text-app-text-3">
           {section.blurb}
         </span>
       ) : null}
       <span aria-hidden="true" className="mt-10 text-[12px] text-app-text-3/70">
-        tap or press any key
+        Tap or press any key
       </span>
     </button>
   );

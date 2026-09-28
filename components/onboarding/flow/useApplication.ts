@@ -68,12 +68,12 @@ export function validate(question: Question, answers: Answers, files: Files) {
   if (question.type === "file") {
     // No set requires a file today, and a missing optional file must never
     // block the step.
-    return question.required && !files[question.id] ? "add a file to continue." : null;
+    return question.required && !files[question.id] ? "Add a file to continue." : null;
   }
 
-  if (question.required && !value) return "this one is required.";
+  if (question.required && !value) return "This one is required.";
   if (question.inputType === "email" && value && !EMAIL_PATTERN.test(value)) {
-    return "that email does not look right.";
+    return "That email doesn’t look right.";
   }
   return null;
 }
@@ -180,7 +180,7 @@ export function useApplication({
     const result = await onSubmit(answers, files);
 
     if (!result.ok) {
-      setSubmitError(result.error ?? "that did not send. try once more.");
+      setSubmitError(result.error ?? "That didn’t send. Try once more.");
       setSubmitting(false);
       return;
     }

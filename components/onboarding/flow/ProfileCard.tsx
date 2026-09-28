@@ -29,42 +29,42 @@ type Spec = {
 const SPECS: Record<QuestionSet["key"], Spec> = {
   intern: {
     title: "name",
-    titleFallback: "your name",
+    titleFallback: "Your name",
     subtitle: ["school", "grade"],
     chips: ["interest", "chapter"],
     line: "startup_role",
     rows: [
-      { id: "github", label: "github" },
-      { id: "other_link", label: "work" },
-      { id: "linkedin", label: "linkedin" },
-      { id: "resume", label: "resume", file: true },
+      { id: "github", label: "GitHub" },
+      { id: "other_link", label: "Work" },
+      { id: "linkedin", label: "LinkedIn" },
+      { id: "resume", label: "Resume", file: true },
     ],
     picks: "startup_picks",
   },
   startup: {
     title: "company",
-    titleFallback: "your startup",
+    titleFallback: "Your startup",
     subtitle: ["stage", "location"],
     line: "one_liner",
     chips: ["fields_needed"],
     rows: [
-      { id: "contact_name", label: "contact" },
-      { id: "website", label: "website" },
-      { id: "hours", label: "hours / week" },
-      { id: "location_mode", label: "setup" },
+      { id: "contact_name", label: "Contact" },
+      { id: "website", label: "Website" },
+      { id: "hours", label: "Hours / week" },
+      { id: "location_mode", label: "Setup" },
     ],
   },
   chapter: {
     title: "name",
-    titleFallback: "your name",
+    titleFallback: "Your name",
     subtitle: ["school", "grade"],
     chips: ["school_type", "cadence"],
     line: "qualified",
     rows: [
-      { id: "city", label: "based in" },
-      { id: "advisor_status", label: "advisor" },
-      { id: "hours", label: "hours / week" },
-      { id: "how_long", label: "running it for" },
+      { id: "city", label: "Based in" },
+      { id: "advisor_status", label: "Advisor" },
+      { id: "hours", label: "Hours / week" },
+      { id: "how_long", label: "Running it for" },
     ],
   },
 };
@@ -107,7 +107,7 @@ export function ProfileCard({
   return (
     <div className="rounded-[16px] bg-app-card p-5 shadow-[inset_0_0_0_1px_var(--color-app-line-strong),0_24px_60px_-24px_rgb(0_0_0_/_0.8)]">
       <div className="flex items-center justify-between text-[11px] text-app-text-3">
-        <span>what a founder sees</span>
+        <span>What a founder sees</span>
         <span className="tabular-nums">{percent}%</span>
       </div>
       <div className="mt-2 h-[3px] overflow-hidden rounded-full bg-app-sunken">
@@ -129,7 +129,7 @@ export function ProfileCard({
             {title ? <Arrive value={title} /> : <span className="text-app-text-3">{spec.titleFallback}</span>}
           </span>
           <span className="mt-1 block truncate text-[12px] text-app-text-3">
-            {subtitle ? <Arrive value={subtitle.toLowerCase()} /> : <Skeleton width="7rem" />}
+            {subtitle ? <Arrive value={subtitle} /> : <Skeleton width="7rem" />}
           </span>
         </span>
       </div>
@@ -152,7 +152,7 @@ export function ProfileCard({
               key={chip}
               className="ax-toast-in rounded-[6px] bg-app-accent/[0.12] px-2 py-0.5 text-[11px] text-app-accent"
             >
-              {chip.toLowerCase()}
+              {chip}
             </span>
           ))
         ) : (
@@ -179,7 +179,7 @@ export function ProfileCard({
 
       {spec.picks ? (
         <div className="mt-5 border-t border-app-line pt-4">
-          <p className="text-[11px] text-app-text-3">wants to work at</p>
+          <p className="text-[11px] text-app-text-3">Wants to work at</p>
           <div className="mt-2.5 flex min-h-[28px] flex-wrap gap-1.5">
             {picks.length ? (
               picks.map((pick) => {

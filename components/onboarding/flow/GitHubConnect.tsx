@@ -55,7 +55,7 @@ export function GitHubConnect({
   async function connect() {
     const supabase = getBrowserSupabase();
     if (!supabase) {
-      setProblem("accounts are not switched on yet — type your handle below.");
+      setProblem("Accounts aren’t switched on yet — type your handle below.");
       return;
     }
 
@@ -69,7 +69,7 @@ export function GitHubConnect({
     if (error) {
       // Most often: manual linking is off, or the GitHub provider is not
       // enabled on the project. Neither is the applicant's problem.
-      setProblem("github is not connecting right now — type your handle below.");
+      setProblem("GitHub isn’t connecting right now — type your handle below.");
       setBusy(false);
     }
   }
@@ -89,11 +89,11 @@ export function GitHubConnect({
     <div>
       <button type="button" onClick={connect} disabled={busy} className="btn-gloss disabled:opacity-70">
         <GitHubMark />
-        {busy ? "opening github…" : "connect github"}
+        {busy ? "Opening GitHub…" : "Connect GitHub"}
         <span aria-hidden="true">↗</span>
       </button>
       {problem ? <p className="mt-2 text-[13px] text-app-text-3">{problem}</p> : null}
-      <p className="mt-6 text-[12px] text-app-text-3">or type it</p>
+      <p className="mt-6 text-[12px] text-app-text-3">Or type it</p>
     </div>
   );
 }
