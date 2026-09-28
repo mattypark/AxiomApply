@@ -35,7 +35,7 @@ The contrast figures below were re-checked after the change.
 | text secondary | `#1b2540b8` | `#4a5a50` (6.9:1) |
 | text muted | `#1b25408f` | `#5c6a61` (5.4:1). klinn's alpha would fail AA here |
 | border | `#0c264d0f` | `#0c2a1a0f` |
-| accent text (section numbers) | `#015efe` | `#366344` (5.1:1) |
+| accent text (section numbers) | `#015efe` | `#366344` (6.6:1) |
 | signal dot | `#d0f100` | `#d0f100` (kept; it is the "live" dot) |
 
 Hero sky (top to bottom, then fades into page):
