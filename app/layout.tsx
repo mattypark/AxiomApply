@@ -3,6 +3,7 @@ import { DM_Sans, Hanken_Grotesk, Instrument_Serif, JetBrains_Mono } from "next/
 import { Analytics } from "@vercel/analytics/react";
 import { LenisProvider } from "@/components/motion/LenisProvider";
 import { PageTransition } from "@/components/transition/PageTransition";
+import { PATH_BOOT } from "@/lib/path-boot";
 import "./globals.css";
 
 /**
@@ -82,9 +83,13 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme="light"
+      // PATH_BOOT sets data-path before hydration, so React must not object.
+      suppressHydrationWarning
       className={`${dmSans.variable} ${instrumentSerif.variable} ${hanken.variable} ${jetbrains.variable}`}
     >
-      <head />
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: PATH_BOOT }} />
+      </head>
       <body>
         {/* AmbientBackdrop + ShapeField (the dot field) removed site-wide —
             every page is now the same flat white as the welcome screen. */}
