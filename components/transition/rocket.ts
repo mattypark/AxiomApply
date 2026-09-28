@@ -16,18 +16,20 @@ import { glyphSvg } from "@/components/rocket-glyph";
  * launch looks the same and a resize can rebuild it exactly.
  */
 
-const FILL_S = 0.9;
-const DRAIN_S = 0.75;
+const FILL_S = 1.35;
+const DRAIN_S = 1;
 
 // The path colour (PATH COLOUR in app/globals.css): green, blue or near-black.
 const SMOKE = "var(--launch-smoke)";
 const SMOKE_DEEP = "var(--launch-smoke-deep)";
 const SMOKE_LIT = "var(--launch-smoke-lit)";
 
-/** The rocket leaves the top of the screen at this share of the fill. */
-const ROCKET_EXIT = 0.62;
+/** The rocket sits on the pad, flame building, until this share of the fill… */
+const IGNITE = 0.16;
+/** …and leaves the top of the screen at this one. */
+const ROCKET_EXIT = 0.72;
 /** The cloud starts to rise once the rocket is clear of the pad. */
-const CLOUD_START = 0.16;
+const CLOUD_START = 0.08;
 /** Launch curve: <2 so it clears the pad quickly but still visibly accelerates. */
 const THRUST = 1.7;
 /** Where the body starts inside the plume, in edge-puff radii… */
@@ -86,6 +88,9 @@ function seeded(seed: number) {
 }
 
 const clamp = (v: number) => Math.min(1, Math.max(0, v));
+/** Where the rocket stands before liftoff: its nose in view, its base below the fold. */
+const padY = (h: number, rocketH: number) => h - rocketH * 0.72;
+
 const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
 const easeOut = (t: number) => 1 - (1 - t) ** 3;
 
@@ -122,7 +127,7 @@ function build(root: HTMLDivElement): Layout {
   const h = window.innerHeight;
   const small = w < 640;
   const R = Math.max(70, Math.min(170, w * 0.11));
-  const rocketH = small ? 112 : 150;
+  const rocketH = small ? 132 : 190;
   const random = seeded(7);
 
   // The cloud: a solid body with a billowing top edge, translated up as one.
@@ -172,7 +177,7 @@ function build(root: HTMLDivElement): Layout {
   // The exhaust trail: small puffs up the middle, born as the nozzle passes.
   const trail: Puff[] = [];
   const trailCount = small ? 18 : 24;
-  const startY = h + rocketH;
+  const startY = padY(h, rocketH);
   const endY = -rocketH * 1.6;
   for (let i = 0; i < trailCount; i += 1) {
     const y = h * (1 - (i + 0.5) / trailCount) + (random() - 0.5) * 20;
@@ -182,7 +187,26 @@ function build(root: HTMLDivElement): Layout {
     const q = clamp((y - rocketH * 0.95 - startY) / (endY - startY));
     const el = puffEl(r, random() > 0.5 ? "lit" : "deep");
     root.append(el);
-    trail.push({ el, x, y, r, side: random() > 0.5 ? 1 : -1, speed: 0.6 + random() * 0.8, born: q ** (1 / THRUST) * ROCKET_EXIT, delay: 0 });
+    trail.push({ el, x, y, r, side: random() > 0.5 ? 1 : -1, speed: 0.6 + random() * 0.8, born: IGNITE + q ** (1 / THRUST) * (ROCKET_EXIT - IGNITE), delay: 0 });
+  }
+  // Ignition: puffs at the pad that burst out sideways while the rocket
+  // is still sitting there, before the cloud proper has risen into view.
+  const padCount = small ? 8 : 12;
+  for (let i = 0; i < padCount; i += 1) {
+    const side = i % 2 === 0 ? -1 : 1;
+    const r = (small ? 44 : 64) * (0.8 + random() * 0.6);
+    const el = puffEl(r, random() > 0.5 ? "lit" : "deep");
+    root.append(el);
+    trail.push({
+      el,
+      x: w / 2 + side * random() * 30,
+      y: h - random() * 24,
+      r,
+      side,
+      speed: 2 + random() * 2.2,
+      born: (i / padCount) * IGNITE,
+      delay: 0,
+    });
   }
   root.prepend(plume);
 
@@ -214,15 +238,18 @@ export function createLaunch(root: HTMLDivElement): Launch {
     const { w, h, R, rocketH, plume, body, edge, inner, trail, rocket, flame } = layout;
     const p = state.fill;
 
-    // Rocket: accelerates off the pad and is gone by ROCKET_EXIT.
-    const q = clamp(p / ROCKET_EXIT);
-    const startY = h + rocketH;
+    // Rocket: rumbles on the pad while the flame builds, then accelerates
+    // away and is gone by ROCKET_EXIT.
+    const igniting = p < IGNITE;
+    const q = clamp((p - IGNITE) / (ROCKET_EXIT - IGNITE));
+    const startY = padY(h, rocketH);
     const endY = -rocketH * 1.6;
     const y = startY + (endY - startY) * q ** THRUST;
-    const shake = Math.sin(p * 140) * 1.4;
+    const shake = Math.sin(p * 220) * (igniting ? 2.6 : 1.2);
     rocket.style.transform = `translate3d(${(w / 2 - rocketH / 4 + shake).toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
     rocket.style.opacity = q >= 1 ? "0" : "1";
-    if (flame) flame.style.transform = `scaleY(${(1 + Math.sin(p * 90) * 0.18 + q * 0.4).toFixed(3)})`;
+    const burn = igniting ? 0.35 + 0.65 * (p / IGNITE) : 1 + q * 0.5;
+    if (flame) flame.style.transform = `scaleY(${(burn + Math.sin(p * 90) * 0.18).toFixed(3)})`;
 
     // Cloud: rises from below the screen until its edge band clears the top.
     const level = easeInOut(clamp((p - CLOUD_START) / (1 - CLOUD_START)));
