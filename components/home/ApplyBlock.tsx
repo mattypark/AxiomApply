@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import type { Paint } from "@/components/product/model";
+import { PathPicker, SIDES } from "@/components/home/PathPicker";
 import { Product } from "@/components/product/Product";
 import type { Side } from "@/lib/apply-sides";
 
@@ -16,47 +16,28 @@ import type { Side } from "@/lib/apply-sides";
  * Each path's promise is the one already written in lib/apply-sections.ts.
  */
 
-const PATHS: {
-  side: Side;
-  label: string;
-  dot: string;
-  paint: Paint;
-  cta: string;
-  when: string;
-  note: string;
-}[] = [
-  {
-    side: "intern",
-    label: "Intern",
-    dot: "#366645",
-    paint: "green",
+/** What each path promises; order and colours come from SIDES. */
+const COPY: Record<Side, { cta: string; when: string; note: string }> = {
+  intern: {
     cta: "Apply as an intern",
     when: "An answer within 14 days",
     note: "Rolling — a person reads every one",
   },
-  {
-    side: "startup",
-    label: "Startup",
-    dot: "#4f6fc9",
-    paint: "blue",
+  startup: {
     cta: "Bring your startup in",
     when: "Reviewed by hand in a few days",
     note: "Then browse intern profiles and request people",
   },
-  {
-    side: "chapter",
-    label: "Chapter",
-    dot: "#26292d",
-    paint: "black",
+  chapter: {
     cta: "Start a chapter",
     when: "Reviewed within a week",
     note: "Chapters are approved one at a time",
   },
-];
+};
 
 export function ApplyBlock() {
   const [active, setActive] = useState(0);
-  const path = PATHS[active];
+  const path = { ...SIDES[active], ...COPY[SIDES[active].side] };
 
   return (
     <section className="bg-ms-sky-soft px-6 py-24 sm:px-[6.5%] sm:py-28">
@@ -78,31 +59,7 @@ export function ApplyBlock() {
           <p className="mt-5 text-[19px] text-ms-body">Free. About seven minutes. Save and finish later.</p>
 
           <p className="mt-10 text-[15px] font-medium text-ms-body">Choose your path</p>
-          <div
-            role="radiogroup"
-            aria-label="Choose your path"
-            className="relative mt-3 grid w-full max-w-[32rem] grid-cols-3 rounded-full bg-white/55 p-1.5"
-          >
-            <span
-              aria-hidden="true"
-              className="absolute top-1.5 bottom-1.5 left-1.5 rounded-full bg-white shadow-[0_6px_18px_-8px_rgb(23_25_28_/_0.35)] transition-transform duration-500 ease-ms"
-              style={{ width: "calc((100% - 12px) / 3)", transform: `translateX(${active * 100}%)` }}
-            />
-            {PATHS.map((option, index) => (
-              <button
-                key={option.side}
-                type="button"
-                role="radio"
-                aria-checked={index === active}
-                onClick={() => setActive(index)}
-                className="relative flex h-12 cursor-pointer items-center justify-center gap-2 rounded-full text-[16px] font-medium text-ms-ink"
-              >
-                <span className="h-3 w-3 rounded-full" style={{ background: option.dot }} />
-                {option.label}
-                {index === active ? <span aria-hidden="true">✓</span> : null}
-              </button>
-            ))}
-          </div>
+          <PathPicker active={active} onChange={setActive} className="mt-3" />
 
           <div className="mt-8 flex items-end justify-between gap-6 border-t border-ms-ink/10 pt-6">
             <div key={path.side} className="ms-rise">
