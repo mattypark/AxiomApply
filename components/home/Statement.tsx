@@ -6,23 +6,21 @@ import { useEffect, useRef } from "react";
  * Moonshot's "Say it. / See what happens." beat, read with the scroll: two
  * lines, nothing else. The section pins for a stretch; "Apply once." stays
  * black, and "We take it from there." — set larger — waits in a faded grey
- * and turns light green one word at a time as you scroll through it. Scroll
- * back and the words fade to grey again.
+ * and takes the path colour one word at a time as you scroll through it.
+ * Scroll back and the words fade to grey again.
  *
  * Colour is written straight to the DOM from one rAF-throttled scroll
- * handler, never through React state. Reduced motion shows it already green
+ * handler, never through React state. Reduced motion shows it already lit
  * and does not pin.
  */
 
-/** Unlit: a faded grey, so the line reads as waiting to be lit. */
-const GREY = [200, 205, 209];
-/** Lit: Matthew asked for a light green over the darker 3.4:1 one; at this
- *  display size it is decoration more than body text (about 2:1 on white). */
-const GREEN = [124, 196, 147];
 const SECOND = "We take it from there.".split(" ");
 
+/** Unlit is a faded grey; lit is the path colour — a light green for interns,
+ *  blue for startups, black for chapters (see PATH COLOUR in globals.css).
+ *  Mixed in CSS so a path switch recolours the words without a re-render. */
 const mix = (t: number) =>
-  `rgb(${GREY.map((from, i) => Math.round(from + (GREEN[i] - from) * t)).join(" ")})`;
+  `color-mix(in oklab, var(--path-lit) ${Math.round(t * 100)}%, var(--path-unlit))`;
 
 export function Statement() {
   const sectionRef = useRef<HTMLElement>(null);
