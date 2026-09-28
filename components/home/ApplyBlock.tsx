@@ -49,7 +49,7 @@ export function ApplyBlock() {
           className="relative mx-auto aspect-[0.8] w-full max-w-[34rem] overflow-hidden rounded-t-[999px] rounded-b-[36px]"
           style={{ background: "linear-gradient(180deg, #ffffff 0%, #f6f8f7 100%)" }}
         >
-          <Product className="!absolute inset-0" scale={0.95} turn={1.2} paint={path.paint} />
+          <Product className="!absolute inset-0" scale={0.95} turn={1.2} paint={path.paint} burst />
         </div>
 
         <div>

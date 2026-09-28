@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { burstLogo } from "@/components/product/logoBurst";
 import type { Paint } from "@/components/product/model";
 import { PATH_PAINT, usePath } from "@/lib/path-theme";
 
@@ -20,18 +21,26 @@ export function Product({
   turn,
   paint,
   label = "the axiom rocket, turning slowly",
+  burst = false,
 }: {
   className?: string;
   scale?: number;
   turn?: number;
   paint?: Paint;
   label?: string;
+  /** Clicking the rocket shoots an investor's logo out of it. */
+  burst?: boolean;
 }) {
   // Without an explicit paint the rocket wears the visitor's path colour.
   const path = usePath();
   const worn = paint ?? PATH_PAINT[path];
   return (
-    <div role="img" aria-label={label} className={`relative ${className}`}>
+    <div
+      role="img"
+      aria-label={label}
+      className={`relative ${burst ? "cursor-pointer" : ""} ${className}`}
+      onClick={burst ? (event) => burstLogo(event.currentTarget, event) : undefined}
+    >
       <div
         aria-hidden="true"
         className="absolute bottom-[6%] left-1/2 h-[7%] w-[34%] -translate-x-1/2 rounded-[50%] bg-ms-ink/15 blur-xl"
