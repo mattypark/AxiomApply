@@ -340,6 +340,30 @@ html[data-path="chapter"] {
   opacity: 1;
 }
 
+/* A stop's picture pops up in the middle of the circle as the rocket lands. */
+.rocket-loop-picture {
+  opacity: 0;
+  transform: scale(0.72);
+  transform-box: fill-box;
+  transform-origin: center;
+  filter: drop-shadow(0 14px 24px rgb(23 25 28 / 0.12));
+  transition:
+    opacity 0.3s var(--ease-ms),
+    transform 0.3s var(--ease-ms);
+}
+
+.rocket-loop-picture[data-on="true"] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.35s var(--ease-ms),
+    transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rocket-loop-picture { transition: none; transform: none; }
+}
+
 /* The light-green ground the home hero, the welcome page and the flow share. */
 .ms-ground,
 .ms.ms-ground {
