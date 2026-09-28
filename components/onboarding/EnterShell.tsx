@@ -14,10 +14,19 @@ import { Product } from "@/components/product/Product";
  * the visitor last picked). On a phone the
  * arch shrinks and sits above the words, so the button stays near the fold.
  */
-export function EnterShell({ children, paint }: { children: ReactNode; paint?: Paint }) {
+export function EnterShell({
+  children,
+  paint,
+  art,
+}: {
+  children: ReactNode;
+  paint?: Paint;
+  /** Replaces the product rocket in the arch. */
+  art?: ReactNode;
+}) {
   return (
     <div className="ms ms-ground flex min-h-dvh flex-col">
-      <header className="mx-auto flex h-20 w-full max-w-[90rem] items-center justify-between px-6 sm:px-[6.5%]">
+      <header className="mx-auto flex h-16 w-full sm:h-20 max-w-[90rem] items-center justify-between px-6 sm:px-[6.5%]">
         <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="Axiom home">
           <Image
             src="/axiom-mark-256.png"
@@ -34,12 +43,12 @@ export function EnterShell({ children, paint }: { children: ReactNode; paint?: P
         </Link>
       </header>
 
-      <main className="mx-auto grid w-full max-w-[90rem] flex-1 items-center gap-8 px-6 pb-12 sm:px-[6.5%] lg:grid-cols-[1fr_1fr] lg:gap-20 lg:pb-20">
+      <main className="mx-auto grid w-full max-w-[90rem] flex-1 items-center gap-5 px-6 pb-8 sm:gap-8 sm:pb-12 sm:px-[6.5%] lg:grid-cols-[1fr_1fr] lg:gap-20 lg:pb-20">
         <div
-          className="relative mx-auto aspect-[0.8] w-full max-w-[13rem] overflow-hidden rounded-t-[999px] rounded-b-[28px] sm:max-w-[16rem] lg:order-last lg:max-w-[30rem] lg:rounded-b-[36px]"
+          className="relative mx-auto aspect-[0.8] w-full max-w-[15rem] overflow-hidden rounded-t-[999px] rounded-b-[28px] sm:max-w-[16rem] lg:order-last lg:max-w-[30rem] lg:rounded-b-[36px]"
           style={{ background: "linear-gradient(180deg, #ffffff 0%, #f6f8f7 100%)" }}
         >
-          <Product className="!absolute inset-0" scale={0.95} turn={1.2} paint={paint} />
+          {art ?? <Product className="!absolute inset-0" scale={0.95} turn={1.2} paint={paint} />}
         </div>
 
         <div className="w-full max-w-[32rem] max-lg:mx-auto">{children}</div>

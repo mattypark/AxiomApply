@@ -322,6 +322,24 @@ html[data-path="chapter"] {
   :root { transition: none; }
 }
 
+/* The welcome page's journey loop (components/onboarding/RocketLoop.tsx):
+   each stop's name is quiet until the rocket reaches it. */
+.rocket-loop-stop {
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  fill: var(--color-ms-muted);
+  opacity: 0.45;
+  transition:
+    fill 0.45s var(--ease-ms),
+    opacity 0.45s var(--ease-ms);
+}
+
+.rocket-loop-stop[data-on="true"] {
+  fill: var(--color-ms-ink);
+  opacity: 1;
+}
+
 /* The light-green ground the home hero, the welcome page and the flow share. */
 .ms-ground,
 .ms.ms-ground {

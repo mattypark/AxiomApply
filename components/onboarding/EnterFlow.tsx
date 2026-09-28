@@ -7,6 +7,7 @@ import { ChapterApplication } from "@/components/apply/ChapterApplication";
 import { PathPicker, SIDES } from "@/components/home/PathPicker";
 import { EnterShell } from "@/components/onboarding/EnterShell";
 import { GoogleButton } from "@/components/onboarding/GoogleButton";
+import { RocketLoop } from "@/components/onboarding/RocketLoop";
 import type { ApplyPrefill } from "@/components/onboarding/flow/useApplication";
 import type { Side } from "@/lib/apply-sides";
 import { getPath, setPath } from "@/lib/path-theme";
@@ -57,7 +58,7 @@ export function EnterFlow({ side, prefill }: { side?: Side; prefill: ApplyPrefil
   };
 
   return (
-    <EnterShell paint={picked.paint}>
+    <EnterShell art={<RocketLoop side={picked.side} className="absolute inset-0" />}>
       <h1 className="ms-display ms-rise text-[clamp(3rem,6vw,5.6rem)] text-ms-ink">
         Welcome
         <br />
