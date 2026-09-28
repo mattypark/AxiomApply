@@ -101,12 +101,6 @@ const CONTRACT_TYPE_TO_QUESTION: Record<ApplyField["type"], QuestionType> = {
   file: "file",
 };
 
-/**
- * Pull one field out of the frozen contract by name. Overrides may change how
- * a question is *presented* (label copy, help text, placeholder) but never the
- * id — that is the wire name and it is taken from the contract only.
- */
-
 /** The contract's placeholders are written lowercase and the contract is
  *  frozen, so the capital goes on here. Handles and URLs stay as they are. */
 function sentenceCase(text: string | undefined) {
@@ -114,6 +108,11 @@ function sentenceCase(text: string | undefined) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
+/**
+ * Pull one field out of the frozen contract by name. Overrides may change how
+ * a question is *presented* (label copy, help text, placeholder) but never the
+ * id — that is the wire name and it is taken from the contract only.
+ */
 function field(
   name: string,
   overrides: Partial<Omit<Question, "id">> = {},
