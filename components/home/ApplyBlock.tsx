@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { PathPicker, SIDES } from "@/components/home/PathPicker";
+import { OAuthButton } from "@/components/onboarding/OAuthButton";
+import { RecommendNote } from "@/components/onboarding/RecommendNote";
 import { Product } from "@/components/product/Product";
 import type { Side } from "@/lib/apply-sides";
 import { usePath } from "@/lib/path-theme";
@@ -10,8 +12,11 @@ import { usePath } from "@/lib/path-theme";
  * Moonshot's pre-order block, turned into the way in: the product standing
  * in an arch on the left; on the right a headline, a picker where Moonshot
  * picks a colour (here: which application), the promise for that path, and
- * one black button. The picker's thumb slides, the button's words follow,
- * and the rocket repaints itself in the path's colour.
+ * the sign-in itself — so there is no separate "Apply" step: Google (and
+ * GitHub for interns) goes straight through and lands in the questions, and
+ * "without an account" skips the welcome page too. The picker's thumb slides,
+ * the button's words follow, and the rocket repaints itself in the path's
+ * colour.
  *
  * Each path's promise is the one already written in lib/apply-sections.ts.
  */
@@ -75,13 +80,37 @@ export function ApplyBlock() {
             </div>
           </div>
 
-          <Link href={`/onboarding?side=${path.side}`} className="ms-pill mt-7 h-16 w-full text-[18px]">
-            <span key={path.cta} className="ms-rise">
-              {path.cta}
-            </span>
-          </Link>
+          {/* Back from Google/GitHub, a signed-in visitor on /onboarding goes
+              straight into the flow — the welcome page never shows. */}
+          <div key={path.side} className="ms-rise mt-7 flex flex-col gap-3">
+            <OAuthButton
+              provider="google"
+              next={`/onboarding?side=${path.side}`}
+              label={`${path.cta} with Google`}
+            />
+            {path.side === "intern" ? (
+              <div className="relative mt-5">
+                <OAuthButton
+                  provider="github"
+                  tone="secondary"
+                  next="/onboarding?side=intern"
+                  label={`${path.cta} with GitHub`}
+                />
+                <RecommendNote placement="above" />
+              </div>
+            ) : null}
+          </div>
           <p className="mt-4 text-center text-[15px] text-ms-body">
-            <span aria-hidden="true">↺ </span>Nothing is sent until you press send.
+            <Link
+              href={`/onboarding?side=${path.side}&start=1`}
+              className="underline underline-offset-4 transition-opacity hover:opacity-60"
+            >
+              or apply without an account
+            </Link>
+            <span className="mx-2 text-ms-muted" aria-hidden="true">
+              ·
+            </span>
+            Nothing is sent until you press send.
           </p>
         </div>
       </div>
