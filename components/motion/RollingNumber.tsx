@@ -60,7 +60,11 @@ export function RollingNumber({
   }, [shown, bounceEvery]);
 
   return (
-    <span ref={ref} className={`inline-flex leading-[1] tabular-nums ${className}`}>
+    // Each digit is shown through a one-line window, so the line must be taller
+    // than the glyphs: at a tight display leading the window shaved the tops
+    // and bottoms off the digits. The negative margin gives the height back
+    // so the number sits exactly where it did.
+    <span ref={ref} className={`my-[-0.09em] inline-flex leading-[1.18] tabular-nums ${className}`}>
       <span className="sr-only">{text}</span>
       <span aria-hidden="true" className="inline-flex" key={beat}>
         {text.split("").map((char, index) => {

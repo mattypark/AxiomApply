@@ -8,7 +8,6 @@ import { Statement } from "@/components/home/Statement";
 import { CookieBanner } from "@/components/welcome/CookieBanner";
 import { getProfile, getUser } from "@/lib/auth";
 import { getInternshipCount } from "@/lib/internship-count";
-import { startups } from "@/lib/site-data";
 
 /**
  * The home page, kept short on purpose — Moonshot's shape (moonshot.computer):
@@ -34,7 +33,7 @@ export default async function WelcomePage() {
     <div className="ms">
       <HomeNav ctaHref={ctaHref} signedIn={Boolean(user)} />
       <main>
-        <Hero ctaHref={ctaHref} placements={startups.length} />
+        <Hero ctaHref={ctaHref} />
         <Statement />
         <Bento internshipCount={internshipCount} />
         <ApplyBlock />
