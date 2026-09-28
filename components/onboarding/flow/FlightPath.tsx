@@ -37,7 +37,7 @@ export function FlightPath({
   current: number;
   /** 0–1 through the current section. */
   within: number;
-  /** Section names under the track (wide screens). */
+  /** Section names under the track, from `lg` up where they fit. */
   labels?: boolean;
   className?: string;
 }) {
@@ -90,7 +90,7 @@ export function FlightPath({
 
       {labels ? (
         <div
-          className="absolute inset-x-0 top-full mt-1 grid"
+          className="absolute inset-x-0 top-full mt-1 grid max-lg:hidden"
           style={{ gridTemplateColumns: `repeat(${count}, minmax(0, 1fr))` }}
         >
           {sections.map((name, index) => (
