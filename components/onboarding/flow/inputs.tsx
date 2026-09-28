@@ -121,7 +121,7 @@ export function FlowTextArea({
             onEnter();
           }
         }}
-        className="max-h-[42vh] min-h-[7.5rem] w-full resize-none rounded-[12px] bg-app-card px-4 py-3.5 text-[17px] leading-[26px] text-app-text-1 caret-app-accent shadow-[inset_0_0_0_1px_var(--color-app-line-strong)] outline-none placeholder:text-app-text-3/60 focus-visible:outline-none focus:shadow-[inset_0_0_0_1px_rgb(111_207_138_/_0.5)]"
+        className="max-h-[42vh] min-h-[7.5rem] w-full resize-none rounded-[12px] bg-app-card px-4 py-3.5 text-[17px] leading-[26px] text-app-text-1 caret-app-accent shadow-[inset_0_0_0_1px_var(--color-app-line-strong)] outline-none placeholder:text-app-text-3/60 focus-visible:outline-none focus:shadow-[inset_0_0_0_1px_rgb(135_183_148_/_0.5)]"
       />
       <div className="mt-2 flex items-center justify-between gap-4 text-[12px] text-app-text-3">
         <span>⌘ + enter to continue</span>
@@ -166,7 +166,7 @@ function ChoiceCard({
       onClick={onClick}
       className={`group flex w-full cursor-pointer items-center gap-3 rounded-[12px] px-3.5 py-3 text-left text-[15px] transition-[background-color,box-shadow,transform] duration-200 ease-button active:scale-[0.99] ${
         selected
-          ? "bg-app-accent/[0.12] text-app-text-1 shadow-[inset_0_0_0_1px_rgb(111_207_138_/_0.55)]"
+          ? "bg-app-accent/[0.12] text-app-text-1 shadow-[inset_0_0_0_1px_rgb(135_183_148_/_0.55)]"
           : "bg-app-card text-app-text-2 shadow-[inset_0_0_0_1px_var(--color-app-line-strong)] hover:bg-app-hover"
       }`}
     >
@@ -328,7 +328,7 @@ export function FlowPicks({
             onClick={() => toggle(option.value)}
             className={`relative flex aspect-square cursor-pointer flex-col items-center justify-center gap-2.5 rounded-[14px] px-2 transition-[background-color,box-shadow,transform] duration-200 ease-button active:scale-[0.97] ${
               isOn
-                ? "bg-app-accent/[0.12] shadow-[inset_0_0_0_1px_rgb(111_207_138_/_0.6),0_0_28px_-6px_rgb(111_207_138_/_0.45)]"
+                ? "bg-app-accent/[0.12] shadow-[inset_0_0_0_1px_rgb(135_183_148_/_0.6),0_0_28px_-6px_rgb(135_183_148_/_0.45)]"
                 : "bg-app-card shadow-[inset_0_0_0_1px_var(--color-app-line-strong)] hover:bg-app-hover"
             }`}
           >

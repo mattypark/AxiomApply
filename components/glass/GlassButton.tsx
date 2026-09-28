@@ -15,7 +15,7 @@ const base =
 
 const tones: Record<NonNullable<Common["tone"]>, string> = {
   forest:
-    "bg-forest text-white shadow-[0_10px_30px_rgba(47,107,61,0.35),inset_0_1px_0_rgba(255,255,255,0.25)] " +
+    "bg-forest text-white shadow-[0_10px_30px_rgba(62,92,69,0.35),inset_0_1px_0_rgba(255,255,255,0.25)] " +
     "hover:bg-forest-deep hover:-translate-y-0.5",
   glass:
     "glass text-ink hover:-translate-y-0.5 hover:shadow-[var(--shadow-hover)]",

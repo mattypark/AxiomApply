@@ -91,7 +91,7 @@ export function Sidebar({
 
         <Link
           href="/apply"
-          className="mt-7 flex items-center justify-center gap-2 rounded-xl bg-forest px-3 py-3 text-white shadow-[0_8px_24px_rgba(47,107,61,0.28)] transition-transform duration-300 hover:-translate-y-0.5 xl:justify-start xl:px-4"
+          className="mt-7 flex items-center justify-center gap-2 rounded-xl bg-forest px-3 py-3 text-white shadow-[0_8px_24px_rgba(62,92,69,0.28)] transition-transform duration-300 hover:-translate-y-0.5 xl:justify-start xl:px-4"
         >
           <span aria-hidden className="text-[0.95rem]">
             ✎

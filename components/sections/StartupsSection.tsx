@@ -6,7 +6,7 @@ import { SectionHead } from "@/components/sections/SectionHead";
 import { startups } from "@/lib/site-data";
 
 /**
- * 04 — the startups, then the statement that closes the argument.
+ * 02 — the startups, then the statement that closes the argument.
  *
  * klinn's layout: the head and one action on the left, a 3×3 wall of logo
  * tiles on the right. The network has eight startups, so the ninth tile is the
@@ -35,7 +35,7 @@ function Monogram({ name }: { name: string }) {
 }
 
 const TILE =
-  "flex aspect-[1/1.05] flex-col items-center justify-center gap-3 rounded-[14px] bg-white px-2 shadow-[0_0_0_1px_var(--color-border-faint),0_8px_24px_-12px_rgba(4,36,16,0.1)]";
+  "flex aspect-[1/1.05] flex-col items-center justify-center gap-3 rounded-[14px] bg-white px-2 shadow-[0_0_0_1px_var(--color-border-faint),0_8px_24px_-12px_rgba(12,28,18,0.1)]";
 
 const POINTS = [
   {
@@ -50,12 +50,12 @@ const POINTS = [
 
 export function StartupsSection() {
   return (
-    <section className="py-24 sm:py-32">
+    <section id="network" className="scroll-mt-24 py-24 sm:py-32">
       <div className="mx-auto grid w-full max-w-[49.5rem] gap-12 px-6 md:grid-cols-[1fr_22rem] md:gap-10">
         <div>
           <SectionHead
             bare
-            index="04"
+            index="02"
             label="the startups"
             icon="nodes"
             title="who you get in front of"

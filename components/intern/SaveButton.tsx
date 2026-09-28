@@ -29,7 +29,7 @@ export function SaveButton({
       }
       className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-[background-color,transform] duration-300 hover:scale-110 ${
         optimistic
-          ? "bg-forest text-white shadow-[0_6px_18px_rgba(47,107,61,0.35)]"
+          ? "bg-forest text-white shadow-[0_6px_18px_rgba(62,92,69,0.35)]"
           : "bg-white/50 text-muted shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] hover:text-ink"
       }`}
     >

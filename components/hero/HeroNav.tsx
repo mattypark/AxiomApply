@@ -48,7 +48,7 @@ export function HeroNav({ signedIn, ctaHref }: { signedIn: boolean; ctaHref: str
 
   const links = [
     { href: "#how-it-works", label: "how it works" },
-    { href: "#what-you-get", label: "what you get" },
+    { href: "#network", label: "the network" },
     { href: "#faq", label: "faq" },
   ];
 
@@ -58,7 +58,7 @@ export function HeroNav({ signedIn, ctaHref }: { signedIn: boolean; ctaHref: str
         className={`pointer-events-auto flex h-[52px] w-full max-w-[52rem] items-center justify-between gap-4 rounded-[18px] pr-2 pl-4 transition-[background-color,box-shadow,backdrop-filter] duration-500 ease-theme ${
           onSky
             ? "bg-transparent shadow-none"
-            : "bg-[#f3f8f4]/80 shadow-[0_1px_0_rgba(255,255,255,0.9)_inset,0_10px_30px_rgba(4,36,16,0.1)] backdrop-blur-xl"
+            : "bg-[#f4f7f5]/80 shadow-[0_1px_0_rgba(255,255,255,0.9)_inset,0_10px_30px_rgba(12,28,18,0.1)] backdrop-blur-xl"
         }`}
       >
         <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="Axiom home">

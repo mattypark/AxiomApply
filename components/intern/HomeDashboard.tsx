@@ -291,7 +291,7 @@ function ActionTile({
       href={href}
       className={`group flex flex-col gap-3 rounded-[22px] p-5 transition-[transform,box-shadow] duration-300 hover:-translate-y-1 ${
         accent
-          ? "bg-forest text-white shadow-[0_10px_30px_rgba(47,107,61,0.28)]"
+          ? "bg-forest text-white shadow-[0_10px_30px_rgba(62,92,69,0.28)]"
           : "bg-white/70 shadow-[0_1px_0_rgba(21,21,15,0.06)] hover:shadow-[var(--shadow-float)]"
       }`}
     >

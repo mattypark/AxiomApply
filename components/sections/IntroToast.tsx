@@ -23,7 +23,7 @@ export function IntroToast({ names }: { names: readonly string[] }) {
   const name = names[index] ?? "";
 
   return (
-    <span className="inline-flex items-center gap-2 rounded-full bg-white py-1 pr-3 pl-1 shadow-[0_0_0_1px_var(--color-border-faint),0_4px_12px_-6px_rgba(4,36,16,0.12)]">
+    <span className="inline-flex items-center gap-2 rounded-full bg-white py-1 pr-3 pl-1 shadow-[0_0_0_1px_var(--color-border-faint),0_4px_12px_-6px_rgba(12,28,18,0.12)]">
       <span className="grid h-5 w-5 place-items-center rounded-full bg-accent text-[10px] font-semibold text-white">
         {name[0]}
       </span>

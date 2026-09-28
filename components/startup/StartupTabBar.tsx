@@ -47,7 +47,7 @@ export function StartupTabBar({
                 <motion.span
                   layoutId="startup-tab-blob"
                   transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                  className="absolute inset-0 rounded-full bg-forest shadow-[0_8px_24px_rgba(47,107,61,0.35),inset_0_1px_0_rgba(255,255,255,0.25)]"
+                  className="absolute inset-0 rounded-full bg-forest shadow-[0_8px_24px_rgba(62,92,69,0.35),inset_0_1px_0_rgba(255,255,255,0.25)]"
                 />
               )}
               <span className="relative">{tab.label}</span>

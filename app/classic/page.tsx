@@ -61,7 +61,7 @@ export default function ClassicLandingPage() {
         <CenterReveal order={2} className="flex w-full flex-col items-center gap-4">
           <Link
             href="/signup"
-            className="rounded-full bg-forest px-9 py-4 text-[1.02rem] font-medium text-white shadow-[0_10px_30px_rgba(47,107,61,0.35),inset_0_1px_0_rgba(255,255,255,0.25)] transition-transform duration-300 hover:-translate-y-0.5 active:scale-[0.97]"
+            className="rounded-full bg-forest px-9 py-4 text-[1.02rem] font-medium text-white shadow-[0_10px_30px_rgba(62,92,69,0.35),inset_0_1px_0_rgba(255,255,255,0.25)] transition-transform duration-300 hover:-translate-y-0.5 active:scale-[0.97]"
           >
             Sign up for Axiom →
           </Link>

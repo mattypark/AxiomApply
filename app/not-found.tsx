@@ -17,7 +17,7 @@ export default function NotFound() {
         </p>
         <Link
           href="/"
-          className="mt-2 rounded-full bg-forest px-6 py-3 text-[0.9rem] font-medium text-white shadow-[0_8px_24px_rgba(47,107,61,0.3)] transition-transform duration-300 hover:-translate-y-0.5"
+          className="mt-2 rounded-full bg-forest px-6 py-3 text-[0.9rem] font-medium text-white shadow-[0_8px_24px_rgba(62,92,69,0.3)] transition-transform duration-300 hover:-translate-y-0.5"
         >
           ← Back to Axiom
         </Link>

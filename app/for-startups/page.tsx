@@ -34,7 +34,7 @@ export default function ForStartupsPage() {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(70% 50% at 80% -10%, rgba(63,143,82,0.16) 0%, transparent 60%), radial-gradient(60% 45% at 10% 110%, rgba(47,107,61,0.14) 0%, transparent 60%)",
+            "radial-gradient(70% 50% at 80% -10%, rgba(83,123,92,0.16) 0%, transparent 60%), radial-gradient(60% 45% at 10% 110%, rgba(62,92,69,0.14) 0%, transparent 60%)",
         }}
       />
 

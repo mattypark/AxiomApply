@@ -27,26 +27,26 @@ export function ClosingCta() {
           className="group relative flex w-[260px] flex-col items-center"
         >
           <svg viewBox="0 0 260 64" className="landing-pad-ring h-16 w-[260px] overflow-visible" aria-hidden="true">
-            <ellipse cx="130" cy="32" rx="126" ry="26" fill="rgb(0 20 8 / 0.28)" />
-            <ellipse cx="130" cy="32" rx="126" ry="26" fill="none" stroke="rgb(234 251 233 / 0.35)" strokeWidth="1" />
+            <ellipse cx="130" cy="32" rx="126" ry="26" fill="rgb(5 15 9 / 0.28)" />
+            <ellipse cx="130" cy="32" rx="126" ry="26" fill="none" stroke="rgb(238 246 238 / 0.35)" strokeWidth="1" />
             <ellipse
               cx="130"
               cy="32"
               rx="92"
               ry="18"
               fill="none"
-              stroke="rgb(125 255 160 / 0.55)"
+              stroke="rgb(158 222 175 / 0.55)"
               strokeWidth="1"
               strokeDasharray="4 6"
-              className="transition-[stroke] duration-500 group-data-[landed=true]:stroke-[#7dffa0]"
+              className="transition-[stroke] duration-500 group-data-[landed=true]:stroke-[#9edeaf]"
             />
             <ellipse
               cx="130"
               cy="32"
               rx="54"
               ry="10"
-              fill="rgb(125 255 160 / 0.12)"
-              className="transition-[fill] duration-500 group-data-[landed=true]:fill-[rgb(125_255_160_/_0.35)]"
+              fill="rgb(158 222 175 / 0.12)"
+              className="transition-[fill] duration-500 group-data-[landed=true]:fill-[rgb(158_222_175_/_0.35)]"
             />
           </svg>
           <span className="mt-3 text-[12px] text-white/60 transition-colors duration-500 group-hover:text-white group-data-[landed=true]:text-white">

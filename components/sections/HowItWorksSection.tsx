@@ -3,7 +3,7 @@ import { InView } from "@/components/motion/InView";
 import { SectionHead } from "@/components/sections/SectionHead";
 
 /**
- * 03 — how it works.
+ * 01 — how it works.
  *
  * Three columns, because there are three steps and a fourth would be invented.
  * Step three is the promise that costs Axiom something — a person reading
@@ -33,7 +33,7 @@ export function HowItWorksSection() {
   return (
     <section id="how-it-works" className="scroll-mt-24 py-24 sm:py-32">
       <SectionHead
-        index="03"
+        index="01"
         label="how it works"
         icon="loop"
         title={

@@ -54,7 +54,7 @@ export function ProblemSection() {
               {PILE.map((roles, index) => (
                 <div
                   key={roles.join()}
-                  className="ax-skeleton flex items-start gap-3 rounded-[12px] bg-white px-3.5 py-3 shadow-[0_0_0_1px_var(--color-border-faint),0_1px_2px_rgba(4,36,16,0.04)]"
+                  className="ax-skeleton flex items-start gap-3 rounded-[12px] bg-white px-3.5 py-3 shadow-[0_0_0_1px_var(--color-border-faint),0_1px_2px_rgba(12,28,18,0.04)]"
                   style={{ animationDelay: `${index * 160}ms` }}
                 >
                   <span className="h-7 w-7 shrink-0 rounded-full bg-loud/[0.05]" />
@@ -82,7 +82,7 @@ export function ProblemSection() {
                 <InView
                   key={message.who}
                   delay={260 + index * 140}
-                  className="rounded-[12px] bg-white px-4 py-3 shadow-[0_0_0_1px_var(--color-border-faint),0_8px_24px_-12px_rgba(4,36,16,0.12)]"
+                  className="rounded-[12px] bg-white px-4 py-3 shadow-[0_0_0_1px_var(--color-border-faint),0_8px_24px_-12px_rgba(12,28,18,0.12)]"
                 >
                   <p className="flex items-center gap-2 text-[11px] text-muted">
                     <span className="h-3.5 w-3.5 rounded-full bg-loud/[0.06]" />

@@ -33,7 +33,7 @@ function Rail({ hidden }: { hidden?: boolean }) {
       {startups.map((startup) => (
         <div
           key={`${startup.name}-${hidden ? "dup" : "lead"}`}
-          className="flex items-center gap-3 rounded-[12px] bg-white px-3 py-3 shadow-[0_0_0_1px_var(--color-border-faint),0_1px_2px_rgba(4,36,16,0.04)]"
+          className="flex items-center gap-3 rounded-[12px] bg-white px-3 py-3 shadow-[0_0_0_1px_var(--color-border-faint),0_1px_2px_rgba(12,28,18,0.04)]"
         >
           <span
             aria-hidden="true"
@@ -58,7 +58,7 @@ function Rail({ hidden }: { hidden?: boolean }) {
 
 function BrowserWindow() {
   return (
-    <div className="overflow-hidden rounded-[16px] bg-white shadow-[0_0_0_1px_var(--color-border-faint),0_8px_24px_-8px_rgba(4,36,16,0.12)]">
+    <div className="overflow-hidden rounded-[16px] bg-white shadow-[0_0_0_1px_var(--color-border-faint),0_8px_24px_-8px_rgba(12,28,18,0.12)]">
       <div className="flex items-center justify-between px-5 py-3.5">
         <span className="flex gap-1">
           <span className="h-[7px] w-[7px] rounded-full bg-[#ff5f57]" />
@@ -86,7 +86,7 @@ function BrowserWindow() {
           </div>
         </div>
         {/* The live dot — klinn's one piece of signal colour. */}
-        <span className="absolute top-0 left-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1 place-items-center rounded-[12px] bg-white shadow-[0_4px_16px_rgba(4,36,16,0.08)]">
+        <span className="absolute top-0 left-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1 place-items-center rounded-[12px] bg-white shadow-[0_4px_16px_rgba(12,28,18,0.08)]">
           <span className="ax-pulse h-2 w-2 rounded-full bg-signal" />
         </span>
         <p className="mt-5 text-[11px] text-muted">remote · part-time · real work</p>

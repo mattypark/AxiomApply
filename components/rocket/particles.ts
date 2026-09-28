@@ -117,8 +117,8 @@ export function createParticles(count: number, pixelRatio: number): ParticleClou
     uSwirl: { value: 0 },
     uMouse: { value: new THREE.Vector2(999, 999) },
     uMouseOn: { value: 1 },
-    uColorA: { value: new THREE.Color(0x7dffa0) },
-    uColorB: { value: new THREE.Color(0xeafbe9) },
+    uColorA: { value: new THREE.Color(0x9edeaf) },
+    uColorB: { value: new THREE.Color(0xeef6ee) },
     uOpacity: { value: 1 },
   };
 

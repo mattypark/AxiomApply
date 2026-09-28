@@ -29,7 +29,7 @@ export default function CareersPage() {
           <span
             style={{
               backgroundImage:
-                "linear-gradient(90deg, #1d4527 0%, #2f6b3d 34%, #3f8f52 67%, #6cc47f 100%)",
+                "linear-gradient(90deg, #273b2c 0%, #3e5c45 34%, #537b5c 67%, #82ae8c 100%)",
               WebkitBackgroundClip: "text",
               backgroundClip: "text",
               color: "transparent",

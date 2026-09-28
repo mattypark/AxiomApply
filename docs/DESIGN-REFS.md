@@ -24,25 +24,29 @@ All copy is lowercase, including headings and buttons. Emphasis is the italic se
 
 ### Colour
 
+Axiom's greens were desaturated by half on 2026-09-27 (Matthew: "too
+saturated"), lightness kept, so the palette reads sage/moss rather than neon.
+The contrast figures below were re-checked after the change.
+
 | Token | klinn | Axiom |
 |---|---|---|
 | page | `#f8f9fc` | `#f7f9f8` |
-| text loud | `#1b2540` | `#14231a` (15.4:1) |
+| text loud | `#1b2540` | `#181f1b` (15.4:1) |
 | text secondary | `#1b2540b8` | `#4a5a50` (6.9:1) |
 | text muted | `#1b25408f` | `#5c6a61` (5.4:1). klinn's alpha would fail AA here |
 | border | `#0c264d0f` | `#0c2a1a0f` |
-| accent text (section numbers) | `#015efe` | `#1f7a3c` (5.1:1) |
+| accent text (section numbers) | `#015efe` | `#366344` (5.1:1) |
 | signal dot | `#d0f100` | `#d0f100` (kept; it is the "live" dot) |
 
 Hero sky (top to bottom, then fades into page):
 
 - klinn: `#000216 0, #00042b 12, #011f58 27, #001d8a 38, #003db7 50, #0080f8 66, #5fbdf7 76, #d3effb 85, transparent 100`
-- Axiom: `#000a04 0, #00140a 12, #03301a 27, #0a4a24 38, #13692f 50, #2a9447 66, #7fcf95 76, #d6f2de 85, transparent 100`
+- Axiom: `#000a04 0, #050f0a 12, #0e251a 27, #1a3a27 38, #295337 50, #447a53 66, #93bb9e 76, #ddebe1 85, transparent 100`
 
 Primary button gradient:
 
 - klinn: `#62bdff 0, #2686f5 45, #2456db 100`, solid foot `#173ca3`
-- Axiom: `#4fc070 0, #1d7f3c 45, #176b33 100`, solid foot `#0e4f25`. White text at the centre stop is 5.06:1.
+- Axiom: `#6ba47c 0, #366645 45, #2c563a 100`, solid foot `#1e3f2a`. White text at the centre stop is 6.68:1.
 
 Dark app (sign-in right side + onboarding):
 
@@ -54,7 +58,7 @@ Dark app (sign-in right side + onboarding):
 | hover | `#202124` | `#1f2220` |
 | line / strong | `#1a1b1d` / `#212224` | `#1a1c1a` / `#212421` |
 | text 1/2/3 | `#fff` / `#e3e4e6` / `#959597` | `#fff` / `#e3e6e4` / `#959795` |
-| accent | `#6e8ae8` | `#6fcf8a` |
+| accent | `#6e8ae8` | `#87b794` |
 
 ### Shape + motion
 

@@ -19,25 +19,25 @@
   --color-paper: #f7f9f8;
   --color-cream: #eef2f0;
   --color-card: #ffffff;
-  --color-ink: #14231a;
+  --color-ink: #181f1b;
   /* Both were below WCAG AA on paper: muted at 4.41:1 and faint at 2.38:1,
      and faint carries the section eyebrows and captions — small type doing
      real work. Darkened to 5.84:1 and 4.54:1, keeping the warm grey hue and
      enough distance between them that the hierarchy still reads. */
   --color-muted: #5c6a61;
   --color-faint: #66736b;
-  --color-forest: #2f6b3d;
-  --color-forest-deep: #245530;
-  --color-forest-bright: #3f8f52;
+  --color-forest: #3e5c45;
+  --color-forest-deep: #304936;
+  --color-forest-bright: #537b5c;
   /* The hero sky, top to bottom. Declared as tokens because the nav and the
      section under the hero both have to resolve against the same colours. */
-  --color-sky-deep: #041a0c;
-  --color-sky-mid: #10592c;
-  --color-sky-bright: #2ba552;
+  --color-sky-deep: #09140e;
+  --color-sky-mid: #224730;
+  --color-sky-bright: #4a865d;
   --color-night: #0e0f0d;
   --color-night-text: #f2f0e9;
   --color-night-muted: #b0aea3;
-  --color-mint: #a8d5b3;
+  --color-mint: #b3cab9;
   --color-error: #d23b3b;
 
   --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, -apple-system,
@@ -74,10 +74,10 @@
    ============================================================ */
 
 @theme {
-  --color-loud: #14231a;
+  --color-loud: #181f1b;
   --color-secondary: #4a5a50;
-  --color-accent: #1f7a3c;
-  --color-signal: #d0f100;
+  --color-accent: #366344;
+  --color-signal: #c2cf8e;
   --color-border-faint: #0c2a1a0a;
   --color-border-muted: #0c2a1a0f;
   --color-border-strong: #0c2a1a1f;
@@ -92,7 +92,7 @@
   --color-app-text-1: #ffffff;
   --color-app-text-2: #e3e6e4;
   --color-app-text-3: #959795;
-  --color-app-accent: #6fcf8a;
+  --color-app-accent: #87b794;
 
   --text-title-h1: 46px;
   --text-title-h1--line-height: 48px;
@@ -156,8 +156,8 @@
 :root {
   /* klinn's sky, re-stopped in green. Declared once because the hero, the
      sign-in card and the closing band all draw it (the band reversed). */
-  --sky: #000a04 0%, #00140a 12%, #03301a 27%, #0a4a24 38%, #13692f 50%,
-    #2a9447 66%, #7fcf95 76%, #d6f2de 85%;
+  --sky: #000a04 0%, #050f0a 12%, #0e251a 27%, #1a3a27 38%, #295337 50%,
+    #447a53 66%, #93bb9e 76%, #ddebe1 85%;
   --hero-inset: 8px;
 }
 
@@ -193,7 +193,7 @@ body {
 }
 
 ::selection {
-  background: rgba(47, 107, 61, 0.22);
+  background: rgba(62, 92, 69, 0.22);
 }
 
 /* In the base layer so a component that draws its own focus state (the
@@ -309,7 +309,7 @@ body {
 }
 
 .chip-forest {
-  background: rgba(47, 107, 61, 0.12);
+  background: rgba(62, 92, 69, 0.12);
   color: var(--color-forest-deep);
 }
 
@@ -334,8 +334,8 @@ body {
 }
 
 .season-spring {
-  --season: #4f8f52;
-  --season-soft: rgba(79, 143, 82, 0.14);
+  --season: #5f7f60;
+  --season-soft: rgba(95, 127, 96, 0.14);
 }
 
 .chip-season {
@@ -607,8 +607,8 @@ body {
   --color-ink: #f2f0e9;
   --color-muted: #b0aea3;
   --color-faint: #76746a;
-  --color-forest: #3f8f52;
-  --color-forest-deep: #a8d5b3;
+  --color-forest: #537b5c;
+  --color-forest-deep: #b3cab9;
   --color-error: #ff6b5e;
 
   --ap-line: rgba(242, 240, 233, 0.2);
@@ -647,8 +647,8 @@ body {
   /* Lighter than the dark scope's faint: this ground is #2e302c, not #0e0f0d,
      so the same grey would sit almost on top of it. */
   --color-faint: #918f87;
-  --color-forest: #4f9d63;
-  --color-forest-deep: #b6d9c0;
+  --color-forest: #638a6d;
+  --color-forest-deep: #bfd0c4;
   --color-error: #ff6b5e;
 
   --ap-line: rgba(236, 235, 230, 0.18);
@@ -696,7 +696,7 @@ body {
   opacity: 0;
   background: linear-gradient(
     90deg,
-    var(--fx-line-color, rgba(47, 107, 61, 0.5)),
+    var(--fx-line-color, rgba(62, 92, 69, 0.5)),
     transparent
   );
   transition:
@@ -755,8 +755,8 @@ body {
 /* The live dot. A ring leaves it rather than the dot itself changing size, so
    the dot never reads as a loading spinner. */
 @keyframes ax-pulse {
-  0%   { box-shadow: 0 0 0 0 rgb(208 241 0 / 0.55); }
-  80%, 100% { box-shadow: 0 0 0 7px rgb(208 241 0 / 0); }
+  0%   { box-shadow: 0 0 0 0 rgb(194 207 142 / 0.55); }
+  80%, 100% { box-shadow: 0 0 0 7px rgb(194 207 142 / 0); }
 }
 
 /* One digit column in a rolling counter: 0–9 stacked, moved by --digit. */
@@ -850,16 +850,16 @@ body {
 }
 
 [data-landed="true"] .landing-pad-ring {
-  filter: drop-shadow(0 0 14px rgb(125 255 160 / 0.8));
+  filter: drop-shadow(0 0 14px rgb(158 222 175 / 0.8));
 }
 
 footer:has([data-landed="true"]) .landing-cta {
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.75),
-    inset 0 -2px 3px rgba(111, 207, 138, 0.5),
-    0 3px 0 #0e4f25,
-    0 0 0 6px rgb(125 255 160 / 0.18),
-    0 7px 24px rgb(125 255 160 / 0.35);
+    inset 0 -2px 3px rgba(135, 183, 148, 0.5),
+    0 3px 0 #1e3f2a,
+    0 0 0 6px rgb(158 222 175 / 0.18),
+    0 7px 24px rgb(158 222 175 / 0.35);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -953,12 +953,12 @@ footer:has([data-landed="true"]) .landing-cta {
 
   .btn-gloss {
     color: #fff;
-    background-image: linear-gradient(180deg, #4fc070 0%, #1d7f3c 45%, #176b33 100%);
+    background-image: linear-gradient(180deg, #6ba47c 0%, #366645 45%, #2c563a 100%);
     box-shadow:
       inset 0 1px 1px rgba(255, 255, 255, 0.75),
-      inset 0 -2px 3px rgba(111, 207, 138, 0.5),
-      0 3px 0 #0e4f25,
-      0 7px 14px rgba(4, 36, 16, 0.18);
+      inset 0 -2px 3px rgba(135, 183, 148, 0.5),
+      0 3px 0 #1e3f2a,
+      0 7px 14px rgba(12, 28, 18, 0.18);
   }
 
   /* The secondary on the sky: same body, glass instead of fill. */
@@ -968,8 +968,8 @@ footer:has([data-landed="true"]) .landing-cta {
     box-shadow:
       inset 0 1px 1px rgba(255, 255, 255, 0.55),
       inset 0 -2px 3px rgba(255, 255, 255, 0.12),
-      0 3px 0 rgba(0, 20, 8, 0.45),
-      0 7px 14px rgba(0, 20, 8, 0.2);
+      0 3px 0 rgba(5, 15, 9, 0.45),
+      0 7px 14px rgba(5, 15, 9, 0.2);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
   }
@@ -977,12 +977,12 @@ footer:has([data-landed="true"]) .landing-cta {
   /* The secondary on paper ("how it works" under 02). */
   .btn-gloss-light {
     color: var(--color-loud);
-    background-image: linear-gradient(180deg, #ffffff 0%, #f1f6f2 100%);
+    background-image: linear-gradient(180deg, #ffffff 0%, #f2f5f3 100%);
     box-shadow:
       inset 0 1px 1px rgba(255, 255, 255, 1),
-      inset 0 -2px 3px rgba(111, 207, 138, 0.18),
-      0 3px 0 #cfe2d4,
-      0 7px 14px rgba(4, 36, 16, 0.08);
+      inset 0 -2px 3px rgba(135, 183, 148, 0.18),
+      0 3px 0 #d4ddd6,
+      0 7px 14px rgba(12, 28, 18, 0.08);
   }
 
   .btn-gloss:hover,
@@ -1000,9 +1000,9 @@ footer:has([data-landed="true"]) .landing-cta {
   .btn-gloss:active {
     box-shadow:
       inset 0 1px 1px rgba(255, 255, 255, 0.6),
-      inset 0 -2px 3px rgba(111, 207, 138, 0.4),
-      0 1px 0 #0e4f25,
-      0 3px 8px rgba(4, 36, 16, 0.16);
+      inset 0 -2px 3px rgba(135, 183, 148, 0.4),
+      0 1px 0 #1e3f2a,
+      0 3px 8px rgba(12, 28, 18, 0.16);
   }
 
   /* Nav size. */

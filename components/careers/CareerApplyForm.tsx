@@ -32,7 +32,7 @@ export function CareerApplyForm({
   if (result?.ok) {
     return (
       <GlassPanel className="flex flex-col items-center gap-2 px-7 py-12 text-center">
-        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-forest text-lg text-white shadow-[0_8px_24px_rgba(47,107,61,0.35)]">
+        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-forest text-lg text-white shadow-[0_8px_24px_rgba(62,92,69,0.35)]">
           ✓
         </span>
         <p className="font-medium text-ink">

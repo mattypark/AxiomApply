@@ -131,7 +131,7 @@ export function ArticleEditor({ article }: { article: Article }) {
             onDragOver={(e) => e.preventDefault()}
             onBlur={save}
             spellCheck
-            className="min-h-[26rem] w-full resize-y rounded-2xl bg-white/50 p-5 font-mono text-[0.85rem] leading-relaxed text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none focus:shadow-[0_0_0_2px_rgba(47,107,61,0.45)]"
+            className="min-h-[26rem] w-full resize-y rounded-2xl bg-white/50 p-5 font-mono text-[0.85rem] leading-relaxed text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none focus:shadow-[0_0_0_2px_rgba(62,92,69,0.45)]"
             placeholder={"# Heading\n\nWrite the article…"}
             aria-label="Article markdown"
           />

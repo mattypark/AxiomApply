@@ -44,7 +44,7 @@ export function CookieBanner() {
           transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1], delay: 0.9 }}
           role="dialog"
           aria-label="Cookie settings"
-          className="fixed right-4 bottom-4 z-50 w-[min(calc(100vw-2rem),360px)] rounded-[16px] bg-white p-5 shadow-[0_0_0_1px_var(--color-border-muted),0_8px_24px_-8px_rgba(4,36,16,0.16),0_2px_6px_rgba(4,36,16,0.05)] sm:right-6 sm:bottom-6"
+          className="fixed right-4 bottom-4 z-50 w-[min(calc(100vw-2rem),360px)] rounded-[16px] bg-white p-5 shadow-[0_0_0_1px_var(--color-border-muted),0_8px_24px_-8px_rgba(12,28,18,0.16),0_2px_6px_rgba(12,28,18,0.05)] sm:right-6 sm:bottom-6"
         >
           <button
             type="button"

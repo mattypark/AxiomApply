@@ -19,7 +19,7 @@ import { DISCORD_INVITE_URL, einLine } from "@/lib/org";
 
 const EXPLORE = [
   { label: "how it works", href: "/#how-it-works" },
-  { label: "what you get", href: "/#what-you-get" },
+  { label: "the network", href: "/#network" },
   { label: "faq", href: "/#faq" },
   { label: "internship feed", href: "/internships" },
   { label: "for startups", href: "/for-startups" },
@@ -88,7 +88,7 @@ export function SiteFooter() {
         className="relative overflow-hidden rounded-b-[var(--radius-hero)] pt-40 sm:pt-56 lg:pt-20"
         style={{
           background:
-            "linear-gradient(180deg, rgb(247 249 248 / 0) 0%, #d6f2de 5%, #7fcf95 10%, #2a9447 16%, #1b7a3a 30%, #13692f 60%, #0a4a24 78%, #000a04 100%)",
+            "linear-gradient(180deg, rgb(247 249 248 / 0) 0%, #ddebe1 5%, #93bb9e 10%, #447a53 16%, #336242 30%, #295337 60%, #1a3a27 78%, #000a04 100%)",
         }}
       >
         <ClosingCta />

@@ -105,7 +105,7 @@ export default async function OpengraphImage() {
           <span>
             A nonprofit placing students into real startup work.
           </span>
-          <span style={{ color: "#2f6b3d", fontWeight: 600 }}>
+          <span style={{ color: "#3e5c45", fontWeight: 600 }}>
             axiomapply.com
           </span>
         </div>

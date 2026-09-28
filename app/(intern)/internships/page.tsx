@@ -158,7 +158,7 @@ function FilterChip({
       href={href}
       className={`rounded-full px-4 py-2 font-mono text-[0.72rem] tracking-[0.08em] transition-[background-color,color,transform] duration-300 hover:-translate-y-0.5 ${
         active
-          ? "bg-forest text-white shadow-[0_6px_18px_rgba(47,107,61,0.3)]"
+          ? "bg-forest text-white shadow-[0_6px_18px_rgba(62,92,69,0.3)]"
           : "bg-white/50 text-muted shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] hover:text-ink"
       }`}
     >

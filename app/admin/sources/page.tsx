@@ -91,7 +91,7 @@ export default async function AdminSourcesPage() {
               name="adapter"
               required
               defaultValue=""
-              className="w-full appearance-none rounded-2xl bg-white/50 px-5 py-3.5 text-[0.95rem] text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none focus:shadow-[0_0_0_2px_rgba(47,107,61,0.45)]"
+              className="w-full appearance-none rounded-2xl bg-white/50 px-5 py-3.5 text-[0.95rem] text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none focus:shadow-[0_0_0_2px_rgba(62,92,69,0.45)]"
             >
               <option value="" disabled>
                 Adapter…
@@ -121,7 +121,7 @@ export default async function AdminSourcesPage() {
               name="kind"
               required
               defaultValue=""
-              className="w-full appearance-none rounded-2xl bg-white/50 px-5 py-3.5 text-[0.95rem] text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none focus:shadow-[0_0_0_2px_rgba(47,107,61,0.45)]"
+              className="w-full appearance-none rounded-2xl bg-white/50 px-5 py-3.5 text-[0.95rem] text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none focus:shadow-[0_0_0_2px_rgba(62,92,69,0.45)]"
             >
               <option value="" disabled>
                 Kind…

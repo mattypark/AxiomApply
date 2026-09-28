@@ -23,7 +23,7 @@ export function EnterShell({ children }: { children: ReactNode }) {
           className="absolute inset-0 -z-10"
           style={{
             background:
-              "radial-gradient(70% 60% at 70% 105%, rgb(127 207 149 / 0.55) 0%, transparent 70%), linear-gradient(180deg, #000a04 0%, #03301a 38%, #0f5a2b 72%, #2a9447 100%)",
+              "radial-gradient(70% 60% at 70% 105%, rgb(147 187 158 / 0.55) 0%, transparent 70%), linear-gradient(180deg, #000a04 0%, #0e251a 38%, #224730 72%, #447a53 100%)",
           }}
         />
         <DotArc className="-z-10 opacity-60" />

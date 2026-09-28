@@ -16,12 +16,12 @@ import { RollingNumber } from "@/components/motion/RollingNumber";
  */
 export function CountBanner({ count }: { count: number }) {
   return (
-    <section style={{ paddingInline: "var(--hero-inset)" }}>
+    <section className="pt-16 lg:pt-28" style={{ paddingInline: "var(--hero-inset)" }}>
       <div
         className="relative overflow-hidden rounded-[var(--radius-hero)] px-6 py-28 text-center sm:py-40"
         style={{
           background:
-            "radial-gradient(60% 70% at 50% 110%, rgb(42 148 71 / 0.75) 0%, rgb(19 105 47 / 0.35) 38%, transparent 72%), linear-gradient(180deg, #000603 0%, #00140a 100%)",
+            "radial-gradient(60% 70% at 50% 110%, rgb(68 122 83 / 0.75) 0%, rgb(41 83 55 / 0.35) 38%, transparent 72%), linear-gradient(180deg, #000603 0%, #050f0a 100%)",
         }}
       >
         <InView as="p" className="text-[20px] leading-[28px] font-medium tracking-[-0.2px] text-white sm:text-[24px] sm:leading-[32px]">

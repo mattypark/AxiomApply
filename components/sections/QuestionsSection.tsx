@@ -4,7 +4,7 @@ import { useState } from "react";
 import { SectionHead } from "@/components/sections/SectionHead";
 
 /**
- * 06 — questions.
+ * 03 — questions.
  *
  * The answers are unchanged from the previous FAQ; only the setting moved.
  * One open at a time, and the panel animates to its measured height with the
@@ -60,7 +60,7 @@ export function QuestionsSection() {
   return (
     // The menu links to /#faq, so this id is load-bearing, not decorative.
     <section id="faq" className="scroll-mt-24 py-24 sm:py-32">
-      <SectionHead index="06" label="questions" icon="help" title="questions." />
+      <SectionHead index="03" label="questions" icon="help" title="questions." />
 
       <div className="mx-auto w-full max-w-[49.5rem] px-6">
         <div className="mt-12">

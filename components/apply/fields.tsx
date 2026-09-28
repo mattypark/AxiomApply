@@ -328,7 +328,7 @@ export function YesNoField({
             onClick={() => onChange(choice)}
             className={`${CHOICE} ${
               value === choice
-                ? "bg-forest text-white shadow-[0_8px_24px_rgba(47,107,61,0.28)]"
+                ? "bg-forest text-white shadow-[0_8px_24px_rgba(62,92,69,0.28)]"
                 : "text-muted shadow-[inset_0_0_0_1px_var(--ap-line)] hover:text-ink hover:shadow-[inset_0_0_0_1px_var(--ap-line-strong)]"
             }`}
           >
@@ -393,7 +393,7 @@ export function MultiCheckboxField({
                 aria-hidden
                 className={`grid h-[18px] w-[18px] shrink-0 place-items-center rounded-[6px] text-[0.6rem] text-white transition-[background-color,box-shadow] duration-300 ${
                   isChecked
-                    ? "bg-forest shadow-[0_4px_12px_rgba(47,107,61,0.3)]"
+                    ? "bg-forest shadow-[0_4px_12px_rgba(62,92,69,0.3)]"
                     : "shadow-[inset_0_0_0_1px_var(--ap-line)] group-hover:shadow-[inset_0_0_0_1px_var(--ap-line-strong)]"
                 }`}
               >
@@ -519,7 +519,7 @@ export function Button({
 }: ButtonProps) {
   const tone =
     variant === "primary"
-      ? "bg-forest text-white shadow-[0_10px_30px_rgba(47,107,61,0.3)] hover:bg-forest-deep hover:-translate-y-0.5 disabled:bg-ink/15 disabled:text-white/70 disabled:shadow-none disabled:translate-y-0"
+      ? "bg-forest text-white shadow-[0_10px_30px_rgba(62,92,69,0.3)] hover:bg-forest-deep hover:-translate-y-0.5 disabled:bg-ink/15 disabled:text-white/70 disabled:shadow-none disabled:translate-y-0"
       : "text-muted hover:text-ink";
 
   return (

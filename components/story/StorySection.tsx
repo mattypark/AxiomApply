@@ -92,7 +92,7 @@ export function StorySection() {
             className="relative h-full overflow-hidden rounded-[var(--radius-hero)]"
             style={{
               background:
-                "radial-gradient(60% 55% at 50% 50%, rgb(19 105 47 / 0.35) 0%, transparent 70%), radial-gradient(80% 60% at 50% 115%, rgb(42 148 71 / 0.55) 0%, transparent 70%), linear-gradient(180deg, #000603 0%, #00140a 100%)",
+                "radial-gradient(60% 55% at 50% 50%, rgb(41 83 55 / 0.35) 0%, transparent 70%), radial-gradient(80% 60% at 50% 115%, rgb(68 122 83 / 0.55) 0%, transparent 70%), linear-gradient(180deg, #000603 0%, #050f0a 100%)",
             }}
           >
             {/* The ring: fills with the whole story's progress. */}
@@ -109,7 +109,7 @@ export function StorySection() {
                 cy="50"
                 r={RING_RADIUS}
                 fill="none"
-                stroke="#6fcf8a"
+                stroke="#87b794"
                 strokeWidth="0.6"
                 strokeLinecap="round"
                 strokeDasharray={RING_LENGTH}
@@ -165,7 +165,7 @@ export function StorySection() {
                 {chapter.body}
               </p>
               <p
-                className="story-rise mt-7 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-[13px] text-loud shadow-[0_0_0_1px_var(--color-border-faint),0_4px_12px_-6px_rgba(4,36,16,0.12)]"
+                className="story-rise mt-7 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-[13px] text-loud shadow-[0_0_0_1px_var(--color-border-faint),0_4px_12px_-6px_rgba(12,28,18,0.12)]"
                 style={{ ["--rise" as string]: "300ms" }}
               >
                 <span className="h-1.5 w-1.5 rounded-full bg-accent" />
