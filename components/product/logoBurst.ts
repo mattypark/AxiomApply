@@ -1,9 +1,9 @@
-import { randomInvestor } from "@/lib/investor-logos";
+import { fitLogo, randomInvestor } from "@/lib/investor-logos";
 
 /**
- * Click the product rocket and an investor's mark shoots out of its nose: a
- * white card that pops, arcs up and away with a spin, and fades. The marks
- * come from lib/investor-logos.ts, picked at random.
+ * Click the product rocket and an investor's mark shoots out of its nose: the
+ * bare, transparent logo pops, arcs up and away with a spin, and fades. The
+ * marks come from lib/investor-logos.ts, picked at random.
  */
 
 const FLIGHT_MS = 1300;
@@ -16,28 +16,24 @@ export function burstLogo(host: HTMLElement, event: { clientX: number; clientY: 
   const x = box.width / 2 + (event.clientX - box.left - box.width / 2) * 0.2;
   const y = box.height * 0.32;
 
-  const card = document.createElement("div");
+  const investor = randomInvestor();
+  const { width, height } = fitLogo(investor, 170, 36);
+  const card = document.createElement("img");
+  card.src = investor.href;
+  card.alt = "";
   card.setAttribute("aria-hidden", "true");
   card.style.cssText = [
     "position:absolute",
     `left:${x}px`,
     `top:${y}px`,
+    `width:${width}px`,
+    `height:${height}px`,
     "z-index:5",
     "pointer-events:none",
-    "display:grid",
-    "place-items:center",
-    "height:56px",
-    "padding:0 18px",
-    "border-radius:999px",
-    "background:#ffffff",
-    "box-shadow:0 14px 30px -12px rgb(23 25 28 / 0.35)",
+    // A soft lift so a dark mark still reads against the rocket.
+    "filter:drop-shadow(0 6px 10px rgb(23 25 28 / 0.18))",
     "will-change:transform,opacity",
   ].join(";");
-  const img = document.createElement("img");
-  img.src = randomInvestor().href;
-  img.alt = "";
-  img.style.cssText = "height:30px;width:auto;max-width:150px;object-fit:contain";
-  card.append(img);
   host.append(card);
 
   const side = Math.random() > 0.5 ? 1 : -1;

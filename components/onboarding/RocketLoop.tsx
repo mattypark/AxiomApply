@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { RocketGlyph } from "@/components/RocketGlyph";
 import { GLYPH_NOZZLE } from "@/components/rocket-glyph";
 import type { Side } from "@/lib/apply-sides";
-import { randomInvestor } from "@/lib/investor-logos";
+import { fitLogo, randomInvestor } from "@/lib/investor-logos";
 
 /**
  * The welcome page's picture: the path as a journey. A small rocket flies a
@@ -92,8 +92,8 @@ const LABELS: { x: number; y: number; anchor: "start" | "middle" | "end" }[] = [
   { x: CX + R + 36, y: CY + 8, anchor: "start" },
 ];
 
-/** The investor card in the middle, and the logo's height inside it. */
-const CARD = { width: 200, height: 76, logo: 40 };
+/** The investor card in the middle, and the box its logo fits inside. */
+const CARD = { width: 210, height: 84, logoWidth: 160, logoHeight: 44 };
 
 const TRAVEL_MS = 1200;
 const DWELL_MS = 1150;
@@ -123,7 +123,7 @@ function StopPicture({ picture }: { picture: Picture }) {
           fill="#ffffff"
         />
         {/* href and width are set each time it shows: a random investor. */}
-        <image data-investor x={CX} y={CY - CARD.logo / 2} height={CARD.logo} />
+        <image data-investor x={CX} y={CY} width={0} height={0} />
       </>
     );
   }
@@ -181,10 +181,12 @@ export function RocketLoop({ side, className = "" }: { side: Side; className?: s
       const logo = picturesRef.current[index]?.querySelector<SVGImageElement>("[data-investor]");
       if (logo) {
         const investor = randomInvestor();
-        const width = (investor.width / investor.height) * CARD.logo;
+        const { width, height } = fitLogo(investor, CARD.logoWidth, CARD.logoHeight);
         logo.setAttribute("href", investor.href);
         logo.setAttribute("width", String(width));
+        logo.setAttribute("height", String(height));
         logo.setAttribute("x", String(CX - width / 2));
+        logo.setAttribute("y", String(CY - height / 2));
       }
       picturesRef.current.forEach((picture, i) => picture?.setAttribute("data-on", String(i === index)));
     };
