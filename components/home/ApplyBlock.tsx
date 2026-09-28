@@ -63,7 +63,7 @@ export function ApplyBlock() {
       <div className="mx-auto grid w-full max-w-[90rem] items-center gap-14 lg:grid-cols-[1fr_1.05fr] lg:gap-20">
         <div
           className="relative mx-auto aspect-[0.8] w-full max-w-[34rem] overflow-hidden rounded-t-[999px] rounded-b-[36px]"
-          style={{ background: "linear-gradient(180deg, #efe7dc 0%, #e6dccd 100%)" }}
+          style={{ background: "linear-gradient(180deg, #ffffff 0%, #f6f8f7 100%)" }}
         >
           <Product className="!absolute inset-0" scale={0.95} turn={1.2} paint={path.paint} />
         </div>
