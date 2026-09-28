@@ -276,7 +276,7 @@ export function QuestionFlow({
                 </button>
               </div>
               {app.submitError ? (
-                <p role="alert" className="mt-4 text-[13px] text-[#ff8a80]">
+                <p role="alert" className="mt-4 text-[13px] text-[#ff8a80] [.ms-flow_&]:text-[#b3261e]">
                   {app.submitError}
                 </p>
               ) : null}
@@ -342,7 +342,7 @@ export function QuestionFlow({
               </div>
 
               {error ? (
-                <p role="alert" className="ax-toast-in mt-4 text-[13px] text-[#ff8a80]">
+                <p role="alert" className="ax-toast-in mt-4 text-[13px] text-[#ff8a80] [.ms-flow_&]:text-[#b3261e]">
                   {error}
                 </p>
               ) : null}

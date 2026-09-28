@@ -444,7 +444,7 @@ export function FlowFile({
           remove file
         </button>
       ) : null}
-      {error ? <p className="mt-2 text-[13px] text-[#ff8a80]">{error}</p> : null}
+      {error ? <p className="mt-2 text-[13px] text-[#ff8a80] [.ms-flow_&]:text-[#b3261e]">{error}</p> : null}
     </div>
   );
 }
