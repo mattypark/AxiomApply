@@ -135,8 +135,10 @@ function Landing({
           }
         >
           <span
-            className="absolute top-1/2 left-0 block h-9 w-[18px]"
-            style={{ transform: "translate(-50%, calc(-100% - 10px))" }}
+            className="absolute top-1/2 left-0 block h-12 w-6"
+            // The glyph's box runs below the nozzle for the flame; this puts
+            // the fins, not the box, just above the stop.
+            style={{ transform: "translate(-50%, calc(-100% + 8px))" }}
           >
             {/* A small arc on the way over, on its own layer. */}
             <span className="flow-arc block h-full w-full">
