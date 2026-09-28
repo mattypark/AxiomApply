@@ -75,8 +75,34 @@ export function TimeChart({ days, sides }: { days: Day[]; sides: Side[] }) {
         ))}
       </ul>
 
-      <div ref={wrapRef} className="relative" onPointerLeave={() => setActive(null)}>
-        <svg width={width} height={HEIGHT} viewBox={`0 0 ${width} ${HEIGHT}`} role="img" aria-label={summary} className="block max-w-full">
+      {/* One pointer handler for the whole plot (mouse and touch alike), and
+          arrow keys once it has focus, so the tooltip is never hover-only. */}
+      <div
+        ref={wrapRef}
+        className="relative touch-pan-y"
+        onPointerMove={(event) => {
+          const left = event.currentTarget.getBoundingClientRect().left;
+          const i = Math.floor((event.clientX - left - PAD.left) / slot);
+          setActive(i >= 0 && i < days.length ? i : null);
+        }}
+        onPointerLeave={() => setActive(null)}
+      >
+        <svg
+          width={width}
+          height={HEIGHT}
+          viewBox={`0 0 ${width} ${HEIGHT}`}
+          role="img"
+          aria-label={summary}
+          tabIndex={0}
+          onKeyDown={(event) => {
+            if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+            event.preventDefault();
+            const step = event.key === "ArrowLeft" ? -1 : 1;
+            setActive((i) => Math.min(days.length - 1, Math.max(0, (i ?? days.length) + step)));
+          }}
+          onBlur={() => setActive(null)}
+          className="block max-w-full rounded-[8px] outline-none focus-visible:ring-2 focus-visible:ring-ms-green"
+        >
           {[0, top / 2, top].map((tick) => (
             <g key={tick}>
               <line x1={PAD.left} x2={width - PAD.right} y1={y(tick)} y2={y(tick)} stroke={tick === 0 ? "#c9ced2" : "#eceef0"} />
@@ -110,15 +136,6 @@ export function TimeChart({ days, sides }: { days: Day[]; sides: Side[] }) {
                     {shortDate(day.date)}
                   </text>
                 ) : null}
-                {/* Hit target: the whole column, wider than the mark. */}
-                <rect
-                  x={PAD.left + i * slot}
-                  y={PAD.top}
-                  width={slot}
-                  height={plotH}
-                  fill="transparent"
-                  onPointerEnter={() => setActive(i)}
-                />
               </g>
             );
           })}
