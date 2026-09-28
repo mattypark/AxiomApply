@@ -79,7 +79,10 @@ export function RollingNumber({
           }
           const digit = armed && !shown ? 0 : Number(char);
           return (
-            <span key={index} className={`inline-block h-[1lh] overflow-hidden ${hop}`} style={delay}>
+            // Clip only top and bottom: display tracking is negative, so each
+            // window is narrower than its glyph and a side clip shaves wide
+            // digits like 8 and 0.
+            <span key={index} className={`inline-block h-[1lh] overflow-x-visible overflow-y-clip ${hop}`} style={delay}>
               <span
                 className="ax-roll"
                 style={{ "--digit": digit, "--roll-delay": `${index * 70}ms` } as CSSProperties}
