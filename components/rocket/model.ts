@@ -1,236 +1,277 @@
-import * as THREE from "three";
-
 /**
- * The Axiom rocket, built from primitives — a port of the standalone prototype
- * (Downloads/files/axiom-rocket-scroll.html) to three r186.
+ * The shapes the particle object becomes, as point clouds.
  *
- * Nose is +Y. Three nested groups so each motion has one owner:
- *   rocket — position + orientation along the flight path (set by the scene)
- *   spin   — roll around its own axis, driven by scroll progress
- *   body   — offsets the geometry so the pivot sits at the centre of mass
+ * Every shape returns exactly `count` points (x, y, z) inside roughly a
+ * 3.4-unit-tall box centred on the origin, so any two can be morphed point
+ * for point. Sampling is seeded: the same shape is the same cloud on every
+ * load, which keeps the morphs identical scroll to scroll.
  *
- * The prototype was written for r128 with colour management off; the scene
- * turns ColorManagement off too, so these hex values land exactly as they did
- * there. Light intensities are multiplied by PI for the same reason: r155+
- * lights are physically based, and PI is the conversion from the old units.
+ * The rocket is the prototype's silhouette — the lathe profile, three fins,
+ * the porthole, the nozzle — sampled as points instead of built as meshes.
  */
 
-export type RocketParts = {
-  rocket: THREE.Group;
-  spin: THREE.Group;
-  flame: THREE.Group;
-  flameGlow: THREE.Sprite;
-  flameLight: THREE.PointLight;
-  halo: THREE.Sprite;
-  orbits: { mat: THREE.MeshBasicMaterial; pivot: THREE.Group; tilt: THREE.Group }[];
-};
+export type ShapeName = "rocket" | "cards" | "network" | "helix" | "torus";
 
-function canvasTexture(draw: (g: CanvasRenderingContext2D, size: number) => void) {
-  const canvas = document.createElement("canvas");
-  canvas.width = canvas.height = 128;
-  const context = canvas.getContext("2d");
-  if (context) draw(context, 128);
-  return new THREE.CanvasTexture(canvas);
+type Rng = () => number;
+
+/** Mulberry32 — small, fast, and identical on every load. */
+function seeded(seed: number): Rng {
+  let a = seed;
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
 }
 
-/** Soft round light — every glow, the trail points and the orb halos. */
-export function makeGlowTexture() {
-  return canvasTexture((g, s) => {
-    const gradient = g.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
-    gradient.addColorStop(0, "rgba(255,255,255,1)");
-    gradient.addColorStop(0.25, "rgba(255,255,255,.55)");
-    gradient.addColorStop(1, "rgba(255,255,255,0)");
-    g.fillStyle = gradient;
-    g.fillRect(0, 0, s, s);
-  });
+class Cloud {
+  readonly data: Float32Array;
+  private index = 0;
+
+  constructor(readonly count: number) {
+    this.data = new Float32Array(count * 3);
+  }
+
+  get size() {
+    return this.index;
+  }
+
+  get full() {
+    return this.index >= this.count;
+  }
+
+  push(x: number, y: number, z: number) {
+    if (this.full) return;
+    this.data[this.index * 3] = x;
+    this.data[this.index * 3 + 1] = y;
+    this.data[this.index * 3 + 2] = z;
+    this.index += 1;
+  }
 }
 
-/** A ring of light — the shockwave when an orb is collected. */
-export function makeRingTexture() {
-  return canvasTexture((g, s) => {
-    const gradient = g.createRadialGradient(s / 2, s / 2, s * 0.3, s / 2, s / 2, s / 2);
-    gradient.addColorStop(0, "rgba(255,255,255,0)");
-    gradient.addColorStop(0.62, "rgba(255,255,255,.95)");
-    gradient.addColorStop(1, "rgba(255,255,255,0)");
-    g.fillStyle = gradient;
-    g.fillRect(0, 0, s, s);
-  });
-}
+/* ------------------------------------------------------------------ */
+/* rocket                                                              */
+/* ------------------------------------------------------------------ */
 
-export function glowSprite(texture: THREE.Texture, color: number, opacity: number) {
-  return new THREE.Sprite(
-    new THREE.SpriteMaterial({
-      map: texture,
-      color,
-      transparent: true,
-      opacity,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-    }),
-  );
-}
-
-export function addLights(scene: THREE.Scene) {
-  scene.add(new THREE.HemisphereLight(0xdfffe6, 0x0a2a12, 0.9 * Math.PI));
-  const key = new THREE.DirectionalLight(0xffffff, 2.2 * Math.PI);
-  key.position.set(3, 4, 5);
-  scene.add(key);
-  const rim = new THREE.DirectionalLight(0x7dffa0, 1.7 * Math.PI);
-  rim.position.set(-4, 1, -3);
-  scene.add(rim);
-}
-
+// [radius, y] from nozzle to nose — the prototype's lathe profile, recentred.
 const PROFILE: [number, number][] = [
-  [0.001, -1.25], [0.4, -1.22], [0.6, -0.95], [0.68, -0.3], [0.66, 0.45],
-  [0.55, 1.0], [0.36, 1.5], [0.15, 1.85], [0.001, 2.05],
+  [0.4, -1.62], [0.6, -1.35], [0.68, -0.7], [0.66, 0.05],
+  [0.55, 0.6], [0.36, 1.1], [0.15, 1.45], [0.0, 1.65],
 ];
 
-export function buildRocket(glow: THREE.Texture): RocketParts {
-  const rocket = new THREE.Group();
-  const spin = new THREE.Group();
-  const body = new THREE.Group();
-  body.position.y = -0.4;
-  rocket.add(spin);
-  spin.add(body);
-
-  const green = new THREE.MeshStandardMaterial({ color: 0x0f8a26, roughness: 0.32, metalness: 0.25 });
-  const deep = new THREE.MeshStandardMaterial({ color: 0x0a6a1c, roughness: 0.4, metalness: 0.2 });
-  const white = new THREE.MeshStandardMaterial({ color: 0xf4fff4, roughness: 0.28, metalness: 0.1 });
-  const metal = new THREE.MeshStandardMaterial({ color: 0x2a3430, roughness: 0.35, metalness: 0.8 });
-  const glass = new THREE.MeshStandardMaterial({
-    color: 0x9fe8ff,
-    roughness: 0.08,
-    metalness: 0.1,
-    emissive: 0x2a9bd0,
-    emissiveIntensity: 0.7,
-  });
-
-  // Body: a lathe of a smoothed profile.
-  const profile = new THREE.SplineCurve(PROFILE.map(([x, y]) => new THREE.Vector2(x, y)))
-    .getPoints(60)
-    .map((point) => new THREE.Vector2(Math.max(0.001, point.x), point.y));
-  const radiusAt = (y: number) =>
-    profile.reduce((best, point) => (Math.abs(point.y - y) < Math.abs(best.y - y) ? point : best)).x;
-  body.add(new THREE.Mesh(new THREE.LatheGeometry(profile, 72), green));
-
-  // Two white bands.
-  for (const y of [-0.55, 0.95]) {
-    const band = new THREE.Mesh(new THREE.TorusGeometry(radiusAt(y) + 0.004, 0.045, 16, 72), white);
-    band.rotation.x = Math.PI / 2;
-    band.position.y = y;
-    body.add(band);
+function radiusAt(y: number) {
+  for (let i = 0; i < PROFILE.length - 1; i += 1) {
+    const [r0, y0] = PROFILE[i];
+    const [r1, y1] = PROFILE[i + 1];
+    if (y >= y0 && y <= y1) {
+      const t = (y - y0) / (y1 - y0);
+      // A cosine blend so the body reads as smooth, not faceted.
+      const s = (1 - Math.cos(t * Math.PI)) / 2;
+      return r0 + (r1 - r0) * s;
+    }
   }
-
-  // Porthole.
-  const portholeRim = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.06, 16, 48), white);
-  portholeRim.position.set(0, 0.45, 0.62);
-  body.add(portholeRim);
-  const portholeGlass = new THREE.Mesh(new THREE.SphereGeometry(0.24, 32, 16), glass);
-  portholeGlass.scale.set(1, 1, 0.35);
-  portholeGlass.position.set(0, 0.45, 0.62);
-  body.add(portholeGlass);
-
-  // Three fins.
-  const finShape = new THREE.Shape();
-  finShape.moveTo(0.5, -0.1);
-  finShape.lineTo(1.08, -1.0);
-  finShape.lineTo(1.08, -1.38);
-  finShape.lineTo(0.5, -1.15);
-  finShape.closePath();
-  const finGeometry = new THREE.ExtrudeGeometry(finShape, { depth: 0.07, bevelEnabled: false });
-  finGeometry.translate(0, 0, -0.035);
-  for (let index = 0; index < 3; index += 1) {
-    const fin = new THREE.Mesh(finGeometry, deep);
-    fin.rotation.y = (index * Math.PI * 2) / 3;
-    body.add(fin);
-  }
-
-  // Nozzle.
-  const nozzle = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.42, 0.3, 32), metal);
-  nozzle.position.y = -1.38;
-  body.add(nozzle);
-
-  // Flame. The prototype drew it additively, which vanishes on the pale end
-  // of the gradient (additive orange on near-white is near-white). Normal
-  // blending keeps it visible on both grounds; the glow sprite behind it
-  // stays additive, so on the dark sky it still blooms.
-  const flame = new THREE.Group();
-  flame.position.y = -1.5;
-  body.add(flame);
-  const flameOuter = new THREE.Mesh(
-    new THREE.ConeGeometry(0.42, 2.0, 24, 1, true),
-    new THREE.MeshBasicMaterial({ color: 0xff8a1f, transparent: true, opacity: 0.7, depthWrite: false, side: THREE.DoubleSide }),
-  );
-  flameOuter.rotation.x = Math.PI;
-  flameOuter.position.y = -1.0;
-  flame.add(flameOuter);
-  const flameInner = new THREE.Mesh(
-    new THREE.ConeGeometry(0.24, 1.3, 24, 1, true),
-    new THREE.MeshBasicMaterial({ color: 0xffe27a, transparent: true, opacity: 0.95, depthWrite: false, side: THREE.DoubleSide }),
-  );
-  flameInner.rotation.x = Math.PI;
-  flameInner.position.y = -0.65;
-  flame.add(flameInner);
-  const flameGlow = glowSprite(glow, 0xff9a3a, 0.9);
-  flameGlow.scale.set(2.2, 2.2, 1);
-  flameGlow.position.y = -0.4;
-  flame.add(flameGlow);
-  const flameLight = new THREE.PointLight(0xff7a2a, 2 * Math.PI, 7, 1);
-  flameLight.position.set(0, -1.8, 0);
-  body.add(flameLight);
-
-  // Halo behind the whole rocket.
-  const halo = glowSprite(glow, 0x4dff7a, 0.35);
-  halo.scale.set(6, 6, 1);
-  rocket.add(halo);
-
-  // Orbit rings — the "finding your passion" flourish around the close-up.
-  const orbit = (radius: number, tiltX: number, tiltY: number, color: number) => {
-    const tilt = new THREE.Group();
-    tilt.rotation.set(tiltX, tiltY, 0);
-    const mat = new THREE.MeshBasicMaterial({
-      color,
-      transparent: true,
-      opacity: 0.4,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-    });
-    tilt.add(new THREE.Mesh(new THREE.TorusGeometry(radius, 0.012, 8, 128), mat));
-    const pivot = new THREE.Group();
-    tilt.add(pivot);
-    const dot = new THREE.Mesh(new THREE.SphereGeometry(0.075, 16, 12), new THREE.MeshBasicMaterial({ color }));
-    dot.position.x = radius;
-    pivot.add(dot);
-    const dotGlow = glowSprite(glow, color, 0.9);
-    dotGlow.scale.set(0.6, 0.6, 1);
-    dot.add(dotGlow);
-    rocket.add(tilt);
-    return { mat, pivot, tilt };
-  };
-
-  return {
-    rocket,
-    spin,
-    flame,
-    flameGlow,
-    flameLight,
-    halo,
-    orbits: [orbit(1.9, 1.15, 0.35, 0x7dffa0), orbit(2.35, 0.55, -0.6, 0xffffff)],
-  };
+  return 0;
 }
 
-/** Every geometry, material and texture under `root`, released. */
-export function disposeTree(root: THREE.Object3D) {
-  const textures = new Set<THREE.Texture>();
-  root.traverse((node) => {
-    const mesh = node as THREE.Mesh;
-    mesh.geometry?.dispose();
-    const materials = Array.isArray(mesh.material) ? mesh.material : mesh.material ? [mesh.material] : [];
-    for (const material of materials) {
-      const map = (material as THREE.MeshBasicMaterial).map;
-      if (map) textures.add(map);
-      material.dispose();
+function rocket(count: number, rand: Rng) {
+  const cloud = new Cloud(count);
+  const bodyShare = Math.floor(count * 0.66);
+  const finShare = Math.floor(count * 0.2);
+  const portShare = Math.floor(count * 0.07);
+
+  // Body surface — sampled by height with weight on radius so the wide middle
+  // is not thinner than the nose.
+  while (cloud.size < bodyShare) {
+    const y = -1.62 + rand() * 3.27;
+    const r = radiusAt(y);
+    if (rand() > r / 0.68 + 0.08) continue;
+    const a = rand() * Math.PI * 2;
+    cloud.push(Math.cos(a) * r, y, Math.sin(a) * r);
+  }
+
+  // Three fins: triangles flaring from the lower body.
+  for (let i = 0; i < finShare; i += 1) {
+    const fin = i % 3;
+    const angle = (fin * Math.PI * 2) / 3 + Math.PI / 6;
+    let u = rand();
+    let v = rand();
+    if (u + v > 1) {
+      u = 1 - u;
+      v = 1 - v;
     }
+    // Triangle: root top (0.55, -0.55), root bottom (0.55, -1.5), tip (1.15, -1.75)
+    const radial = 0.55 + v * 0.6;
+    const y = -0.55 + u * -0.95 + v * -1.2;
+    cloud.push(Math.cos(angle) * radial, y, Math.sin(angle) * radial);
+  }
+
+  // Porthole ring on the front.
+  for (let i = 0; i < portShare; i += 1) {
+    const a = rand() * Math.PI * 2;
+    const r = 0.22 + rand() * 0.05;
+    cloud.push(Math.cos(a) * r, 0.2 + Math.sin(a) * r, 0.66);
+  }
+
+  // Nozzle ring, the rest.
+  while (!cloud.full) {
+    const a = rand() * Math.PI * 2;
+    const r = 0.3 + rand() * 0.1;
+    cloud.push(Math.cos(a) * r, -1.62 - rand() * 0.18, Math.sin(a) * r);
+  }
+  return cloud.data;
+}
+
+/* ------------------------------------------------------------------ */
+/* the pile — a stack of application cards                             */
+/* ------------------------------------------------------------------ */
+
+function cards(count: number, rand: Rng) {
+  const cloud = new Cloud(count);
+  const CARDS = 6;
+  const W = 2.1;
+  const H = 1.35;
+  for (let i = 0; !cloud.full; i += 1) {
+    const card = i % CARDS;
+    const lift = (card - (CARDS - 1) / 2) * 0.42;
+    const skew = (card - 2.5) * 0.08;
+    // Mostly edges and a few "text lines", so each card reads as a card.
+    const kind = rand();
+    let x: number;
+    let y: number;
+    if (kind < 0.55) {
+      const t = rand() * 2 * (W + H);
+      if (t < W) [x, y] = [t - W / 2, H / 2];
+      else if (t < W + H) [x, y] = [W / 2, H / 2 - (t - W)];
+      else if (t < 2 * W + H) [x, y] = [W / 2 - (t - W - H), -H / 2];
+      else [x, y] = [-W / 2, -H / 2 + (t - 2 * W - H)];
+    } else {
+      const line = Math.floor(rand() * 4);
+      const length = line === 0 ? 0.9 : 1.5 - line * 0.2;
+      x = -W / 2 + 0.2 + rand() * length;
+      y = H / 2 - 0.3 - line * 0.26;
+    }
+    // Cards lie tilted back, fanned slightly, stacked upward.
+    const cosT = Math.cos(1.05);
+    const sinT = Math.sin(1.05);
+    const px = x + skew;
+    const py = y * cosT + lift;
+    const pz = y * sinT - card * 0.05;
+    cloud.push(px, py, pz);
+  }
+  return cloud.data;
+}
+
+/* ------------------------------------------------------------------ */
+/* the intro — a network of nodes                                      */
+/* ------------------------------------------------------------------ */
+
+function network(count: number, rand: Rng) {
+  const cloud = new Cloud(count);
+  const NODES = 16;
+  const nodes: [number, number, number][] = [];
+  for (let i = 0; i < NODES; i += 1) {
+    // Fibonacci sphere, squashed a little so it reads wider than tall.
+    const y = 1 - (i / (NODES - 1)) * 2;
+    const r = Math.sqrt(1 - y * y);
+    const a = i * 2.399963;
+    nodes.push([Math.cos(a) * r * 1.55, y * 1.35, Math.sin(a) * r * 1.55]);
+  }
+  const edges: [number, number][] = [];
+  nodes.forEach((node, i) => {
+    const nearest = nodes
+      .map((other, j) => ({ j, d: Math.hypot(node[0] - other[0], node[1] - other[1], node[2] - other[2]) }))
+      .filter(({ j }) => j !== i)
+      .sort((a, b) => a.d - b.d)
+      .slice(0, 3);
+    for (const { j } of nearest) if (i < j) edges.push([i, j]);
   });
-  for (const texture of textures) texture.dispose();
+
+  const nodeShare = Math.floor(count * 0.42);
+  for (let i = 0; i < nodeShare; i += 1) {
+    const node = nodes[i % NODES];
+    const u = rand() * 2 - 1;
+    const a = rand() * Math.PI * 2;
+    const s = Math.sqrt(1 - u * u);
+    const r = 0.13;
+    cloud.push(node[0] + Math.cos(a) * s * r, node[1] + u * r, node[2] + Math.sin(a) * s * r);
+  }
+  while (!cloud.full) {
+    const [a, b] = edges[Math.floor(rand() * edges.length)];
+    const t = rand();
+    const jitter = () => (rand() - 0.5) * 0.02;
+    cloud.push(
+      nodes[a][0] + (nodes[b][0] - nodes[a][0]) * t + jitter(),
+      nodes[a][1] + (nodes[b][1] - nodes[a][1]) * t + jitter(),
+      nodes[a][2] + (nodes[b][2] - nodes[a][2]) * t + jitter(),
+    );
+  }
+  return cloud.data;
+}
+
+/* ------------------------------------------------------------------ */
+/* the work — a helix                                                  */
+/* ------------------------------------------------------------------ */
+
+function helix(count: number, rand: Rng) {
+  const cloud = new Cloud(count);
+  const TURNS = 2.6;
+  const HEIGHT = 3.3;
+  const R = 0.85;
+  const strandShare = Math.floor(count * 0.72);
+  for (let i = 0; i < strandShare; i += 1) {
+    const t = rand();
+    const strand = i % 2;
+    const a = t * TURNS * Math.PI * 2 + strand * Math.PI;
+    const wobble = (rand() - 0.5) * 0.06;
+    cloud.push(Math.cos(a) * (R + wobble), -HEIGHT / 2 + t * HEIGHT, Math.sin(a) * (R + wobble));
+  }
+  const RUNGS = 22;
+  while (!cloud.full) {
+    const rung = Math.floor(rand() * RUNGS);
+    const t = (rung + 0.5) / RUNGS;
+    const a = t * TURNS * Math.PI * 2;
+    const s = rand() * 2 - 1;
+    cloud.push(Math.cos(a) * R * s, -HEIGHT / 2 + t * HEIGHT, Math.sin(a) * R * s);
+  }
+  return cloud.data;
+}
+
+/* ------------------------------------------------------------------ */
+/* the promise — a torus                                               */
+/* ------------------------------------------------------------------ */
+
+function torus(count: number, rand: Rng) {
+  const cloud = new Cloud(count);
+  const R = 1.15;
+  const r = 0.46;
+  while (!cloud.full) {
+    const u = rand() * Math.PI * 2;
+    const v = rand() * Math.PI * 2;
+    // Accept by area so the outer rim is not sparser than the inner one.
+    if (rand() > (R + r * Math.cos(v)) / (R + r)) continue;
+    const x = (R + r * Math.cos(v)) * Math.cos(u);
+    const y = (R + r * Math.cos(v)) * Math.sin(u);
+    const z = r * Math.sin(v);
+    // Stood up and turned toward the viewer, like the reference's ring.
+    cloud.push(x, y * 0.94 + z * 0.34, z * 0.94 - y * 0.34);
+  }
+  return cloud.data;
+}
+
+const BUILDERS: Record<ShapeName, (count: number, rand: Rng) => Float32Array> = {
+  rocket,
+  cards,
+  network,
+  helix,
+  torus,
+};
+
+export function buildShapes(count: number): Record<ShapeName, Float32Array> {
+  const out = {} as Record<ShapeName, Float32Array>;
+  (Object.keys(BUILDERS) as ShapeName[]).forEach((name, index) => {
+    out[name] = BUILDERS[name](count, seeded(20260927 + index * 101));
+  });
+  return out;
 }

@@ -16,7 +16,7 @@ import { workMedia } from "@/lib/media-manifest";
  */
 export function InsideTheWorkSection() {
   return (
-    <section data-rocket="work" className="py-24 sm:py-32">
+    <section className="py-24 sm:py-32">
       <SectionHead
         index="05"
         label="inside the work"

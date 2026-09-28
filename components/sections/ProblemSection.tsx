@@ -24,7 +24,7 @@ const THREAD = [
 
 export function ProblemSection() {
   return (
-    <section data-rocket="problem" className="pt-10 pb-24 sm:pb-32">
+    <section className="pt-10 pb-24 sm:pb-32">
       <SectionHead
         index="01"
         label="the problem"

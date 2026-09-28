@@ -16,7 +16,7 @@ import { RollingNumber } from "@/components/motion/RollingNumber";
  */
 export function CountBanner({ count }: { count: number }) {
   return (
-    <section data-rocket="feed" style={{ paddingInline: "var(--hero-inset)" }}>
+    <section style={{ paddingInline: "var(--hero-inset)" }}>
       <div
         className="relative overflow-hidden rounded-[var(--radius-hero)] px-6 py-28 text-center sm:py-40"
         style={{

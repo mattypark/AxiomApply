@@ -2,56 +2,41 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import {
-  addLights,
-  buildRocket,
-  disposeTree,
-  glowSprite,
-  makeGlowTexture,
-  makeRingTexture,
-} from "@/components/rocket/model";
-import {
-  COMPACT_PATH,
-  DESKTOP_MIN_WIDTH,
-  DESKTOP_PATH,
-  resolveBeats,
-  scrollToCurve,
-  type Beat,
-  type ResolvedPath,
-} from "@/components/rocket/path";
+import { CHAPTERS } from "@/components/rocket/chapters";
+import { buildShapes, type ShapeName } from "@/components/rocket/model";
+import { createParticles } from "@/components/rocket/particles";
+import { clamp01, landingAt, liftAt, morphAt } from "@/components/rocket/path";
 
 /**
- * The scroll-scrubbed rocket: one fixed, transparent, full-viewport canvas
- * that never takes a click.
+ * The 3D object: one fixed, transparent canvas that never takes a click, and
+ * one particle cloud that lives in two places on the page.
  *
- * Everything on screen — position, roll, trail, which orbs are lit — is a pure
- * function of scroll position, so scrolling up plays it backwards with no
- * extra logic. The only state carried between frames is the eased scroll
- * value, which is what makes it feel like a scrubbed video rather than a
- * jittery one.
+ *   story   — sits in the pinned stage (`[data-story-stage]`), morphing shape
+ *             per chapter and holding still while each chapter's text arrives.
+ *             After the last chapter it lifts off, slowly, up and out.
+ *   landing — comes back down as the closing band scrolls in and settles on
+ *             the pad (`[data-landing-pad]`), which lights when it touches.
  *
- * Loaded through next/dynamic with ssr:false (RocketLayer), so three never
- * ships in the server bundle or delays first paint.
+ * Positions come from the DOM every frame, so the object is always exactly
+ * over its stage or its pad whatever the layout does. Every motion is eased
+ * twice — once by the eased scroll, once by a slow follow — which is what
+ * makes it turn like something heavy instead of snapping.
+ *
+ * Desktop only; RocketLayer does not mount it below 1024px.
  */
 
+const COUNT = 6500;
 const CAM_Z = 9;
 const FOV = 40;
 const TAN = Math.tan((FOV * Math.PI) / 360);
-const TRAIL_POINTS = 140;
-/** Eased scroll: fraction of the remaining distance covered per frame. */
-const INERTIA = 0.075;
+/** Shape clouds are ~3.4 units tall. */
+const SHAPE_HEIGHT = 3.4;
+/** How much of each frame's gap the scroll closes. Lower is heavier. */
+const SCROLL_EASE = 0.07;
+/** How much of each frame's gap position/rotation close. Lower turns slower. */
+const FOLLOW = 0.06;
 
-/** Where along each path the "passions" hang, as beat indices. */
-const ORB_BEATS = {
-  desktop: [1.5, 3.5, 5, 11, 15.5, 17.5, 23],
-  compact: [1.5, 3.5, 5.5, 7.5],
-};
-const ORB_COLORS = [0x7dffa0, 0xffd166, 0x6be3ff, 0xff8fb1, 0xc9a7ff, 0xffffff, 0xff9d5c];
-
-const smoothstep = (a: number, b: number, x: number) => {
-  const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
-  return t * t * (3 - 2 * t);
-};
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 export default function RocketScene() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -60,295 +45,245 @@ export default function RocketScene() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // The prototype's colours were tuned with colour management off (r128's
-    // default). Matching that keeps its exact greens.
-    THREE.ColorManagement.enabled = false;
-
     let renderer: THREE.WebGLRenderer;
     try {
       renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, premultipliedAlpha: true });
     } catch {
-      // No WebGL: the page is complete without the rocket.
-      return;
+      return; // No WebGL: the page is complete without the object.
     }
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    renderer.setPixelRatio(pixelRatio);
     renderer.setClearColor(0x000000, 0);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.1;
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 100);
     camera.position.set(0, 0, CAM_Z);
-    addLights(scene);
 
-    const glowTexture = makeGlowTexture();
-    const ringTexture = makeRingTexture();
-    const parts = buildRocket(glowTexture);
-    scene.add(parts.rocket);
+    const shapes = buildShapes(COUNT);
+    const chapterShapes: ShapeName[] = CHAPTERS.map((chapter) => chapter.shape);
+    const cloud = createParticles(COUNT, pixelRatio);
+    cloud.uniforms.uMotion.value = reduce ? 0 : 1;
+    cloud.uniforms.uMouseOn.value = reduce ? 0 : 1;
+    const object = new THREE.Group();
+    object.add(cloud.points);
+    scene.add(object);
 
-    // Orbs — the passions the rocket lights up as it passes.
-    type Orb = {
-      beat: number;
-      dy: number;
-      color: THREE.Color;
-      mesh: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>;
-      glow: THREE.Sprite;
-      shock: THREE.Sprite;
-      u: number;
-    };
-    const dim = new THREE.Color(0x1a3a22);
-    let orbs: Orb[] = [];
-
-    function buildOrbs(beats: number[]) {
-      for (const orb of orbs) {
-        scene.remove(orb.mesh);
-        disposeTree(orb.mesh);
-      }
-      orbs = beats.map((beat, index) => {
-        const color = ORB_COLORS[index % ORB_COLORS.length];
-        const mesh = new THREE.Mesh(
-          new THREE.SphereGeometry(0.1, 24, 16),
-          new THREE.MeshBasicMaterial({ color: 0x1a3a22 }),
-        );
-        const glow = glowSprite(glowTexture.clone(), color, 0.15);
-        glow.scale.set(0.9, 0.9, 1);
-        mesh.add(glow);
-        const shock = glowSprite(ringTexture.clone(), color, 0);
-        mesh.add(shock);
-        scene.add(mesh);
-        return { beat, dy: index % 2 ? -0.9 : 0.9, color: new THREE.Color(color), mesh, glow, shock, u: 0 };
-      });
+    let pair = "";
+    function showPair(from: ShapeName, to: ShapeName) {
+      const key = `${from}>${to}`;
+      if (key === pair) return;
+      pair = key;
+      cloud.setPair(shapes[from], shapes[to]);
     }
+    showPair("rocket", "rocket");
 
-    // Exhaust trail. Normal blending with per-point alpha rather than the
-    // prototype's additive points, which vanished on the pale gradient.
-    const trailPositions = new Float32Array(TRAIL_POINTS * 3);
-    const trailColors = new Float32Array(TRAIL_POINTS * 4);
-    const trailGeometry = new THREE.BufferGeometry();
-    trailGeometry.setAttribute("position", new THREE.BufferAttribute(trailPositions, 3));
-    trailGeometry.setAttribute("color", new THREE.BufferAttribute(trailColors, 4));
-    const trail = new THREE.Points(
-      trailGeometry,
-      new THREE.PointsMaterial({
-        size: 0.42,
-        map: glowTexture.clone(),
-        vertexColors: true,
-        transparent: true,
-        depthWrite: false,
-        sizeAttenuation: true,
-      }),
-    );
-    trail.frustumCulled = false;
-    scene.add(trail);
+    // ---- layout ---------------------------------------------------------
+    let vw = window.innerWidth;
+    let vh = window.innerHeight;
+    const halfWorld = CAM_Z * TAN; // world half-height at z = 0
 
-    // Layout-dependent state, rebuilt on resize and on layout shifts.
-    let curve = new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(0, 1, 0)]);
-    let resolved: ResolvedPath = { positions: [0, 1], stretchFrom: 0, max: 1 };
-    let beatCount = 2;
-    let baseScale = 0.62;
-    let compact = false;
-    let orbsAllowed = true;
-
-    function layout() {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      renderer.setSize(width, height, false);
-      const aspect = width / height;
-      camera.aspect = aspect;
+    function resize() {
+      vw = window.innerWidth;
+      vh = window.innerHeight;
+      renderer.setSize(vw, vh, false);
+      camera.aspect = vw / vh;
       camera.updateProjectionMatrix();
-
-      const nextCompact = width < DESKTOP_MIN_WIDTH;
-      const beats: Beat[] = nextCompact ? COMPACT_PATH : DESKTOP_PATH;
-      // Desktop is a notch smaller than the prototype's 0.62 so an upright
-      // rocket fits inside the gutters beside the 49.5rem text column.
-      baseScale = nextCompact ? (width < 640 ? 0.2 : 0.3) : 0.5 * Math.min(1, aspect * 0.85);
-      // The trail is sized in world units; tie it to the rocket so a phone's
-      // small rocket does not drag a desktop-sized smear across the copy.
-      (trail.material as THREE.PointsMaterial).size = 0.42 * (baseScale / 0.5);
-
-      curve = new THREE.CatmullRomCurve3(
-        beats.map((beat) => {
-          const halfHeight = (CAM_Z - beat.z) * TAN;
-          return new THREE.Vector3(beat.x * halfHeight * aspect, beat.y * halfHeight, beat.z);
-        }),
-        false,
-        "centripetal",
-      );
-      beatCount = beats.length;
-      resolved = resolveBeats(beats);
-
-      if (nextCompact !== compact || orbs.length === 0) {
-        compact = nextCompact;
-        buildOrbs(compact ? ORB_BEATS.compact : ORB_BEATS.desktop);
-      }
-      for (const orb of orbs) {
-        orb.u = orb.beat / (beatCount - 1);
-        const point = curve.getPoint(orb.u);
-        const lift = orb.dy * (compact ? 0.35 : 0.5 + Math.max(0, point.z) * 0.12);
-        orb.mesh.position.set(point.x, point.y + lift, point.z - 0.4);
-      }
-      // Phones get the rocket alone; orbs at that size are specks over text.
-      orbsAllowed = !compact || width >= 640;
     }
 
-    // Scroll, eased.
-    let target = window.scrollY;
-    let current = target;
-    let previousU = 0;
+    const toWorldX = (px: number) => ((px - vw / 2) / (vh / 2)) * halfWorld;
+    const toWorldY = (py: number) => (-(py - vh / 2) / (vh / 2)) * halfWorld;
+    const pxToWorld = (px: number) => (px / (vh / 2)) * halfWorld;
+
+    // ---- input ------------------------------------------------------------
+    let targetScroll = window.scrollY;
+    let scroll = targetScroll;
     const onScroll = () => {
-      target = window.scrollY;
+      targetScroll = window.scrollY;
     };
 
-    let layoutFrame = 0;
-    const scheduleLayout = () => {
-      if (layoutFrame) return;
-      layoutFrame = requestAnimationFrame(() => {
-        layoutFrame = 0;
-        layout();
-      });
+    const mouse = { x: 0, y: 0, nx: 0, ny: 0, inside: false };
+    const onMove = (event: PointerEvent) => {
+      mouse.x = event.clientX;
+      mouse.y = event.clientY;
+      mouse.nx = event.clientX / vw - 0.5;
+      mouse.ny = event.clientY / vh - 0.5;
+      mouse.inside = true;
+    };
+    const onLeave = () => {
+      mouse.inside = false;
     };
 
-    const up = new THREE.Vector3(0, 1, 0);
-    const tangent = new THREE.Vector3();
-    const facing = new THREE.Quaternion();
-    const trailHead = new THREE.Color(0.85, 1, 0.8);
-    const trailTail = new THREE.Color(0.12, 0.55, 0.24);
-    const scratch = new THREE.Color();
+    let padHover = false;
+    const onPadEnter = () => {
+      padHover = true;
+    };
+    const onPadLeave = () => {
+      padHover = false;
+    };
+    const padElement = document.querySelector<HTMLElement>("[data-landing-pad]");
+    padElement?.addEventListener("pointerenter", onPadEnter);
+    padElement?.addEventListener("pointerleave", onPadLeave);
 
+    // ---- the frame --------------------------------------------------------
+    const target = { x: 0, y: 0, scale: 1, tilt: 0, opacity: 0 };
+    const now = { x: 0, y: 0, scale: 1, tilt: 0, opacity: 0, spin: 0, lookX: 0, lookY: 0 };
     let frame = 0;
+    let settled = false;
+    let landed = false;
 
-    function tick(now: number) {
+    function tick(time: number) {
       frame = requestAnimationFrame(tick);
-      const time = now * 0.001;
+      const t = time * 0.001;
+      scroll += (targetScroll - scroll) * (reduce ? 1 : SCROLL_EASE);
 
-      current += (target - current) * (reduce ? 1 : INERTIA);
-      const u = scrollToCurve(current, resolved);
-      const velocity = u - previousU;
-      previousU = u;
-      const speed = Math.min(1, Math.abs(velocity) * 260);
+      const story = document.querySelector<HTMLElement>("[data-story]");
+      const stage = document.querySelector<HTMLElement>("[data-story-stage]");
 
-      const position = curve.getPoint(u);
-      curve.getTangent(u, tangent);
-      tangent.z *= 0.35;
-      tangent.normalize();
-      facing.setFromUnitVectors(up, tangent);
-      parts.rocket.quaternion.slerp(facing, reduce ? 1 : 0.25);
+      let mode: "story" | "landing" | "none" = "none";
+      let chapterFloat = 0;
+      let landing = 0;
+      let padRect: DOMRect | null = null;
 
-      const bob = reduce ? 0 : Math.sin(time * 1.6) * 0.06 * (1 - speed);
-      parts.rocket.position.set(position.x, position.y + bob, position.z);
-      parts.rocket.scale.setScalar(baseScale);
-      parts.spin.rotation.y = u * Math.PI * 8 + (reduce ? 0 : Math.sin(time * 0.8) * 0.05);
-
-      // Flame: bigger with speed, flickering unless motion is reduced.
-      const intensity = 0.45 + 0.55 * speed;
-      const flicker = reduce ? 1 : 1 + (Math.sin(time * 41) + Math.sin(time * 23.7)) * 0.05;
-      const stretch = reduce ? 1 : 1 + Math.sin(time * 31) * 0.06;
-      parts.flame.scale.set(flicker, (0.5 + intensity * 0.9) * stretch, flicker);
-      parts.flameLight.intensity = (1 + intensity * 2.4) * Math.PI;
-      (parts.flameGlow.material as THREE.SpriteMaterial).opacity = 0.5 + intensity * 0.45;
-      (parts.halo.material as THREE.SpriteMaterial).opacity = 0.18 + intensity * 0.2;
-
-      // Orbit rings exist only in the close-up. The prototype kept them faintly
-      // on the whole way, and their bright dots drifted across copy.
-      const zoom = smoothstep(0.8, 2.2, position.z);
-      for (const orbit of parts.orbits) {
-        orbit.tilt.visible = zoom > 0.01;
-        orbit.tilt.scale.setScalar(0.6 + 0.4 * zoom);
+      if (padElement) {
+        padRect = padElement.getBoundingClientRect();
+        // Measured against the eased scroll, not the live one, so the descent
+        // has the same weight as everything else.
+        const easedCentre = padRect.top + padRect.height / 2 + (window.scrollY - scroll);
+        landing = landingAt(easedCentre, vh);
+        if (landing > 0) mode = "landing";
       }
-      parts.orbits[0].mat.opacity = 0.7 * zoom;
-      parts.orbits[1].mat.opacity = 0.5 * zoom;
-      parts.orbits[0].pivot.rotation.z = (reduce ? 0 : time * 1.2) + u * 20;
-      parts.orbits[1].pivot.rotation.z = -(reduce ? 0 : time * 0.8) - u * 14;
 
-      // Trail: the last stretch of the path behind the rocket.
-      const visible = 0.35 + 0.65 * intensity;
-      for (let index = 0; index < TRAIL_POINTS; index += 1) {
-        const fraction = index / TRAIL_POINTS;
-        const t = u - 0.004 - index * 0.0009;
-        const alive = t >= 0 ? 1 : 0;
-        const point = curve.getPoint(Math.max(0, t));
-        const wobble = reduce ? 0 : 0.05 * fraction;
-        trailPositions[index * 3] = point.x + Math.sin(index * 1.7 + time * 3) * wobble;
-        trailPositions[index * 3 + 1] = point.y + Math.cos(index * 1.3 + time * 2.6) * wobble;
-        trailPositions[index * 3 + 2] = point.z;
-        scratch.copy(trailHead).lerp(trailTail, fraction);
-        trailColors[index * 4] = scratch.r;
-        trailColors[index * 4 + 1] = scratch.g;
-        trailColors[index * 4 + 2] = scratch.b;
-        trailColors[index * 4 + 3] = Math.pow(1 - fraction, 1.6) * 0.85 * visible * alive;
-      }
-      trailGeometry.attributes.position.needsUpdate = true;
-      trailGeometry.attributes.color.needsUpdate = true;
+      if (mode === "none" && story && stage) {
+        const storyTop = story.getBoundingClientRect().top + window.scrollY;
+        chapterFloat = (scroll - storyTop) / vh;
+        const rect = stage.getBoundingClientRect();
+        const lift = liftAt(chapterFloat, CHAPTERS.length);
+        if (rect.bottom > 0 && rect.top < vh && lift < 1) {
+          mode = "story";
+          const morph = morphAt(chapterFloat, chapterShapes);
+          showPair(morph.from, morph.to);
+          cloud.uniforms.uMix.value = morph.mix;
 
-      // Orbs: each exists only around its own moment. The path is in screen
-      // space, so an orb left on screen would sit over whatever section
-      // scrolls under it later — the prototype's orbs covered its headline.
-      // Each fades in as the rocket approaches, lights as it passes, pops a
-      // ring, and fades out behind it.
-      const span = 0.06;
-      for (const orb of orbs) {
-        const presence =
-          smoothstep(orb.u - span * 1.6, orb.u - span * 0.4, u) *
-          (1 - smoothstep(orb.u + span * 0.8, orb.u + span * 1.8, u));
-        orb.mesh.visible = orbsAllowed && presence > 0.01;
-        const lit = smoothstep(orb.u - 0.012, orb.u + 0.012, u);
-        orb.mesh.material.color.copy(dim).lerp(orb.color, lit);
-        const pulse = reduce ? 0 : Math.sin(time * 2 + orb.u * 30) * 0.03 * lit;
-        orb.mesh.scale.setScalar((0.6 + 0.6 * lit + pulse) * presence);
-        // Kept low: the glow is additive, and on the pale end of the page a
-        // bright one reads as a white disc rather than as light.
-        (orb.glow.material as THREE.SpriteMaterial).opacity = (0.1 + 0.4 * lit) * presence;
-        const since = u - orb.u;
-        const shock = orb.shock.material as THREE.SpriteMaterial;
-        if (since > 0 && since < 0.04) {
-          const k = since / 0.04;
-          shock.opacity = (1 - k) * 0.9;
-          orb.shock.scale.setScalar(1 + k * 7);
-        } else {
-          shock.opacity = 0;
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height * 0.5;
+          const size = Math.min(rect.width, rect.height) * 0.5;
+          // Lift-off: rises most of a screen and drifts right, leaning into it.
+          target.x = toWorldX(cx + lift * vw * 0.18);
+          target.y = toWorldY(cy - lift * vh * 1.15);
+          target.scale = pxToWorld(size) / SHAPE_HEIGHT;
+          target.tilt = -lift * 0.32;
+          target.opacity = 1 - clamp01((lift - 0.75) / 0.25);
         }
       }
 
-      camera.position.x = compact ? 0 : Math.sin(u * Math.PI * 2) * 0.25;
-      camera.lookAt(0, 0, 0);
+      if (mode === "landing" && padRect) {
+        showPair("rocket", "rocket");
+        cloud.uniforms.uMix.value = 0;
+        const padX = padRect.left + padRect.width / 2;
+        const padY = padRect.top + padRect.height * 0.35;
+        const height = Math.min(260, vh * 0.3);
+        // A gentle arc in from the upper right that flattens into the pad.
+        const q = landing;
+        const sx = padX + vw * 0.22;
+        const sy = padY - vh * 1.05;
+        const cx = padX + vw * 0.2;
+        const cy = padY - vh * 0.35;
+        const ex = padX;
+        const ey = padY - height / 2;
+        const a = (1 - q) * (1 - q);
+        const b = 2 * (1 - q) * q;
+        const c = q * q;
+        target.x = toWorldX(a * sx + b * cx + c * ex);
+        target.y = toWorldY(a * sy + b * cy + c * ey);
+        target.scale = pxToWorld(height) / SHAPE_HEIGHT;
+        // Leans back against its own descent and straightens as it arrives.
+        target.tilt = 0.28 * (1 - q) ** 1.5;
+        target.opacity = clamp01(q * 3);
+      }
+
+      if (mode === "none") target.opacity = 0;
+
+      // Slow follow: this is what makes it turn like something with mass. In
+      // the story the stage itself is the anchor, so position follows it
+      // tightly and only rotation carries the weight; the lift-off and the
+      // landing are free flight, and follow slowly.
+      const lifting = mode === "story" && liftAt(chapterFloat, CHAPTERS.length) > 0;
+      const follow = reduce ? 1 : mode === "story" && !lifting ? 0.35 : FOLLOW;
+      const jump = !settled || reduce;
+      now.x = jump ? target.x : lerp(now.x, target.x, follow);
+      now.y = jump ? target.y : lerp(now.y, target.y, follow);
+      now.scale = jump ? target.scale : lerp(now.scale, target.scale, follow);
+      now.tilt = lerp(now.tilt, target.tilt, reduce ? 1 : 0.04);
+      now.opacity = lerp(now.opacity, target.opacity, reduce ? 1 : 0.08);
+      if (mode !== "none") settled = true;
+
+      // The cursor: the object leans toward it, slowly.
+      const lookX = mouse.inside && !reduce ? mouse.nx : 0;
+      const lookY = mouse.inside && !reduce ? mouse.ny : 0;
+      now.lookX = lerp(now.lookX, lookX, 0.04);
+      now.lookY = lerp(now.lookY, lookY, 0.04);
+
+      // Turning: a slow idle spin plus a quarter-turn per chapter.
+      const spinTarget = (reduce ? 0 : t * 0.12) + (mode === "story" ? chapterFloat * 0.9 : 0);
+      now.spin = lerp(now.spin, spinTarget, reduce ? 1 : 0.05);
+
+      object.position.set(now.x, now.y, 0);
+      object.scale.setScalar(now.scale);
+      object.rotation.set(0.12 + now.lookY * 0.35, now.spin + now.lookX * 0.6, now.tilt);
+
+      cloud.uniforms.uTime.value = t;
+      cloud.uniforms.uOpacity.value = now.opacity;
+      cloud.uniforms.uSize.value = 22 * Math.min(1.4, Math.max(0.7, now.scale / 0.55));
+      cloud.uniforms.uSwirl.value = lerp(cloud.uniforms.uSwirl.value, padHover ? 1 : 0, 0.08);
+      cloud.uniforms.uMouse.value.set(
+        mouse.inside ? toWorldX(mouse.x) : 999,
+        mouse.inside ? toWorldY(mouse.y) : 999,
+      );
+
+      // The pad lights when the rocket is down on it.
+      const isLanded = mode === "landing" && landing > 0.97;
+      if (isLanded !== landed && padElement) {
+        landed = isLanded;
+        padElement.dataset.landed = String(landed);
+      }
+
+      if (now.opacity < 0.005) {
+        renderer.clear();
+        return;
+      }
       renderer.render(scene, camera);
     }
 
-    // A hidden tab renders nothing.
     const onVisibility = () => {
       cancelAnimationFrame(frame);
       if (document.visibilityState === "visible") {
-        target = current = window.scrollY;
+        targetScroll = scroll = window.scrollY;
         frame = requestAnimationFrame(tick);
       }
     };
 
-    // Sections move when fonts land, images decode or the FAQ opens; the
-    // beats are measured from them, so re-measure whenever the page resizes.
-    const observer = new ResizeObserver(scheduleLayout);
-    observer.observe(document.body);
-
-    layout();
-    current = target = window.scrollY;
-    previousU = scrollToCurve(current, resolved);
+    resize();
+    window.addEventListener("resize", resize);
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", scheduleLayout);
+    window.addEventListener("pointermove", onMove, { passive: true });
+    document.documentElement.addEventListener("pointerleave", onLeave);
     document.addEventListener("visibilitychange", onVisibility);
     frame = requestAnimationFrame(tick);
 
     return () => {
       cancelAnimationFrame(frame);
-      cancelAnimationFrame(layoutFrame);
-      observer.disconnect();
+      window.removeEventListener("resize", resize);
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", scheduleLayout);
+      window.removeEventListener("pointermove", onMove);
+      document.documentElement.removeEventListener("pointerleave", onLeave);
       document.removeEventListener("visibilitychange", onVisibility);
-      disposeTree(scene);
-      glowTexture.dispose();
-      ringTexture.dispose();
+      padElement?.removeEventListener("pointerenter", onPadEnter);
+      padElement?.removeEventListener("pointerleave", onPadLeave);
+      if (padElement) delete padElement.dataset.landed;
+      cloud.points.geometry.dispose();
+      cloud.points.material.dispose();
       renderer.dispose();
     };
   }, []);

@@ -1,5 +1,6 @@
 import { GradientHero } from "@/components/hero/GradientHero";
 import { RocketLayer } from "@/components/rocket/RocketLayer";
+import { StorySection } from "@/components/story/StorySection";
 import { WelcomeSections } from "@/components/welcome/WelcomeSections";
 import { getProfile, getUser } from "@/lib/auth";
 import { getInternshipCount } from "@/lib/internship-count";
@@ -28,9 +29,11 @@ export default async function WelcomePage() {
         ctaHref={ctaHref}
         placements={startups.length}
       />
+      {/* Six chapters beside a pinned 3D stage on desktop; plain text below. */}
+      <StorySection />
       <WelcomeSections internshipCount={internshipCount} />
-      {/* The scroll-scrubbed rocket: fixed, transparent, never takes a click.
-          Its flight path is anchored to the sections above (data-rocket). */}
+      {/* The particle object: morphs through the story's chapters, lifts
+          off, and lands on the pad in the closing band. Desktop only. */}
       <RocketLayer />
     </>
   );

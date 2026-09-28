@@ -817,6 +817,63 @@ body {
 }
 .ax-shine:hover { animation: ax-shine 1s linear; }
 
+/* ---------- the story's chapters ----------
+   Desktop only: a chapter's lines are hidden until it is the one at the
+   centre of the screen, then rise in one after another (--rise is each line's
+   delay). Leaving is quicker than arriving, so two chapters never read at
+   once. Below 1024px there is no stage and the chapters are plain text. */
+
+@media (min-width: 1024px) {
+  .story-rise {
+    transition:
+      opacity 0.8s var(--ease-story),
+      transform 0.8s var(--ease-story),
+      filter 0.8s var(--ease-story);
+    transition-delay: var(--rise, 0ms);
+  }
+
+  .story-chapter[data-active="false"] .story-rise {
+    opacity: 0;
+    transform: translateY(26px);
+    filter: blur(4px);
+    transition-duration: 0.35s;
+    transition-delay: 0ms;
+  }
+}
+
+/* The landing pad lights when the rocket is down on it, and the button
+   under it answers. RocketScene sets data-landed on the pad. */
+.landing-pad-ring {
+  transition:
+    opacity 0.6s var(--ease-story),
+    filter 0.6s var(--ease-story);
+}
+
+[data-landed="true"] .landing-pad-ring {
+  filter: drop-shadow(0 0 14px rgb(125 255 160 / 0.8));
+}
+
+footer:has([data-landed="true"]) .landing-cta {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.75),
+    inset 0 -2px 3px rgba(111, 207, 138, 0.5),
+    0 3px 0 #0e4f25,
+    0 0 0 6px rgb(125 255 160 / 0.18),
+    0 7px 24px rgb(125 255 160 / 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-rise,
+  .landing-pad-ring {
+    transition: none;
+  }
+
+  .story-chapter[data-active="false"] .story-rise {
+    transform: none;
+    filter: none;
+  }
+}
+
 /* ---------- scroll reveal ----------
    Driven by the data-inview attribute that <InView> writes, so the
    resting and revealed states both live in CSS and nothing animates

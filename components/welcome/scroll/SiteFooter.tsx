@@ -85,7 +85,7 @@ export function SiteFooter() {
       style={{ marginInline: "var(--hero-inset)", marginBottom: "var(--hero-inset)" }}
     >
       <div
-        className="relative overflow-hidden rounded-b-[var(--radius-hero)] pt-40 sm:pt-56"
+        className="relative overflow-hidden rounded-b-[var(--radius-hero)] pt-40 sm:pt-56 lg:pt-20"
         style={{
           background:
             "linear-gradient(180deg, rgb(247 249 248 / 0) 0%, #d6f2de 5%, #7fcf95 10%, #2a9447 16%, #1b7a3a 30%, #13692f 60%, #0a4a24 78%, #000a04 100%)",
