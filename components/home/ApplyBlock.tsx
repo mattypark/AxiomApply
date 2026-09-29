@@ -89,14 +89,14 @@ export function ApplyBlock() {
               label={`${path.cta} with Google`}
             />
             {path.side === "intern" ? (
-              <div className="relative mt-5">
+              <div className="relative mb-6">
                 <OAuthButton
                   provider="github"
                   tone="secondary"
                   next="/onboarding?side=intern"
                   label={`${path.cta} with GitHub`}
                 />
-                <RecommendNote placement="above" />
+                <RecommendNote placement="below" />
               </div>
             ) : null}
           </div>

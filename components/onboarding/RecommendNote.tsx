@@ -15,8 +15,9 @@ import { Poor_Story } from "next/font/google";
  *
  * `placement="margin"` hangs it in the left margin on wide screens (xl, where
  * EnterShell leaves room) and above the button's right end below that;
- * `placement="above"` always sits above — for tight layouts like the home's
- * apply block.
+ * `placement="above"` always sits above; `placement="below"` sits under the
+ * button's bottom-right corner, arrow pointing up, and keeps a small double
+ * pulse going — the home's apply block uses it.
  */
 
 const hand = Poor_Story({ weight: "400", subsets: ["latin"], display: "swap" });
@@ -85,7 +86,7 @@ function Stroke({ d, drawn, delay, width }: { d: string; drawn: boolean; delay: 
   );
 }
 
-export function RecommendNote({ placement = "margin" }: { placement?: "margin" | "above" }) {
+export function RecommendNote({ placement = "margin" }: { placement?: "margin" | "above" | "below" }) {
   const { ref, drawn } = useDrawn();
   const shaft = WRITE_MS;
   const head = WRITE_MS + ARROW_MS * 0.8;
@@ -104,8 +105,25 @@ export function RecommendNote({ placement = "margin" }: { placement?: "margin" |
     </span>
   );
 
+  const below = (
+    <span
+      className={`absolute top-full right-5 mt-1 flex origin-top-right items-start gap-0.5 ${
+        drawn ? "note-beat" : ""
+      }`}
+      // The pulse waits until the word and arrow have finished drawing.
+      style={{ animationDelay: `${WRITE_MS + ARROW_MS + 300}ms` }}
+    >
+      <Written drawn={drawn} className="mt-3 -rotate-3 text-[15px]" />
+      <svg width="26" height="24" viewBox="0 0 34 30" fill="none">
+        <Stroke d="M4 26 C 18 26, 26 18, 27 5" drawn={drawn} delay={shaft} width={2.2} />
+        <Stroke d="M21 11 L 27 4 L 32 12" drawn={drawn} delay={head} width={2.2} />
+      </svg>
+    </span>
+  );
+
   return (
     <span ref={ref} aria-hidden="true" className={`${hand.className} pointer-events-none text-ms-muted`}>
+      {placement === "below" ? below : null}
       {placement === "margin" ? (
         // Wide: in the left margin, arrow curling right into the button.
         <span className="absolute top-1/2 right-full mr-2 hidden -translate-y-[68%] flex-col items-end xl:flex">
@@ -116,7 +134,7 @@ export function RecommendNote({ placement = "margin" }: { placement?: "margin" |
           </svg>
         </span>
       ) : null}
-      {above}
+      {placement === "below" ? null : above}
     </span>
   );
 }

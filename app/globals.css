@@ -364,6 +364,21 @@ html[data-path="chapter"] {
   .rocket-loop-picture { transition: none; transform: none; }
 }
 
+/* RecommendNote's "below" placement: two quick beats, then a rest, looping. */
+@keyframes note-beat {
+  0%, 36%, 100% { transform: scale(1); }
+  9%, 27% { transform: scale(1.14); }
+  18% { transform: scale(1.02); }
+}
+
+.note-beat {
+  animation: note-beat 2.4s var(--ease-ms) infinite both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .note-beat { animation: none; }
+}
+
 /* The light-green ground the home hero, the welcome page and the flow share. */
 .ms-ground,
 .ms.ms-ground {
