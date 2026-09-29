@@ -96,8 +96,9 @@ export function AuthForm({
       return;
     }
     if (data.session) {
-      // Signed in immediately — full navigation so the server sees the cookies.
-      window.location.assign(next);
+      // Signed in immediately — full navigation so the server sees the
+      // cookies, through the same landing rules as Google (admins → HQ).
+      window.location.assign(`/auth/continue?next=${encodeURIComponent(next)}`);
       return;
     }
     // No session back means "Confirm email" is still ON in Supabase, so the

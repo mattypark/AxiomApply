@@ -1588,3 +1588,22 @@ footer:has([data-landed="true"]) .landing-cta {
     transform: none;
   }
 }
+
+/* ── Rocket message (404, sign-in error) ─────────────────────────────────
+   The parked rocket floats a few pixels and its shadow breathes with it.
+   Transform and opacity only; still under reduced motion. */
+@keyframes rocket-idle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes rocket-idle-shadow {
+  0%, 100% { transform: scaleX(1); opacity: 1; }
+  50% { transform: scaleX(0.82); opacity: 0.6; }
+}
+.rocket-idle { animation: rocket-idle 3.2s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+.rocket-idle-shadow { animation: rocket-idle-shadow 3.2s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .rocket-idle,
+  .rocket-idle-shadow { animation: none; }
+}
+

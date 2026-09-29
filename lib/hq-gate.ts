@@ -32,6 +32,15 @@ function codeMatches(given: string): boolean {
   return a.length === b.length ? timingSafeEqual(a, b) : (timingSafeEqual(b, b), false);
 }
 
+/**
+ * HQ's address, for sending an admin there after sign-in. Null while
+ * HQ_CODE is unset or too short, so nobody is ever sent to a closed door.
+ */
+export function hqPath(): string | null {
+  const code = process.env.HQ_CODE ?? "";
+  return code.length >= MIN_CODE_LENGTH ? `/hq/${encodeURIComponent(code)}` : null;
+}
+
 /** The signed-in admin, or null. Checks the session first, then the code. */
 export async function checkHq(code: string): Promise<HqActor | null> {
   const gate = await requireAdmin();

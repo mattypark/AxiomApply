@@ -63,14 +63,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "Axiom Pathways",
-    title: "Axiom Pathways — Connecting young talent to their passions",
+    title: "Axiom Pathways — Find your passion at Axiom",
     description:
       "A nonprofit placing high school and early-college students into real startup work. Selected for what they have shipped, not their credentials.",
     url: "https://axiomapply.com",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Axiom Pathways — Connecting young talent to their passions",
+    title: "Axiom Pathways — Find your passion at Axiom",
     description:
       "A nonprofit placing high school and early-college students into real startup work.",
   },
