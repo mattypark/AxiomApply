@@ -127,8 +127,10 @@ export function PageTransition({ children }: { children: ReactNode }) {
       >
         <div ref={stageRef} className="absolute inset-0 overflow-hidden" style={{ visibility: "hidden" }} />
         <div
-          className={`absolute inset-0 grid place-items-center transition-[opacity,transform] duration-500 ease-ms ${
-            covered ? "scale-100 opacity-100" : "scale-90 opacity-0"
+          // Opacity only: a scale here made the mark visibly change size as
+          // the page swapped underneath it.
+          className={`absolute inset-0 grid place-items-center transition-opacity duration-500 ease-ms ${
+            covered ? "opacity-100" : "opacity-0"
           }`}
         >
           <span className="flex items-center gap-3 text-white sm:gap-5">
@@ -137,6 +139,8 @@ export function PageTransition({ children }: { children: ReactNode }) {
               alt=""
               width={256}
               height={256}
+              // Eager, so it is decoded before the first launch and never pops in.
+              priority
               // The mark's file has wide margins; scale past them so it matches the word.
               className="h-12 w-12 scale-[1.7] object-contain brightness-0 invert sm:h-20 sm:w-20"
             />
