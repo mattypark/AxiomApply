@@ -4,8 +4,8 @@ import Link from "next/link";
 import { RocketGlyph } from "@/components/RocketGlyph";
 
 /**
- * The page for when something didn't launch: a 404, a sign-in that didn't
- * finish. The welcome page's ground and type, the flat rocket parked on the
+ * The page for when something didn't launch (a 404, a sign-in that didn't
+ * finish) and, with `lit`, for when something did (an application sent). The welcome page's ground and type, the flat rocket parked on the
  * pad with its engine off, one sentence, and a way forward.
  *
  * The rocket idles (a slow float, `.rocket-idle` in globals.css); under
@@ -17,12 +17,15 @@ export function RocketMessage({
   children,
   primary,
   secondary,
+  lit = false,
 }: {
   kicker: string;
   title: string;
   children: ReactNode;
   primary: { href: string; label: string };
   secondary?: { href: string; label: string };
+  /** Engine on, nose up: for good news (an application sent), not a dead end. */
+  lit?: boolean;
 }) {
   return (
     <div className="ms ms-ground flex min-h-dvh flex-col">
@@ -36,7 +39,7 @@ export function RocketMessage({
       <main className="mx-auto flex w-full max-w-[40rem] flex-1 flex-col items-center justify-center px-4 pb-24 text-center">
         <div className="relative flex flex-col items-center" aria-hidden="true">
           <div className="rocket-idle">
-            <RocketGlyph flame={false} width={104} height={208} className="rotate-[14deg]" />
+            <RocketGlyph flame={lit} width={104} height={208} className={lit ? "" : "rotate-[14deg]"} />
           </div>
           {/* The glyph's box keeps room below the nozzle for a flame that's off here; the shadow tucks up into it. */}
           <span className="rocket-idle-shadow -mt-12 block h-3.5 w-28 rounded-[50%] bg-ms-ink/10" />
