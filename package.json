@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "NODE_OPTIONS=--max-http-header-size=65536 next dev -p 3005",
     "build": "next build",
-    "start": "next start -p 3005"
+    "start": "next start -p 3005",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/*.test.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.6.1",
