@@ -32,13 +32,27 @@ Matthew wants one platform he and Claude can both drive from the CLI
 | Concern | Now | Cloudflare |
 |---|---|---|
 | Hosting | Vercel | Workers via `@opennextjs/cloudflare` |
-| Database | Supabase Postgres | **D1** (SQLite) — or Neon Postgres over **Hyperdrive** if the triggers/RLS port badly; decide in step 1 and say why |
+| Database | Supabase Postgres | **D1** (SQLite). Decided 2026-09-29: one platform, driven by `wrangler`. Neon was the fallback and isn't needed; see the port table in `docs/SESSION-BACKEND.md` |
 | Auth | Supabase Auth | **Better Auth** on the same DB: Google + GitHub providers, account linking on, sessions in cookies |
 | Files | Supabase Storage (`avatars`) | **R2** bucket, signed URLs |
-| Private applicant dashboard (later) | — | **Cloudflare Access** in front of `/admin/*`, allowlist Matthew's + Frank's Google emails. A hidden URL is not protection: this is minors' contact data |
+| HQ, the live applicant dashboard | `/hq/[code]`: `requireAdmin()` + a secret code, both 404 on failure (built 2026-09-29) | **Cloudflare Access** in front of `/hq/*` and `/admin/*`, allowlisting Matthew's and Frank's Google emails, with the app's two checks kept behind it. A hidden URL is not protection: this is minors' contact data |
 
 **Composio is not an auth provider.** It connects AI agents to third-party apps
 on a user's behalf. It does not log people into this site. Use Better Auth.
+
+## Where it stands (2026-09-29)
+
+- **Step 1 is done**: `docs/SESSION-BACKEND.md` has every trigger, function
+  and policy, with how each one is enforced on D1.
+- **HQ already uses the seam** step 2 asks for: `lib/data/hq/` (types, pure
+  normalise/aggregate with tests, a Supabase adapter) behind `getHqSource()`.
+  The D1 adapter implements `HqSource` and gets swapped in there.
+- `supabase/migrations/0020_hq.sql` (read/decided columns, startup status,
+  `hq_audit`) is written but **not applied**. It goes on Supabase first, and
+  into the D1 schema after.
+- The Supabase CLI is logged in to the wrong account for Axiom (project
+  `robmrvpacjqxvxrivrrz` isn't in its list). Wrangler isn't installed.
+- GitHub sign-in waits for Better Auth. The Supabase GitHub provider stays off.
 
 ## Steps (commit after each, author Matthew Park <matthew.parkk0@gmail.com>, never push)
 

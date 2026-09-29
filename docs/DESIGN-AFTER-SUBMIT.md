@@ -361,6 +361,19 @@ Done screen's promises. **No existing file was edited.** No CSS was added to
    is only a flag on signed-in accounts)?
 8. Do applicants see **who** read it ("Matthew has read it") or just "Read"?
 
+### Answers (Matthew, 2026-09-28/29)
+
+1. **Access:** both locks, secret path **and** `requireAdmin()`. Built. Cloudflare Access comes later.
+2. **Frank:** only once Cloudflare Access is in.
+3. **Read:** only the Mark read button (plus the Sheet's reviewer column X, as before). Opening the drawer doesn't count.
+4. **Decisions:** in **both** HQ and the Sheet. Each push records column Y, and an HQ decision stands until Y changes after it (`planDecision`, `lib/sheet-shared.ts`).
+5. **Edits:** decided later. Nothing is built for applicant edits.
+6. **Exports:** always include phone numbers, and every export is logged.
+7. Startups: `startup_inquiries.status` added in `0020_hq.sql`.
+8. Not asked yet.
+
+What was built is in `docs/HQ-BACKFILL.md` (the runbook) and `lib/data/hq/`.
+
 ## Hand-off for the backend session
 
 1. `lib/data/hq.ts` implementing `HqSource` above, over Supabase first, D1

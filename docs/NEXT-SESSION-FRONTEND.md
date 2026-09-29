@@ -200,3 +200,37 @@ decisions are listed in the spec.
    loop card and the click burst; reduced-motion on the new flow.
 5. Dev server: restart it every few hours — the long-running webpack dev server
    grew to 5.5 GB this session. Consider `next dev --turbopack` (ask first).
+
+## Handoff — 2026-09-29 (HQ is built)
+
+**Done, committed, nothing pushed:**
+- **HQ is real** at `/hq/[code]` (`app/hq/[code]/`). `requireAdmin()` runs,
+  then a constant-time check of `HQ_CODE`; either failure is a 404.
+  Private/no-store/no-referrer/noindex headers, and no analytics on `/hq`
+  (`components/analytics/SiteAnalytics.tsx`).
+- The data seam is `lib/data/hq/`:
+  - `types.ts`
+  - pure `normalise.ts` and `aggregate.ts`, tested
+  - `supabase.ts`, behind `getHqSource()` in `index.ts`
+  - The API is under `app/hq/[code]/api/*`, sharing `lib/hq-api.ts`.
+- The UI moved to `components/hq/` and takes an `HqClient`. `/preview/hq`
+  runs the same components over a mock client
+  (`components/preview/hq/mockClient.ts`).
+- Decisions in both places. The Sheet push fills blank answers
+  (`lib/sheet-shared.ts`, `app/api/sheet/decisions/route.ts`,
+  `APPS_SCRIPT_DECISIONS.gs`, an additive paste).
+- The backfill script is `scripts/backfill-applications.ts` (one row per
+  person, dry-run by default).
+- `npm test` runs node's built-in runner over `tests/*.test.ts` (no dependency).
+  That needed `allowImportingTsExtensions` in tsconfig.
+- **Stack decision:** Cloudflare all-in (D1 + Better Auth with Google and
+  GitHub + R2 + Access). No Composio. See `docs/SESSION-BACKEND.md` and
+  `nextsessions/backend-cloudflare.md`.
+- a16z stays the plain "a16z" name.
+
+**Waiting on Matthew** (runbook: `docs/HQ-BACKFILL.md`):
+1. Apply `0020_hq.sql`. The CLI is logged in to the wrong account for Axiom.
+2. Set `HQ_CODE`.
+3. Export the Sheet CSV, then do the backfill dry run followed by `--write`.
+4. Paste the new `APPS_SCRIPT_DECISIONS.gs`.
+5. Deploy when he chooses.
