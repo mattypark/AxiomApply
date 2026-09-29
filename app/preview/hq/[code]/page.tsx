@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PreviewFrame } from "@/components/preview/PreviewFrame";
-import { HqDashboard } from "@/components/preview/hq/HqDashboard";
+import { HqPreview } from "@/components/preview/hq/HqPreview";
 import { MOCK_HQ_CODE } from "@/components/preview/hq/secret";
 
 /**
@@ -19,7 +19,7 @@ export default async function HqSecretPreviewPage({ params }: { params: Promise<
   if (code !== MOCK_HQ_CODE) notFound();
   return (
     <PreviewFrame current="hq" ground={false}>
-      <HqDashboard initialState="ready" secretPath={`/preview/hq/${MOCK_HQ_CODE}`} />
+      <HqPreview initialState="ready" where={`/preview/hq/${MOCK_HQ_CODE}`} />
     </PreviewFrame>
   );
 }

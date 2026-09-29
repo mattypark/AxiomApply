@@ -1,4 +1,4 @@
-import type { Kpis } from "@/components/preview/hq/stats";
+import type { Kpis } from "@/lib/data/hq/types";
 
 /**
  * The four numbers someone opening HQ wants before anything else: how many,

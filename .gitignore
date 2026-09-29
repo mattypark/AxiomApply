@@ -10,3 +10,7 @@ dist
 .vercel
 *.tsbuildinfo
 next-env.d.ts
+
+# Local-only: Sheet exports for the backfill (applicant data) and QA screenshots.
+# Never committed.
+private/

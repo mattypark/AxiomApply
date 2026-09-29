@@ -1,4 +1,4 @@
-import type { FunnelStep } from "@/components/preview/hq/stats";
+import type { FunnelStep } from "@/lib/data/hq/types";
 
 /**
  * Received → read → decided → accepted. Each bar is its share of

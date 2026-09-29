@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Side } from "@/lib/apply-sides";
-import type { Day } from "@/components/preview/hq/stats";
-import { SIDE_LABEL, shortDate } from "@/components/preview/labels";
+import type { Day } from "@/lib/data/hq/types";
+import { SIDE_LABEL, shortDate } from "@/components/hq/labels";
 
 /**
  * Applications per day, stacked by side. Hand-built SVG, no chart library:

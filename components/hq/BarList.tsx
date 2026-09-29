@@ -1,6 +1,6 @@
 "use client";
 
-import type { Bar } from "@/components/preview/hq/stats";
+import type { Bar } from "@/lib/data/hq/types";
 
 /**
  * A ranked list of horizontal bars — chapter, school, grade, interest, side.

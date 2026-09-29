@@ -1,8 +1,8 @@
 "use client";
 
 import { SIDES } from "@/components/home/PathPicker";
-import type { MockApplication } from "@/components/preview/mock-data";
-import { STATUS_TONE, SIDE_LABEL, boardStatus, shortDate, statusLabel } from "@/components/preview/labels";
+import type { HqRow, HqStatus, Side } from "@/lib/data/hq/types";
+import { STATUS_TONE, SIDE_LABEL, shortDay, statusLabel } from "@/components/hq/labels";
 
 /**
  * The applications list. A dense table on a desk, a stack of two-line rows
@@ -13,21 +13,22 @@ import { STATUS_TONE, SIDE_LABEL, boardStatus, shortDate, statusLabel } from "@/
 
 const DOT = Object.fromEntries(SIDES.map((option) => [option.side, option.dot]));
 
-export function StatusPill({ app }: { app: MockApplication }) {
-  const status = boardStatus(app);
+export function StatusPill({ status, side }: { status: HqStatus; side: Side }) {
   return (
     <span className={`inline-flex h-6 items-center rounded-full px-2.5 text-[12px] font-medium whitespace-nowrap ${STATUS_TONE[status]}`}>
-      {statusLabel(status, app.side)}
+      {statusLabel(status, side)}
     </span>
   );
 }
+
+const orDash = (value: string | null) => value ?? "—";
 
 export function AppTable({
   rows,
   onOpen,
   openId,
 }: {
-  rows: readonly MockApplication[];
+  rows: readonly HqRow[];
   onOpen: (id: string) => void;
   openId: string | null;
 }) {
@@ -65,15 +66,12 @@ export function AppTable({
                   {SIDE_LABEL[app.side]}
                 </span>
               </td>
-              <td className="max-w-[14rem] truncate px-3 py-3 text-ms-body">{app.org}</td>
-              <td className="px-3 py-3 text-ms-body">{app.chapter}</td>
+              <td className="max-w-[14rem] truncate px-3 py-3 text-ms-body">{orDash(app.org)}</td>
+              <td className="max-w-[10rem] truncate px-3 py-3 text-ms-body">{orDash(app.chapter)}</td>
               <td className="px-3 py-3">
-                <span className="flex items-center gap-2">
-                  <StatusPill app={app} />
-                  {app.edits.length ? <span className="text-[12px] text-ms-muted">edited</span> : null}
-                </span>
+                <StatusPill status={app.status} side={app.side} />
               </td>
-              <td className="py-3 pr-6 pl-3 text-right text-ms-body tabular-nums">{shortDate(app.submittedAt)}</td>
+              <td className="py-3 pr-6 pl-3 text-right text-ms-body tabular-nums">{shortDay(app.submittedAt)}</td>
             </tr>
           ))}
         </tbody>
@@ -91,10 +89,10 @@ export function AppTable({
               <span className="min-w-0 flex-1">
                 <span className="block truncate font-medium text-ms-ink">{app.name}</span>
                 <span className="block truncate text-[13px] text-ms-muted">
-                  {app.org} · {app.chapter} · {shortDate(app.submittedAt)}
+                  {[app.org, app.chapter, shortDay(app.submittedAt)].filter(Boolean).join(" · ")}
                 </span>
               </span>
-              <StatusPill app={app} />
+              <StatusPill status={app.status} side={app.side} />
             </button>
           </li>
         ))}
