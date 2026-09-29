@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans, Hanken_Grotesk, Instrument_Serif, JetBrains_Mono } from "next/font/google";
-import { Analytics } from "@vercel/analytics/react";
+import { SiteAnalytics } from "@/components/analytics/SiteAnalytics";
 import { LenisProvider } from "@/components/motion/LenisProvider";
 import { PageTransition } from "@/components/transition/PageTransition";
 import { PATH_BOOT } from "@/lib/path-boot";
@@ -96,7 +96,7 @@ export default function RootLayout({
         <LenisProvider>
           <PageTransition>{children}</PageTransition>
         </LenisProvider>
-        <Analytics />
+        <SiteAnalytics />
       </body>
     </html>
   );

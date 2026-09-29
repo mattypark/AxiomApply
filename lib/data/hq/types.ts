@@ -114,17 +114,20 @@ export type HqContact = { email: string; phone: string | null };
 
 export type Ok = { ok: boolean; error?: string };
 
+/** Who is acting: the name goes on the row ("Read by Matthew"), the email into the audit log. */
+export type HqActor = { email: string; name: string };
+
 export interface HqSource {
   stats(filters: HqFilters): Promise<HqStats>;
   list(filters: HqFilters, page: HqPage): Promise<HqList>;
   get(id: string): Promise<HqDetail | null>;
   /** Logged: a minor's phone number is the thing worth a record. */
-  contact(id: string, by: string): Promise<HqContact | null>;
+  contact(id: string, by: HqActor): Promise<HqContact | null>;
   /** Never mails anyone. Decision mail still goes out from /admin/applications. */
-  decide(id: string, status: HqDecision, by: string): Promise<Ok>;
-  markRead(id: string, by: string): Promise<Ok>;
+  decide(id: string, status: HqDecision, by: HqActor): Promise<Ok>;
+  markRead(id: string, by: HqActor): Promise<Ok>;
   /** The current slice as CSV, phone numbers included (Matthew, 2026-09-28). Logged. */
-  exportCsv(filters: HqFilters, by: string): Promise<string>;
+  exportCsv(filters: HqFilters, by: HqActor): Promise<string>;
 }
 
 /** What the page calls. The server fills in the actor from the session. */

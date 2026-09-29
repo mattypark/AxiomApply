@@ -22,6 +22,20 @@ const nextConfig: NextConfig = {
         ]
       : [],
   },
+  // HQ holds applicants' personal details: never cached anywhere, never
+  // indexed, and its secret path never leaves in a Referer header.
+  async headers() {
+    return [
+      {
+        source: "/hq/:path*",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store" },
+          { key: "Referrer-Policy", value: "no-referrer" },
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       // Old Astro paths → new equivalents
