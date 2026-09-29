@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAdminSupabase } from "@/lib/supabase/admin";
 import { parseSheetRows, type SheetRow } from "@/lib/sheet-decisions";
+import { ANSWER_COLUMNS, fillNulls, planDecision } from "@/lib/sheet-shared";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -52,20 +53,35 @@ export async function POST(request: Request) {
   // for someone who already exists — the unique index is on
   // (lower(email), submitted_at), so a duplicate with a different timestamp
   // raises no error at all.
-  const known = new Map<string, { id: string; status: string; contacted: boolean }>();
+  // Every answer column is read too, so a push can fill the blanks a web
+  // insert left (they failed silently before 0017) without ever overwriting
+  // something the database holds. Before 0020_hq.sql there are no HQ columns
+  // to read; the push then behaves exactly as it always did.
+  type Known = { id: string; status: string; contacted: boolean; decidedVia?: "sheet" | "hq" | null; sheetDecision?: string | null; record: Record<string, unknown> };
+  const known = new Map<string, Known>();
   const PAGE = 1000;
+  const BASE = `id, email, name, status, contacted_elsewhere, submitted_at, ${ANSWER_COLUMNS.join(", ")}`;
+  let columns = `${BASE}, decided_via, sheet_decision`;
+  let tracksHq = true;
 
   for (let from = 0; ; from += PAGE) {
     const { data, error } = await supabase
       .from("applications")
-      .select("id, email, status, contacted_elsewhere, submitted_at")
+      .select(columns)
       .order("submitted_at", { ascending: false })
       .range(from, from + PAGE - 1);
 
+    if (error && tracksHq && /decided_via|sheet_decision/.test(error.message)) {
+      tracksHq = false;
+      columns = BASE;
+      known.clear();
+      from = -PAGE;
+      continue;
+    }
     if (error) {
       return NextResponse.json({ error: `lookup failed: ${error.message}` }, { status: 500 });
     }
-    for (const row of data ?? []) {
+    for (const row of (data ?? []) as unknown as Record<string, unknown>[]) {
       const key = String(row.email).toLowerCase();
       // Ordered newest first, so the first row seen for an address is the one
       // a status change should land on — it is also the one the applicant's
@@ -75,6 +91,10 @@ export async function POST(request: Request) {
           id: row.id as string,
           status: row.status as string,
           contacted: row.contacted_elsewhere === true,
+          ...(tracksHq
+            ? { decidedVia: (row.decided_via as Known["decidedVia"]) ?? null, sheetDecision: (row.sheet_decision as string | null) ?? null }
+            : {}),
+          record: row,
         });
       }
     }
@@ -84,6 +104,8 @@ export async function POST(request: Request) {
   const decidedAt = new Date().toISOString();
   const inserts: Record<string, unknown>[] = [];
   let updated = 0;
+  let heldForHq = 0;
+  let answersFilled = 0;
   const failures: { email: string; error: string }[] = [];
 
   for (const person of parsed.people) {
@@ -93,6 +115,7 @@ export async function POST(request: Request) {
       inserts.push({
         email: person.email,
         name: person.name,
+        ...person.answers,
         status: person.status,
         reviewer: person.reviewer,
         selected_for: person.category,
@@ -101,32 +124,42 @@ export async function POST(request: Request) {
         source: "sheet_backfill",
         submitted_at: person.submittedAt ?? decidedAt,
         sheet_row: { row: person.row, decision: person.status, category: person.category },
+        ...(tracksHq ? { sheet_decision: person.decision, decided_via: person.undecided ? null : "sheet" } : {}),
       });
       continue;
     }
 
-    // Nothing to write when the Sheet agrees with Postgres. Skipping the
-    // no-ops keeps a re-push cheap and leaves decided_at meaning "when this
-    // decision was first recorded" rather than "last time anyone pushed".
-    // The contacted flag is checked too — it can turn true on a later push,
-    // when a person is added to a "(sent out)" tab after their first push.
-    if (existing.status === person.status && existing.contacted === person.contacted) {
-      continue;
-    }
+    // Decisions can be made here in the Sheet or in HQ; lib/sheet-shared.ts
+    // (planDecision) decides which one is newer. Skipping the no-ops keeps a
+    // re-push cheap and leaves decided_at meaning "when this decision was
+    // first recorded" rather than "last time anyone pushed".
+    const plan = planDecision(existing, person);
+    const fill = fillNulls(existing.record, person.answers);
+    const fields: Record<string, unknown> = { ...fill };
 
-    const { error } = await supabase
-      .from("applications")
-      .update({
+    if (plan.kind === "apply") {
+      Object.assign(fields, {
         status: person.status,
         reviewer: person.reviewer,
         selected_for: person.category,
-        decided_at: person.undecided ? null : decidedAt,
         contacted_elsewhere: person.contacted,
-      })
-      .eq("id", existing.id);
+      });
+      if (existing.status !== person.status) fields.decided_at = person.undecided ? null : decidedAt;
+      if (tracksHq) Object.assign(fields, { sheet_decision: person.decision, decided_via: person.undecided ? null : "sheet" });
+    } else if (plan.kind === "record") {
+      heldForHq += 1;
+      Object.assign(fields, { sheet_decision: person.decision, contacted_elsewhere: person.contacted });
+    }
+
+    if (!Object.keys(fields).length) continue;
+
+    const { error } = await supabase.from("applications").update(fields).eq("id", existing.id);
 
     if (error) failures.push({ email: person.email, error: error.message });
-    else updated += 1;
+    else {
+      if (plan.kind === "apply") updated += 1;
+      if (Object.keys(fill).length) answersFilled += 1;
+    }
   }
 
   let inserted = 0;
@@ -149,6 +182,9 @@ export async function POST(request: Request) {
       inserted,
       updated,
       unchanged: parsed.people.length - inserted - updated - failures.length,
+      // Decided in HQ since the last push, with column Y unchanged: HQ's call stands.
+      heldForHq,
+      answersFilled,
       duplicatesCollapsed: parsed.duplicatesCollapsed,
       contactedElsewhere: parsed.people.filter((p) => p.contacted).length,
       counts,

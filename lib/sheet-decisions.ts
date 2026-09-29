@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { ApplicationStatus } from "@/lib/applications";
+import { cleanAnswers, parseDecision, parseSheetTime, type Answers } from "@/lib/sheet-shared";
 
 /**
  * Reading review decisions back out of the Google Sheet.
@@ -33,16 +34,14 @@ export type SheetRow = {
    * this flag they would look like ordinary undecided applicants.
    */
   contacted?: boolean;
+  /**
+   * Columns D–T, by `applications` column name. Sent by the push since the
+   * backfill (APPS_SCRIPT_DECISIONS.gs); older script versions leave it out.
+   * They only ever fill blanks.
+   */
+  answers?: unknown;
 };
 
-/** What column Y is allowed to say. Compared case-insensitively, trimmed. */
-const DECISION_WORDS: Record<string, ApplicationStatus> = {
-  accepted: "accepted",
-  rejected: "rejected",
-  waitlist: "waitlist",
-  waitlisted: "waitlist",
-  withdrawn: "withdrawn",
-};
 
 export type ParsedRow = {
   row: number;
@@ -56,6 +55,9 @@ export type ParsedRow = {
   /** Already mailed elsewhere. Recorded, but never queued for a decision. */
   contacted: boolean;
   submittedAt: string | null;
+  /** Column Y exactly as shown, for the HQ/Sheet last-writer rule. */
+  decision: string;
+  answers: Answers;
 };
 
 export type SkippedRow = { row: number; value: string; why: string };
@@ -67,27 +69,7 @@ export type ParseResult = {
   duplicatesCollapsed: number;
 };
 
-/**
- * Sheet timestamps arrive as display strings ("6/6/2026 23:35:51"). An
- * unparseable one is not worth failing a push over — it only affects ordering
- * and the submitted_at we record for rows the site has never seen.
- */
-function parseSheetDate(raw?: string): string | null {
-  if (!raw) return null;
-  const ms = Date.parse(raw);
-  return Number.isNaN(ms) ? null : new Date(ms).toISOString();
-}
 
-function parseDecision(
-  raw: string | undefined,
-): { ok: true; status: ApplicationStatus; undecided: boolean } | { ok: false } {
-  const value = (raw ?? "").trim();
-  if (!value) return { ok: true, status: "applied", undecided: true };
-
-  const mapped = DECISION_WORDS[value.toLowerCase()];
-  if (!mapped) return { ok: false };
-  return { ok: true, status: mapped, undecided: false };
-}
 
 /**
  * One person, one outcome — even though 732 sheet rows carry only 666 distinct
@@ -137,7 +119,9 @@ export function parseSheetRows(rows: SheetRow[]): ParseResult {
       status: decision.status,
       undecided: decision.undecided,
       contacted: raw.contacted === true,
-      submittedAt: parseSheetDate(raw.timestamp),
+      submittedAt: parseSheetTime(raw.timestamp),
+      decision: (raw.decision ?? "").trim(),
+      answers: cleanAnswers(raw.answers),
     };
 
     const existing = byEmail.get(email);

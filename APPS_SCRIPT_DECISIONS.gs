@@ -48,8 +48,36 @@ var COL_REVIEWER  = 24;  // X — "Matthew", "Frank", …
 var COL_DECISION  = 25;  // Y — Accepted / Rejected / waitlist, blank = undecided
 var COL_CATEGORY  = 26;  // Z — SWE / GTM / Data / Hardware / Other
 
-/** Rows per request. Keeps each POST well inside Apps Script's limits. */
-var PUSH_CHUNK = 300;
+/**
+ * The applicant's own answers, D–T, by the site's column name. Sent so the
+ * site can fill answers its database is missing (web inserts failed silently
+ * before migration 0017). The site only ever fills BLANKS with these; it never
+ * overwrites what it already has. Same positions as the webhook's appendRow
+ * (APPS_SCRIPT_WEBHOOK.gs), and the same rule as above: read by position.
+ */
+var ANSWER_COLS = {
+  phone: 4,           // D
+  school: 5,          // E
+  grade: 6,           // F
+  interest: 8,        // H
+  chapter: 9,         // I
+  startup_role: 10,   // J
+  background: 11,     // K
+  letter: 13,         // M
+  instagram: 14,      // N
+  linkedin: 15,       // O
+  github: 16,         // P
+  other_link: 17,     // Q
+  resume_url: 18,     // R
+  comments: 19,       // S
+  extra_file_url: 20, // T
+};
+
+/**
+ * Rows per request. Each row now carries its answers (letters run long), and
+ * the site's host caps a request body at 4.5 MB; 150 rows stays far inside it.
+ */
+var PUSH_CHUNK = 150;
 
 /**
  * Tabs whose name contains this already received mail some other way — the
@@ -118,6 +146,7 @@ function pushDecisionsToAxiom() {
       decision: String(v[COL_DECISION - 1] || "").trim(),
       category: String(v[COL_CATEGORY - 1] || "").trim(),
       contacted: contacted,
+      answers: answersOf_(v),
     });
   }
 
@@ -312,4 +341,14 @@ function summariseSkipped(skipped) {
     lines.push("  " + parts.join(", ") + " — " + label);
   }
   return lines.join("\n");
+}
+
+/** One row's answers, D–T, as { column: text }. Blank cells are left out. */
+function answersOf_(values) {
+  var answers = {};
+  for (var key in ANSWER_COLS) {
+    var text = String(values[ANSWER_COLS[key] - 1] || "").trim();
+    if (text) answers[key] = text;
+  }
+  return answers;
 }
