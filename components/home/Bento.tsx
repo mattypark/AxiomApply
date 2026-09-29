@@ -202,7 +202,7 @@ export function Bento({ internshipCount }: { internshipCount: number }) {
           <Tile className="lg:col-span-6" tone="bg-[var(--path-tile-5)]" delay={80} href="/internships">
             <p className="text-[16px] font-medium text-ms-body">Live internships in the feed</p>
             <p className="ms-display mt-6 text-[clamp(4rem,7vw,6.5rem)] text-ms-ink">
-              ≈<RollingNumber value={internshipCount} bounceEvery={7000} />
+              <span className="mr-[0.06em]">≈</span><RollingNumber value={internshipCount} bounceEvery={7000} />
             </p>
             <p className="mt-2 text-[15px] text-ms-body">Open to everyone. Pulled daily. No cut. →</p>
           </Tile>
@@ -210,7 +210,7 @@ export function Bento({ internshipCount }: { internshipCount: number }) {
           <Tile className="lg:col-span-6" tone="bg-[#e5e4ee]" delay={160}>
             <p className="text-[16px] font-medium text-ms-body">Time to an answer</p>
             <p className="ms-display mt-6 text-[clamp(4rem,7vw,6.5rem)] text-ms-ink">
-              ≈<RollingNumber value={14} bounceEvery={7000} />
+              <span className="mr-[0.06em]">≈</span><RollingNumber value={14} bounceEvery={7000} />
               <span className="ml-3 text-[0.4em] tracking-[-0.03em]">days</span>
             </p>
             <p className="mt-2 text-[15px] text-ms-body">Either way. A person reads every one.</p>

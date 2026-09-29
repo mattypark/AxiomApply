@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { NO_ACCOUNT_NOTE } from "@/components/onboarding/no-account";
 import { PathPicker, SIDES } from "@/components/home/PathPicker";
 import { OAuthButton } from "@/components/onboarding/OAuthButton";
 import { RecommendNote } from "@/components/onboarding/RecommendNote";
@@ -107,11 +108,8 @@ export function ApplyBlock() {
             >
               or apply without an account
             </Link>
-            <span className="mx-2 text-ms-muted" aria-hidden="true">
-              ·
-            </span>
-            Nothing is sent until you press send.
           </p>
+          <p className="mt-1.5 text-center text-[14px] text-ms-muted">{NO_ACCOUNT_NOTE}</p>
         </div>
       </div>
     </section>

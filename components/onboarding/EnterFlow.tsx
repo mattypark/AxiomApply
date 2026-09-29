@@ -12,6 +12,7 @@ import { RocketLoop } from "@/components/onboarding/RocketLoop";
 import type { ApplyPrefill } from "@/components/onboarding/flow/useApplication";
 import type { Side } from "@/lib/apply-sides";
 import { getPath, setPath } from "@/lib/path-theme";
+import { NO_ACCOUNT_NOTE } from "@/components/onboarding/no-account";
 
 /**
  * Where Enter goes: the account first, then the application.
@@ -101,6 +102,7 @@ export function EnterFlow({
       >
         or continue without an account
       </button>
+      <p className="mt-1.5 text-center text-[14px] text-ms-muted">{NO_ACCOUNT_NOTE}</p>
     </EnterShell>
   );
 }

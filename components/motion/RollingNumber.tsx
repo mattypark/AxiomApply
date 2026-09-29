@@ -71,8 +71,10 @@ export function RollingNumber({
           const hop = beat > 0 ? "ax-hop" : "";
           const delay = { animationDelay: `${index * 70}ms` };
           if (!/\d/.test(char)) {
+            // Display tracking pulls the next digit over a comma's tail (8 sat
+            // on top of it). Separators get their space back on both sides.
             return (
-              <span key={index} className={`inline-block ${hop}`} style={delay}>
+              <span key={index} className={`ml-[0.03em] mr-[0.08em] inline-block ${hop}`} style={delay}>
                 {char}
               </span>
             );
