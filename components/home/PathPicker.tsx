@@ -25,11 +25,14 @@ export function PathPicker({
   onChange,
   label = "Choose your path",
   className = "",
+  compact = false,
 }: {
   active: number;
   onChange?: (index: number) => void;
   label?: string;
   className?: string;
+  /** Smaller on phones (the home's apply block); full size from `sm` up. */
+  compact?: boolean;
 }) {
   return (
     <div
@@ -52,9 +55,9 @@ export function PathPicker({
             setPath(option.side);
             onChange?.(index);
           }}
-          className="relative flex h-12 cursor-pointer items-center justify-center gap-2 rounded-full text-[16px] font-medium text-ms-ink"
+          className={`relative flex cursor-pointer items-center justify-center rounded-full font-medium text-ms-ink ${compact ? "h-10 gap-1.5 text-[14px] sm:h-12 sm:gap-2 sm:text-[16px]" : "h-12 gap-2 text-[16px]"}`}
         >
-          <span className="h-3 w-3 rounded-full" style={{ background: option.dot }} />
+          <span className={`rounded-full ${compact ? "h-2.5 w-2.5 sm:h-3 sm:w-3" : "h-3 w-3"}`} style={{ background: option.dot }} />
           {option.label}
         </button>
       ))}

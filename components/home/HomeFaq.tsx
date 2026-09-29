@@ -29,9 +29,9 @@ export function HomeFaq() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="scroll-mt-24 bg-white px-6 py-24 sm:px-[6.5%] sm:py-32">
-      <div className="mx-auto grid w-full max-w-[90rem] gap-12 lg:grid-cols-[1fr_1.4fr]">
-        <h2 className="ms-display text-[clamp(2.6rem,4.8vw,4.2rem)] text-ms-ink">
+    <section id="faq" className="scroll-mt-24 bg-white px-5 py-14 sm:px-[6.5%] sm:py-32">
+      <div className="mx-auto grid w-full max-w-[90rem] gap-5 sm:gap-12 lg:grid-cols-[1fr_1.4fr]">
+        <h2 className="ms-display text-[2rem] text-ms-ink sm:text-[clamp(2.6rem,4.8vw,4.2rem)]">
           A few good
           <br />
           questions.
@@ -45,14 +45,14 @@ export function HomeFaq() {
                   type="button"
                   aria-expanded={isOpen}
                   onClick={() => setOpen(isOpen ? null : index)}
-                  className="flex w-full cursor-pointer items-center justify-between gap-6 py-6 text-left"
+                  className="flex w-full cursor-pointer items-center justify-between gap-4 py-4 text-left sm:gap-6 sm:py-6"
                 >
-                  <span className="text-[clamp(1.2rem,1.7vw,1.5rem)] font-medium tracking-[-0.02em] text-ms-ink">
+                  <span className="text-[1rem] font-medium tracking-[-0.02em] text-ms-ink sm:text-[clamp(1.2rem,1.7vw,1.5rem)]">
                     {item.q}
                   </span>
                   <span
                     aria-hidden="true"
-                    className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ms-mist text-[20px] text-ms-ink transition-transform duration-500 ease-ms"
+                    className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-ms-mist text-[16px] text-ms-ink transition-transform duration-500 ease-ms sm:h-9 sm:w-9 sm:text-[20px]"
                     style={{ transform: isOpen ? "rotate(45deg)" : undefined }}
                   >
                     +
@@ -63,7 +63,7 @@ export function HomeFaq() {
                   style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
                 >
                   <div className="overflow-hidden">
-                    <p className="max-w-[56ch] pb-7 text-[17px] leading-[1.55] text-ms-body">{item.a}</p>
+                    <p className="max-w-[56ch] pb-5 text-[14px] leading-[1.55] text-ms-body sm:pb-7 sm:text-[17px]">{item.a}</p>
                   </div>
                 </div>
               </div>

@@ -30,7 +30,7 @@ function Tile({
 }) {
   const body = (
     <div
-      className={`group relative h-full overflow-hidden rounded-[28px] p-8 transition-transform duration-500 ease-ms hover:-translate-y-1 sm:p-10 ${tone}`}
+      className={`group relative h-full overflow-hidden rounded-[20px] p-4 transition-transform duration-500 ease-ms hover:-translate-y-1 sm:rounded-[28px] sm:p-10 ${tone}`}
     >
       {children}
     </div>
@@ -51,7 +51,7 @@ function Tile({
 function Title({ children, light }: { children: ReactNode; light?: boolean }) {
   return (
     <h3
-      className={`ms-display text-[clamp(2rem,3vw,2.9rem)] ${light ? "text-white" : "text-ms-ink"}`}
+      className={`ms-display text-[1.3rem] sm:text-[clamp(2rem,3vw,2.9rem)] ${light ? "text-white" : "text-ms-ink"}`}
     >
       {children}
     </h3>
@@ -60,7 +60,7 @@ function Title({ children, light }: { children: ReactNode; light?: boolean }) {
 
 function Caption({ children, light }: { children: ReactNode; light?: boolean }) {
   return (
-    <p className={`mt-3 text-[16px] font-medium ${light ? "text-white/70" : "text-ms-body"}`}>
+    <p className={`mt-1.5 text-[12px] leading-snug font-medium sm:mt-3 sm:text-[16px] ${light ? "text-white/70" : "text-ms-body"}`}>
       {children}
     </p>
   );
@@ -69,17 +69,17 @@ function Caption({ children, light }: { children: ReactNode; light?: boolean }) 
 /** A mini application, the one thing you fill in. */
 function ApplicationSketch() {
   return (
-    <div className="absolute right-[-8%] bottom-[-4%] left-[14%] h-[58%]">
-      <div className="absolute inset-0 translate-x-6 translate-y-5 rotate-[4deg] rounded-[22px] bg-white/45" />
-      <div className="absolute inset-0 rounded-[22px] bg-white p-7 shadow-[0_24px_60px_-24px_rgb(23_25_28_/_0.35)] transition-transform duration-700 ease-ms group-hover:-rotate-1">
-        <p className="text-[13px] font-medium text-ms-muted">your application</p>
+    <div className="absolute right-[-14%] bottom-[-4%] left-[12%] h-[56%] sm:right-[-8%] sm:left-[14%] sm:h-[58%]">
+      <div className="absolute inset-0 translate-x-3 translate-y-3 rotate-[4deg] rounded-[14px] bg-white/45 sm:translate-x-6 sm:translate-y-5 sm:rounded-[22px]" />
+      <div className="absolute inset-0 rounded-[14px] bg-white p-3.5 shadow-[0_24px_60px_-24px_rgb(23_25_28_/_0.35)] transition-transform duration-700 ease-ms group-hover:-rotate-1 sm:rounded-[22px] sm:p-7">
+        <p className="text-[9px] font-medium text-ms-muted sm:text-[13px]">your application</p>
         {["what have you built?", "where do you want to work?", "anything else?"].map((label, index) => (
-          <div key={label} className="mt-5">
-            <p className="text-[14px] font-medium text-ms-ink">{label}</p>
-            <div className="mt-2 h-2.5 rounded-full bg-ms-mist" style={{ width: `${86 - index * 18}%` }} />
+          <div key={label} className="mt-2.5 sm:mt-5">
+            <p className="text-[9.5px] font-medium text-ms-ink sm:text-[14px]">{label}</p>
+            <div className="mt-1 h-1.5 rounded-full bg-ms-mist sm:mt-2 sm:h-2.5" style={{ width: `${86 - index * 18}%` }} />
           </div>
         ))}
-        <span className="mt-7 inline-flex h-10 items-center rounded-full bg-ms-ink px-5 text-[14px] font-medium text-white">
+        <span className="mt-3.5 inline-flex h-6 items-center rounded-full bg-ms-ink px-3 text-[9.5px] font-medium text-white sm:mt-7 sm:h-10 sm:px-5 sm:text-[14px]">
           Send it
         </span>
       </div>
@@ -90,11 +90,11 @@ function ApplicationSketch() {
 /** Four applications, fanned; the top one is marked read. */
 function ReadStack() {
   return (
-    <div className="absolute right-[6%] bottom-[-18%] h-[78%] w-[46%]">
+    <div className="absolute right-[8%] bottom-[-16%] h-[52%] w-[62%] sm:right-[6%] sm:bottom-[-18%] sm:h-[78%] sm:w-[46%]">
       {[0, 1, 2, 3].map((index) => (
         <div
           key={index}
-          className="absolute inset-0 rounded-[18px] bg-white shadow-[0_18px_40px_-20px_rgb(23_25_28_/_0.35)] transition-transform duration-700 ease-ms"
+          className="absolute inset-0 rounded-[12px] bg-white shadow-[0_18px_40px_-20px_rgb(23_25_28_/_0.35)] transition-transform duration-700 ease-ms sm:rounded-[18px]"
           style={{
             transform: `translate(${index * -14}px, ${index * 10}px) rotate(${(index - 1.5) * 4}deg)`,
             opacity: 1 - index * 0.14,
@@ -102,11 +102,11 @@ function ReadStack() {
           }}
         >
           {index === 0 ? (
-            <div className="p-6">
-              <div className="h-2.5 w-2/3 rounded-full bg-ms-mist" />
-              <div className="mt-3 h-2.5 w-1/2 rounded-full bg-ms-mist" />
-              <div className="mt-3 h-2.5 w-3/5 rounded-full bg-ms-mist" />
-              <span className="absolute top-5 right-5 grid h-11 w-11 place-items-center rounded-full bg-ms-green text-[18px] text-white transition-transform duration-500 ease-ms group-hover:scale-110">
+            <div className="p-3 sm:p-6">
+              <div className="h-1.5 w-1/2 rounded-full bg-ms-mist sm:h-2.5 sm:w-2/3" />
+              <div className="mt-2 h-1.5 w-2/5 rounded-full bg-ms-mist sm:mt-3 sm:h-2.5 sm:w-1/2" />
+              <div className="mt-2 h-1.5 w-1/2 rounded-full bg-ms-mist sm:mt-3 sm:h-2.5 sm:w-3/5" />
+              <span className="absolute top-2.5 right-2.5 grid h-6 w-6 place-items-center rounded-full bg-ms-green text-[11px] text-white sm:top-5 sm:right-5 sm:h-11 sm:w-11 sm:text-[18px] transition-transform duration-500 ease-ms group-hover:scale-110">
                 ✓
               </span>
             </div>
@@ -120,11 +120,11 @@ function ReadStack() {
 /** The intro, as the two messages it actually is. */
 function IntroThread() {
   return (
-    <div className="mt-8 flex flex-col gap-3">
-      <p className="w-fit max-w-[80%] rounded-[20px] rounded-bl-[6px] bg-white/10 px-4 py-3 text-[15px] text-white/90">
+    <div className="mt-3 flex flex-col gap-1.5 sm:mt-8 sm:gap-3">
+      <p className="w-fit max-w-[88%] rounded-[14px] rounded-bl-[4px] bg-white/10 px-2.5 py-1.5 text-[11px] leading-snug text-white/90 sm:max-w-[80%] sm:rounded-[20px] sm:rounded-bl-[6px] sm:px-4 sm:py-3 sm:text-[15px]">
         Someone here fits the role you posted.
       </p>
-      <p className="ml-auto w-fit max-w-[80%] rounded-[20px] rounded-br-[6px] bg-ms-green px-4 py-3 text-[15px] text-white transition-transform duration-500 ease-ms group-hover:-translate-y-1">
+      <p className="ml-auto w-fit max-w-[88%] rounded-[14px] rounded-br-[4px] bg-ms-green px-2.5 py-1.5 text-[11px] leading-snug text-white sm:max-w-[80%] sm:rounded-[20px] sm:rounded-br-[6px] sm:px-4 sm:py-3 sm:text-[15px] transition-transform duration-500 ease-ms group-hover:-translate-y-1">
         Send them over.
       </p>
     </div>
@@ -133,15 +133,15 @@ function IntroThread() {
 
 function Roster() {
   return (
-    <div className="mt-8 flex flex-wrap gap-2">
+    <div className="mt-3 flex flex-wrap gap-1 sm:mt-8 sm:gap-2">
       {startups.map((startup) => (
         <span
           key={startup.name}
-          className="inline-flex items-center gap-2 rounded-full bg-white py-1.5 pr-3.5 pl-1.5 text-[14px] font-medium text-ms-ink shadow-[0_1px_2px_rgb(23_25_28_/_0.06)]"
+          className="inline-flex items-center gap-1 rounded-full bg-white py-0.5 pr-2 pl-0.5 text-[10px] font-medium text-ms-ink shadow-[0_1px_2px_rgb(23_25_28_/_0.06)] sm:gap-2 sm:py-1.5 sm:pr-3.5 sm:pl-1.5 sm:text-[14px]"
         >
           {/* Monograms, not logos: most of the roster has no logo file, and the
               ones that do are wide wordmarks that turn to mush at chip size. */}
-          <span className="grid h-6 w-6 place-items-center rounded-full bg-ms-green/15 text-[11px] font-semibold text-ms-green">
+          <span className="grid h-4 w-4 place-items-center rounded-full bg-ms-green/15 text-[8px] font-semibold text-ms-green sm:h-6 sm:w-6 sm:text-[11px]">
             {startup.name[0]}
           </span>
           {startup.name}
@@ -153,15 +153,16 @@ function Roster() {
 
 export function Bento({ internshipCount }: { internshipCount: number }) {
   return (
-    <section className="bg-ms-mist px-4 py-24 sm:px-[3%] sm:py-32">
+    <section className="bg-ms-mist px-4 py-14 sm:px-[3%] sm:py-32">
       <div className="mx-auto w-full max-w-[100rem]">
-        <InView as="h2" className="ms-display px-2 text-[clamp(2.6rem,5.2vw,4.6rem)] text-ms-ink">
+        <InView as="h2" className="ms-display px-1 text-[2rem] text-ms-ink sm:px-2 sm:text-[clamp(2.6rem,5.2vw,4.6rem)]">
           Built for students. Thought through.
         </InView>
 
-        <div className="mt-12 grid gap-4 lg:grid-cols-12">
+        {/* Phones: two columns, so seven tiles take four rows, not seven. */}
+        <div className="mt-6 grid grid-cols-2 gap-2.5 sm:mt-12 sm:gap-4 lg:grid-cols-12">
           <Tile
-            className="min-h-[34rem] lg:col-span-4 lg:row-span-2"
+            className="row-span-2 min-h-[20rem] sm:min-h-[34rem] lg:col-span-4"
             tone="bg-[linear-gradient(170deg,var(--path-tile-1)_0%,var(--path-tile-2)_100%)]"
           >
             <Title>Apply once.</Title>
@@ -169,7 +170,7 @@ export function Bento({ internshipCount }: { internshipCount: number }) {
             <ApplicationSketch />
           </Tile>
 
-          <Tile className="min-h-[21rem] lg:col-span-5" tone="bg-[var(--path-tile-3)]" delay={80}>
+          <Tile className="min-h-[9.75rem] sm:min-h-[21rem] lg:col-span-5" tone="bg-[var(--path-tile-3)]" delay={80}>
             <Title>
               A person
               <br />
@@ -179,41 +180,41 @@ export function Bento({ internshipCount }: { internshipCount: number }) {
             <ReadStack />
           </Tile>
 
-          <Tile className="min-h-[21rem] lg:col-span-3" tone="bg-[#e8e3db]" delay={160}>
+          <Tile className="min-h-[9.75rem] sm:min-h-[21rem] lg:col-span-3" tone="bg-[#e8e3db]" delay={160}>
             <Title>Free. Always.</Title>
             <Caption>We&apos;re a nonprofit.</Caption>
-            <p className="ms-display absolute right-8 bottom-4 text-[clamp(5rem,9vw,8.5rem)] text-ms-ink/90 transition-transform duration-700 ease-ms group-hover:-translate-y-2">
+            <p className="ms-display absolute right-4 bottom-2 text-[3.2rem] text-ms-ink/90 sm:right-8 sm:bottom-4 sm:text-[clamp(5rem,9vw,8.5rem)] transition-transform duration-700 ease-ms group-hover:-translate-y-2">
               $0
             </p>
           </Tile>
 
-          <Tile className="min-h-[21rem] lg:col-span-4" tone="bg-[#1b1d20]" delay={120}>
+          <Tile className="min-h-[11rem] sm:min-h-[21rem] lg:col-span-4" tone="bg-[#1b1d20]" delay={120}>
             <Title light>We make the intro.</Title>
             <Caption light>Straight to the founder who decides.</Caption>
             <IntroThread />
           </Tile>
 
-          <Tile className="min-h-[21rem] lg:col-span-4" tone="bg-[var(--path-tile-4)]" delay={200}>
+          <Tile className="min-h-[11rem] sm:min-h-[21rem] lg:col-span-4" tone="bg-[var(--path-tile-4)]" delay={200}>
             <Title>The network.</Title>
             <Caption>{startups.length} startups hiring right now.</Caption>
             <Roster />
           </Tile>
 
           <Tile className="lg:col-span-6" tone="bg-[var(--path-tile-5)]" delay={80} href="/internships">
-            <p className="text-[16px] font-medium text-ms-body">Live internships in the feed</p>
-            <p className="ms-display mt-6 text-[clamp(4rem,7vw,6.5rem)] text-ms-ink">
+            <p className="text-[12px] leading-snug font-medium text-ms-body sm:text-[16px]">Live internships in the feed</p>
+            <p className="ms-display mt-3 text-[2.1rem] text-ms-ink sm:mt-6 sm:text-[clamp(4rem,7vw,6.5rem)]">
               <span className="mr-[0.06em]">≈</span><RollingNumber value={internshipCount} bounceEvery={7000} />
             </p>
-            <p className="mt-2 text-[15px] text-ms-body">Open to everyone. Pulled daily. No cut. →</p>
+            <p className="mt-1.5 text-[11px] leading-snug text-ms-body sm:mt-2 sm:text-[15px]">Open to everyone. Pulled daily. No cut. →</p>
           </Tile>
 
           <Tile className="lg:col-span-6" tone="bg-[#e5e4ee]" delay={160}>
-            <p className="text-[16px] font-medium text-ms-body">Time to an answer</p>
-            <p className="ms-display mt-6 text-[clamp(4rem,7vw,6.5rem)] text-ms-ink">
+            <p className="text-[12px] leading-snug font-medium text-ms-body sm:text-[16px]">Time to an answer</p>
+            <p className="ms-display mt-3 text-[2.1rem] text-ms-ink sm:mt-6 sm:text-[clamp(4rem,7vw,6.5rem)]">
               <span className="mr-[0.06em]">≈</span><RollingNumber value={14} bounceEvery={7000} />
-              <span className="ml-3 text-[0.4em] tracking-[-0.03em]">days</span>
+              <span className="ml-1.5 text-[0.4em] tracking-[-0.03em] sm:ml-3">days</span>
             </p>
-            <p className="mt-2 text-[15px] text-ms-body">Either way. A person reads every one.</p>
+            <p className="mt-1.5 text-[11px] leading-snug text-ms-body sm:mt-2 sm:text-[15px]">Either way. A person reads every one.</p>
           </Tile>
         </div>
       </div>

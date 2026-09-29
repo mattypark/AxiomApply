@@ -21,13 +21,13 @@ const SOCIAL = [
 export function HomeFooter() {
   const ein = einLine();
   return (
-    <footer className="bg-white px-6 pt-10 pb-12 sm:px-[6.5%]">
-      <div className="mx-auto flex w-full max-w-[90rem] flex-wrap items-center justify-between gap-6 border-t border-ms-ink/10 pt-10">
+    <footer className="bg-white px-5 pt-6 pb-10 sm:px-[6.5%] sm:pt-10 sm:pb-12">
+      <div className="mx-auto flex w-full max-w-[90rem] flex-wrap items-center justify-between gap-4 border-t border-ms-ink/10 pt-6 sm:gap-6 sm:pt-10">
         <Link href="/" className="flex items-center gap-2" aria-label="Axiom home">
           <Image src="/axiom-mark-256.png" alt="" width={256} height={256} className="h-7 w-7 object-contain" />
           <span className="text-[20px] font-semibold tracking-[-0.04em] text-ms-ink">axiom</span>
         </Link>
-        <nav className="flex flex-wrap gap-x-7 gap-y-2 text-[15px] font-medium text-ms-body">
+        <nav className="flex flex-wrap gap-x-5 gap-y-1.5 text-[13.5px] font-medium text-ms-body sm:gap-x-7 sm:gap-y-2 sm:text-[15px]">
           {LINKS.map((link) => (
             <Link key={link.href} href={link.href} className="transition-colors hover:text-ms-ink">
               {link.label}
@@ -35,7 +35,7 @@ export function HomeFooter() {
           ))}
         </nav>
       </div>
-      <div className="mx-auto mt-6 flex w-full max-w-[90rem] flex-wrap items-center justify-between gap-4 text-[14px] text-ms-muted">
+      <div className="mx-auto mt-4 flex w-full max-w-[90rem] flex-wrap items-center justify-between gap-3 text-[12.5px] text-ms-muted sm:mt-6 sm:gap-4 sm:text-[14px]">
         <p>
           © 2026 Axiom Pathways{ein ? ` · ${ein}` : ""} · A nonprofit placing students into real startup work.
         </p>

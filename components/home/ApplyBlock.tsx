@@ -49,45 +49,46 @@ export function ApplyBlock() {
   const path = { ...SIDES[active], ...COPY[SIDES[active].side] };
 
   return (
-    <section className="bg-ms-sky-soft px-6 py-24 sm:px-[6.5%] sm:py-28">
-      <div className="mx-auto grid w-full max-w-[90rem] items-center gap-14 lg:grid-cols-[1fr_1.05fr] lg:gap-20">
+    <section className="bg-ms-sky-soft px-5 py-14 sm:px-[6.5%] sm:py-28">
+      <div className="mx-auto grid w-full max-w-[90rem] items-center gap-8 sm:gap-14 lg:grid-cols-[1fr_1.05fr] lg:gap-20">
         <div
-          className="relative mx-auto aspect-[0.8] w-full max-w-[34rem] overflow-hidden rounded-t-[999px] rounded-b-[36px]"
+          className="relative mx-auto aspect-[0.8] w-full max-w-[14rem] overflow-hidden rounded-t-[999px] rounded-b-[24px] sm:max-w-[34rem] sm:rounded-b-[36px]"
           style={{ background: "linear-gradient(180deg, #ffffff 0%, #f6f8f7 100%)" }}
         >
           <Product className="!absolute inset-0" scale={0.95} turn={1.2} paint={path.paint} burst />
         </div>
 
         <div>
-          <p className="text-[16px] font-medium text-ms-body">Applications open · rolling</p>
-          <h2 className="ms-display mt-4 text-[clamp(3rem,6vw,5.6rem)] text-ms-ink">
+          <p className="text-[13px] font-medium text-ms-body sm:text-[16px]">Applications open · rolling</p>
+          <h2 className="ms-display mt-2 text-[2.3rem] text-ms-ink sm:mt-4 sm:text-[clamp(3rem,6vw,5.6rem)]">
             Start your
             <br />
             application
           </h2>
-          <p className="mt-5 text-[19px] text-ms-body">Free. About seven minutes. Save and finish later.</p>
+          <p className="mt-3 text-[15px] text-ms-body sm:mt-5 sm:text-[19px]">Free. About seven minutes. Save and finish later.</p>
 
-          <p className="mt-10 text-[15px] font-medium text-ms-body">Choose your path</p>
-          <PathPicker active={active} className="mt-3" />
+          <p className="mt-6 text-[13px] font-medium text-ms-body sm:mt-10 sm:text-[15px]">Choose your path</p>
+          <PathPicker active={active} className="mt-2 sm:mt-3" compact />
 
-          <div className="mt-8 flex items-end justify-between gap-6 border-t border-ms-ink/10 pt-6">
+          <div className="mt-5 flex items-end justify-between gap-4 border-t border-ms-ink/10 pt-4 sm:mt-8 sm:gap-6 sm:pt-6">
             <div key={path.side} className="ms-rise">
-              <p className="text-[17px] font-medium text-ms-ink">{path.when}</p>
-              <p className="mt-1 text-[15px] text-ms-body">{path.note}</p>
+              <p className="text-[14px] font-medium text-ms-ink sm:text-[17px]">{path.when}</p>
+              <p className="mt-0.5 text-[12.5px] text-ms-body sm:mt-1 sm:text-[15px]">{path.note}</p>
             </div>
             <div className="text-right">
-              <p className="ms-display text-[44px]">$0</p>
-              <p className="text-[14px] text-ms-body">always</p>
+              <p className="ms-display text-[32px] sm:text-[44px]">$0</p>
+              <p className="text-[12px] text-ms-body sm:text-[14px]">always</p>
             </div>
           </div>
 
           {/* Back from Google/GitHub, a signed-in visitor on /onboarding goes
               straight into the flow — the welcome page never shows. */}
-          <div key={path.side} className="ms-rise mt-7 flex flex-col gap-3">
+          <div key={path.side} className="ms-rise mt-5 flex flex-col gap-2.5 sm:mt-7 sm:gap-3">
             <OAuthButton
               provider="google"
               next={`/onboarding?side=${path.side}`}
               label={`${path.cta} with Google`}
+              compact
             />
             {path.side === "intern" ? (
               <div className="relative mb-6">
@@ -96,12 +97,13 @@ export function ApplyBlock() {
                   tone="secondary"
                   next="/onboarding?side=intern"
                   label={`${path.cta} with GitHub`}
+                  compact
                 />
                 <RecommendNote placement="below" />
               </div>
             ) : null}
           </div>
-          <p className="mt-4 text-center text-[15px] text-ms-body">
+          <p className="mt-3 text-center text-[13.5px] text-ms-body sm:mt-4 sm:text-[15px]">
             <Link
               href={`/onboarding?side=${path.side}&start=1`}
               className="underline underline-offset-4 transition-opacity hover:opacity-60"
@@ -109,7 +111,7 @@ export function ApplyBlock() {
               or apply without an account
             </Link>
           </p>
-          <p className="mt-1.5 text-center text-[14px] text-ms-muted">{NO_ACCOUNT_NOTE}</p>
+          <p className="mt-1 text-center text-[12px] text-ms-muted sm:mt-1.5 sm:text-[14px]">{NO_ACCOUNT_NOTE}</p>
         </div>
       </div>
     </section>

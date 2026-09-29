@@ -23,12 +23,15 @@ export function OAuthButton({
   next,
   tone = "primary",
   label,
+  compact = false,
 }: {
   provider: OAuthProvider;
   next: string;
   tone?: "primary" | "secondary";
   /** Replaces "Continue with …", e.g. "Apply as an intern with Google". */
   label?: string;
+  /** Smaller on phones (the home's apply block); full size from `sm` up. */
+  compact?: boolean;
 }) {
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
@@ -60,7 +63,7 @@ export function OAuthButton({
         type="button"
         onClick={go}
         disabled={busy}
-        className={`ms-pill h-16 w-full text-[18px] disabled:opacity-70 ${
+        className={`ms-pill w-full disabled:opacity-70 ${compact ? "h-12 text-[15px] sm:h-16 sm:text-[18px]" : "h-16 text-[18px]"} ${
           tone === "secondary"
             ? "bg-white! text-ms-ink! shadow-[inset_0_0_0_1px_rgb(23_25_28_/_0.12)] hover:bg-ms-mist!"
             : ""
