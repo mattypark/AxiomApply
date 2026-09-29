@@ -164,3 +164,39 @@ filter; every class has a `prefers-reduced-motion` fallback (`flow-*` block in
   not been walked for this design.
 - He'll send new UI references later; the private applicant dashboard for him
   and Frank is planned (behind real auth — Cloudflare Access), not started.
+
+## Handoff — end of 2026-09-28 session (read first)
+
+**Done and committed (nothing pushed):** rocket page transition (slower, ignition,
+smoke keeps churning while the route loads, mark fades only); welcome page
+(RocketLoop circle, Recommended! note that writes itself on); home apply block
+signs you in directly (Google; GitHub + pulsing Recommended! for interns;
+"or apply without an account" → `/onboarding?side=…&start=1` straight into the
+flow); path colour site-wide; question flow redesign (see "Question flow design"
+above); investor marks (`lib/investor-logos.ts`, cropped symbols in
+`public/logos/investors/*-mark.svg`); HQ dashboard + after-submit prototypes on
+MOCK data at `/preview/hq` and `/preview/after-submit` (spec:
+`docs/DESIGN-AFTER-SUBMIT.md`).
+
+**The live dashboard is NOT live.** `/preview/hq` is a mock-data prototype with no
+auth gate (noindex only). Do not load real Sheet/Supabase data into it. Before any
+real data: the backend session builds the data layer (`lib/data/hq.ts` interface in
+the spec), the `/hq/[code]` route with `requireAdmin()` + secret code (Cloudflare
+Access later), and backfills Supabase `applications` from the Sheet (web inserts
+failed silently before migration 0017 — compare counts first). Matthew's open
+decisions are listed in the spec.
+
+**Next session, in order:**
+1. Backend (separate session, `nextsessions/backend-cloudflare.md`): HQ data layer +
+   gate + Sheet backfill; keep the Sheet as the backup write.
+2. GitHub sign-in: today it's plain Supabase OAuth (`OAuthButton`,
+   `GitHubConnect`). Matthew wants GitHub (and maybe Google) connected via
+   **Composio** — research it (`composio` skill), decide Supabase-vs-Composio with
+   him, then wire. The Supabase GitHub provider is still off (his toggle).
+3. a16z: its site has no short mark any more (header = "ANDREESSEN HOROWITZ",
+   favicon = star symbol). It's set as a plain "a16z" name SVG — ask Matthew if he'd
+   rather have the star symbol.
+4. Not yet re-checked in the browser: the new square investor marks inside the
+   loop card and the click burst; reduced-motion on the new flow.
+5. Dev server: restart it every few hours — the long-running webpack dev server
+   grew to 5.5 GB this session. Consider `next dev --turbopack` (ask first).
