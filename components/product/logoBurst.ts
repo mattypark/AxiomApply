@@ -17,7 +17,7 @@ export function burstLogo(host: HTMLElement, event: { clientX: number; clientY: 
   const y = box.height * 0.32;
 
   const investor = randomInvestor();
-  const { width, height } = fitLogo(investor, 170, 36);
+  const { width, height } = fitLogo(investor, 150, 46);
   const card = document.createElement("img");
   card.src = investor.href;
   card.alt = "";

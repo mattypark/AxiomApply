@@ -2,8 +2,12 @@
  * Investor and accelerator marks the site shows as decoration — the journey
  * loop's Intern stop and the rocket's click burst draw from here, at random.
  *
- * The files are the firms' own logos as transparent SVGs, from Wikimedia
- * Commons (fetched 2026-09-28, at Matthew's request). They are trademarks of
+ * Each firm shows as its mark alone, not its full name: the symbol cropped
+ * out of its own logo (Wikimedia Commons SVGs, fetched 2026-09-28 at
+ * Matthew's request) — YC's Y, Sequoia's tree, KP's diamond, Founders Fund's
+ * stripes, Lightspeed's L, General Catalyst's G. Where the brand is only a
+ * name (Accel, Greylock) it stays the name; a16z's site has no short mark
+ * any more, so it is set as the name "a16z". They are trademarks of
  * their owners and appear as "the kind of places this leads", not as backers
  * of Axiom. Adding one: drop the SVG in public/logos/investors/ and add a line.
  */
@@ -17,13 +21,13 @@ export type InvestorLogo = {
 
 export const INVESTOR_LOGOS: InvestorLogo[] = [
   { name: "Y Combinator", href: "/logos/investors/ycombinator.svg", aspect: 1 },
-  { name: "Andreessen Horowitz", href: "/logos/investors/a16z.svg", aspect: 4.36 },
-  { name: "Sequoia", href: "/logos/investors/sequoia.svg", aspect: 7.6 },
+  { name: "Andreessen Horowitz", href: "/logos/investors/a16z-name.svg", aspect: 3 },
+  { name: "Sequoia", href: "/logos/investors/sequoia-mark.svg", aspect: 1 },
   { name: "Accel", href: "/logos/investors/accel.svg", aspect: 3.12 },
-  { name: "Kleiner Perkins", href: "/logos/investors/kleiner-perkins.svg", aspect: 9.52 },
-  { name: "Founders Fund", href: "/logos/investors/founders-fund.svg", aspect: 9.57 },
-  { name: "Lightspeed", href: "/logos/investors/lightspeed.svg", aspect: 4.93 },
-  { name: "General Catalyst", href: "/logos/investors/general-catalyst.svg", aspect: 6.9 },
+  { name: "Kleiner Perkins", href: "/logos/investors/kleiner-perkins-mark.svg", aspect: 1 },
+  { name: "Founders Fund", href: "/logos/investors/founders-fund-mark.svg", aspect: 1 },
+  { name: "Lightspeed", href: "/logos/investors/lightspeed-mark.svg", aspect: 1 },
+  { name: "General Catalyst", href: "/logos/investors/general-catalyst-mark.svg", aspect: 1.03 },
   { name: "Greylock", href: "/logos/investors/greylock.svg", aspect: 3.83 },
 ];
 

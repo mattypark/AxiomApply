@@ -93,7 +93,7 @@ const LABELS: { x: number; y: number; anchor: "start" | "middle" | "end" }[] = [
 ];
 
 /** The investor card in the middle, and the box its logo fits inside. */
-const CARD = { width: 210, height: 84, logoWidth: 160, logoHeight: 44 };
+const CARD = { width: 210, height: 84, logoWidth: 150, logoHeight: 52 };
 
 const TRAVEL_MS = 1200;
 const DWELL_MS = 1150;
