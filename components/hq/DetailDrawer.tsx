@@ -189,6 +189,16 @@ export function DetailDrawer({
                 ))}
             </dl>
 
+            {!app.answers.length ? (
+              <section className="rounded-[20px] bg-[#f1ead6] p-4 text-[14px] leading-relaxed text-ms-ink">
+                <p className="font-medium">Their answers aren&rsquo;t copied here yet.</p>
+                <p className="mt-1 text-ms-body">
+                  {app.sheetRow ? `They're in the Sheet, row #${app.sheetRow}. ` : "They're in the Sheet. "}
+                  Press &ldquo;Push decisions to site&rdquo; in the Sheet (with the updated script) and they&rsquo;ll fill in here.
+                </p>
+              </section>
+            ) : null}
+
             {app.answers.length ? (
               <section>
                 <p className="text-[13px] font-medium text-ms-muted">Their answers</p>

@@ -138,9 +138,22 @@ function parseTranscript(message: unknown): Record<string, string> {
   return values;
 }
 
+/** Non-empty strings only, so a blank column never hides the same answer kept elsewhere. */
+function filled(source: unknown): Record<string, string> {
+  if (!source || typeof source !== "object") return {};
+  return Object.fromEntries(
+    Object.entries(source as Record<string, unknown>).filter(
+      (entry): entry is [string, string] => typeof entry[1] === "string" && entry[1].trim() !== "",
+    ),
+  );
+}
+
 function answersFor(side: Side, record: Record<string, unknown>): HqAnswer[] {
-  const extra = side === "chapter" && record.sheet_row && typeof record.sheet_row === "object" ? (record.sheet_row as Record<string, unknown>) : {};
-  const values: Record<string, unknown> = side === "startup" ? parseTranscript(record.message) : { ...extra, ...record };
+  // `sheet_row` keeps everything a web submission sent (interns) or every
+  // answer the table has no column for (chapters). Columns win when both
+  // have a value; either fills in for the other when one is blank.
+  const values: Record<string, unknown> =
+    side === "startup" ? parseTranscript(record.message) : { ...filled(record.sheet_row), ...filled(record) };
   const answers: HqAnswer[] = [];
   for (const section of QUESTION_SETS[side].sections) {
     for (const question of section.questions) {
