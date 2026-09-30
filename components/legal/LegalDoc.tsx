@@ -1,7 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
-import { GlassPanel } from "@/components/glass/GlassPanel";
+import { HomeFooter } from "@/components/home/HomeFooter";
 import { einLine, ORG_LEGAL_NAME } from "@/lib/org";
-import { Reveal } from "@/components/motion/Reveal";
 
 export type LegalSection = {
   heading: string;
@@ -19,85 +19,125 @@ type Props = {
   sections: LegalSection[];
 };
 
+/** Both founders, so a question never waits on one inbox. */
+const CONTACT = ["matthew@axiompathways.org", "frank@axiompathways.org"] as const;
+
+/** "Who we are" → "who-we-are", for the contents links. */
+function anchor(heading: string) {
+  return heading
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 /**
- * Shared chrome for /privacy and /terms — back link, title, last-updated
- * stamp, and a readable measure. Both documents stay plain text so they can
- * be edited without touching layout.
+ * Privacy, Terms, Cookies and the About pages, in the home page's system:
+ * the path-coloured ground under a big display title, then the document on
+ * white, numbered, at a reading measure, with the contents pinned beside it
+ * on wide screens. The documents themselves stay plain data in each page, so
+ * the words can change without touching this layout.
  */
 export function LegalDoc({ title, updated, intro, sections }: Props) {
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-3xl flex-col px-5 py-10 sm:px-8">
-      <Link
-        href="/"
-        className="w-fit text-[0.85rem] text-muted transition-[color,transform] duration-300 hover:-translate-x-1 hover:text-ink"
-      >
-        ← Back
-      </Link>
+    <div className="ms bg-white">
+      <div className="ms-ground">
+        <header className="mx-auto flex h-16 w-full max-w-[90rem] items-center justify-between px-5 sm:h-20 sm:px-[6.5%]">
+          <Link href="/" className="flex items-center gap-2" aria-label="Axiom home">
+            <Image src="/axiom-mark-256.png" alt="" width={256} height={256} className="h-8 w-8 object-contain" />
+            <span className="text-[22px] font-semibold tracking-[-0.04em] text-ms-ink">axiom</span>
+          </Link>
+          <Link href="/onboarding" className="ms-pill h-11 px-6 text-[15px]">
+            Apply
+          </Link>
+        </header>
 
-      <Reveal className="mt-14">
-        <span className="kicker">Axiom Pathways</span>
-        <h1 className="mt-2 text-[clamp(2.2rem,6vw,3.4rem)] font-semibold tracking-tight text-ink">
-          {title}
-        </h1>
-      </Reveal>
-
-      <Reveal delay={0.08}>
-        <p className="mt-3 font-mono text-[0.74rem] tracking-[0.1em] text-faint uppercase">
-          Last updated {updated}
-        </p>
-        <p className="mt-5 max-w-[58ch] leading-relaxed text-muted">{intro}</p>
-      </Reveal>
-
-      <div className="mt-12 flex flex-col gap-4">
-        {sections.map((section, i) => (
-          <Reveal key={section.heading} delay={0.12 + i * 0.04}>
-            <GlassPanel className="flex flex-col gap-3 p-7">
-              <h2 className="text-[1.15rem] font-semibold tracking-tight text-ink">
-                {section.heading}
-              </h2>
-              {section.body.map((paragraph) => (
-                <p
-                  key={paragraph.slice(0, 40)}
-                  className="max-w-[62ch] text-[0.95rem] leading-relaxed text-muted"
-                >
-                  {paragraph}
-                </p>
-              ))}
-              {section.list && (
-                <ul className="mt-1 flex flex-col gap-2">
-                  {section.list.map((item) => (
-                    <li
-                      key={item.slice(0, 40)}
-                      className="max-w-[62ch] pl-4 text-[0.95rem] leading-relaxed text-muted before:-ml-4 before:inline-block before:w-4 before:text-forest before:content-['—']"
-                    >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </GlassPanel>
-          </Reveal>
-        ))}
+        <div className="mx-auto w-full max-w-[90rem] px-5 pt-10 pb-14 sm:px-[6.5%] sm:pt-16 sm:pb-20">
+          <p className="text-[14px] font-medium text-ms-body sm:text-[16px]">
+            Axiom Pathways · Last updated {updated}
+          </p>
+          <h1 className="ms-display mt-3 text-[clamp(2.6rem,8vw,6rem)] text-ms-ink">{title}</h1>
+          <p className="mt-5 max-w-[46ch] text-[17px] leading-relaxed text-ms-body sm:text-[20px]">{intro}</p>
+        </div>
       </div>
 
-      <Reveal delay={0.4}>
-        <p className="mt-10 text-[0.85rem] text-muted">
-          Questions about this document?{" "}
-          <a
-            href="mailto:matthew@axiompathways.org"
-            className="font-medium text-forest transition-colors hover:text-forest-deep"
-          >
-            matthew@axiompathways.org
-          </a>
-        </p>
+      <main className="mx-auto grid w-full max-w-[90rem] gap-10 px-5 py-12 sm:px-[6.5%] sm:py-20 lg:grid-cols-[16rem_1fr] lg:gap-20">
+        <nav aria-label="Contents" className="hidden lg:block">
+          <div className="sticky top-10">
+            <p className="text-[13px] font-medium text-ms-muted">Contents</p>
+            <ol className="mt-4 flex flex-col gap-2.5 text-[15px]">
+              {sections.map((section, i) => (
+                <li key={section.heading}>
+                  <a
+                    href={`#${anchor(section.heading)}`}
+                    className="flex gap-3 text-ms-body transition-colors hover:text-ms-ink"
+                  >
+                    <span className="w-5 shrink-0 text-ms-green tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+                    {section.heading}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </nav>
 
-        {/* Entity identification. Legal documents should say which legal
-            entity is making the promises. */}
-        <p className="mt-4 font-mono text-[0.7rem] leading-relaxed tracking-[0.08em] text-faint uppercase">
-          {ORG_LEGAL_NAME}
-          {einLine() ? ` · ${einLine()}` : ""}
-        </p>
-      </Reveal>
-    </main>
+        <div className="min-w-0">
+          {sections.map((section, i) => (
+            <section
+              key={section.heading}
+              id={anchor(section.heading)}
+              className="scroll-mt-10 border-t border-ms-ink/10 py-8 first:border-t-0 first:pt-0 sm:py-10"
+            >
+              <p className="text-[13px] font-medium text-ms-green tabular-nums">{String(i + 1).padStart(2, "0")}</p>
+              <h2 className="mt-2 text-[22px] font-medium tracking-[-0.03em] text-ms-ink sm:text-[28px]">
+                {section.heading}
+              </h2>
+              <div className="mt-4 flex max-w-[64ch] flex-col gap-3.5">
+                {section.body.map((paragraph) => (
+                  <p key={paragraph.slice(0, 40)} className="text-[15.5px] leading-[1.65] text-ms-body sm:text-[17px]">
+                    {paragraph}
+                  </p>
+                ))}
+                {section.list ? (
+                  <ul className="flex flex-col gap-2.5">
+                    {section.list.map((item) => (
+                      <li
+                        key={item.slice(0, 40)}
+                        className="relative pl-6 text-[15.5px] leading-[1.65] text-ms-body sm:text-[17px]"
+                      >
+                        <span aria-hidden="true" className="absolute top-[0.8em] left-0 h-1.5 w-1.5 rounded-full bg-ms-green" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+            </section>
+          ))}
+
+          <aside className="mt-4 rounded-[28px] bg-ms-sky-soft p-6 sm:mt-8 sm:p-8">
+            <p className="text-[20px] font-medium tracking-[-0.03em] text-ms-ink sm:text-[24px]">Questions about this?</p>
+            <p className="mt-2 text-[15.5px] leading-relaxed text-ms-body sm:text-[17px]">
+              Email us and a person answers:{" "}
+              {CONTACT.map((email, i) => (
+                <span key={email}>
+                  {i > 0 ? " or " : ""}
+                  <a href={`mailto:${email}`} className="font-medium text-ms-ink underline underline-offset-4 hover:opacity-70">
+                    {email}
+                  </a>
+                </span>
+              ))}
+              .
+            </p>
+            {/* Legal documents should say which legal entity is making the promises. */}
+            <p className="mt-5 text-[13px] text-ms-muted">
+              {ORG_LEGAL_NAME}
+              {einLine() ? ` · ${einLine()}` : ""}
+            </p>
+          </aside>
+        </div>
+      </main>
+
+      <HomeFooter />
+    </div>
   );
 }
