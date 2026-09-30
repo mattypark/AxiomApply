@@ -24,12 +24,13 @@ export default async function OnboardingPage({
   const profile = await getProfile();
 
   // An explicit side wins over the role redirect: an intern who wants to start
-  // a chapter must not be bounced to /home before seeing the form. Chapters
-  // are additive, so having a role cannot rule one out.
-  if (!requested) {
-    if (profile?.role === "intern") redirect("/home");
-    if (profile?.role === "startup") redirect("/startup/home");
-  }
+  // a chapter must not be bounced before seeing the form. Chapters are
+  // additive, so having a role cannot rule one out.
+  //
+  // Interns are never bounced to /home from here: /home only shows a sent
+  // application and sends anyone without one back to this page, so the two
+  // redirecting to each other looped for an intern who hadn't applied yet.
+  if (!requested && profile?.role === "startup") redirect("/startup/home");
 
   const user = await getUser();
 

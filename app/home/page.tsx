@@ -17,7 +17,8 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const user = await getUser();
-  if (!user?.email) redirect("/onboarding");
+  // An explicit side, so /onboarding shows the form rather than routing by role.
+  if (!user?.email) redirect("/onboarding?side=intern");
 
   const [application, chapter] = await Promise.all([getMyApplication(), getMyChapter()]);
   if (application) {
@@ -42,5 +43,5 @@ export default async function HomePage() {
       />
     );
   }
-  redirect("/onboarding");
+  redirect("/onboarding?side=intern");
 }

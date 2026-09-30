@@ -59,12 +59,19 @@ export async function getMyApplication(): Promise<MyApplication | null> {
   const user = await getUser();
   if (!user) return null;
 
-  const supabase = await getServerSupabase();
+  // Read with the service role, filtered to this user, not through RLS. The
+  // live table was created by hand (see 0017_applications_shape.sql) and its
+  // select-own policy can't be relied on: without it every applicant reads
+  // nothing, and /home sent people who had just applied back to the form.
+  // The filter is the whole guard, so it uses the session's own verified id
+  // and email and an EXACT match: ilike would let `_` or `%` in an address
+  // match someone else's row. Addresses are stored lowercased by every writer.
+  const supabase = getAdminSupabase() ?? (await getServerSupabase());
   if (!supabase) return null;
 
   const email = user.email?.toLowerCase().trim();
   const filter = email
-    ? `user_id.eq.${user.id},email.ilike.${email}`
+    ? `user_id.eq.${user.id},email.eq."${email.replace(/"/g, "")}"`
     : `user_id.eq.${user.id}`;
 
   const { data, error } = await supabase
