@@ -39,7 +39,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Skip static assets and images.
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|gif|svg|webp|ico)).*)",
+    // Skip static assets, images and the PostHog proxy (no session there).
+    "/((?!_next/static|_next/image|favicon.ico|ingest/|.*\\.(?:png|jpg|jpeg|gif|svg|webp|ico)).*)",
   ],
 };

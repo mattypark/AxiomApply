@@ -3,16 +3,17 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
+import { CONSENT_EVENT } from "@/components/analytics/PostHogAnalytics";
 
 const KEY = "ax_cookie_choice";
 
 /**
  * Cookie notice.
  *
- * The site currently sets only what it needs to work — the Supabase auth
- * session — so there is nothing to gate. This records a choice, remembers it,
- * and stays honest about that rather than implying a tracking stack that
- * doesn't exist. Dismissing without choosing is treated as essential-only.
+ * The site sets only what it needs to work — the Supabase auth session —
+ * plus, after "Accept all", PostHog's visitor id in local storage (without
+ * it PostHog keeps the id in memory only). Dismissing without choosing is
+ * treated as essential-only.
  */
 export function CookieBanner() {
   const [show, setShow] = useState(false);
@@ -31,6 +32,8 @@ export function CookieBanner() {
     } catch {
       /* ignore */
     }
+    // analytics only stores anything once someone accepts; tell it now
+    window.dispatchEvent(new CustomEvent(CONSENT_EVENT, { detail: value }));
     setShow(false);
   };
 

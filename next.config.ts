@@ -10,7 +10,28 @@ const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL
   ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
   : null;
 
+/**
+ * PostHog goes through our own domain (/ingest) so ad blockers don't drop
+ * page views. US region; set NEXT_PUBLIC_POSTHOG_REGION=eu for an EU project.
+ */
+const posthogHost =
+  process.env.NEXT_PUBLIC_POSTHOG_REGION === "eu" ? "eu" : "us";
+
 const nextConfig: NextConfig = {
+  // PostHog's API paths end in a slash; Next would otherwise redirect them
+  skipTrailingSlashRedirect: true,
+  async rewrites() {
+    return [
+      {
+        source: "/ingest/static/:path*",
+        destination: `https://${posthogHost}-assets.i.posthog.com/static/:path*`,
+      },
+      {
+        source: "/ingest/:path*",
+        destination: `https://${posthogHost}.i.posthog.com/:path*`,
+      },
+    ];
+  },
   images: {
     remotePatterns: supabaseHost
       ? [

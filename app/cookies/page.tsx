@@ -28,8 +28,8 @@ const sections: LegalSection[] = [
   {
     heading: "Analytics — optional",
     body: [
-      "We use Vercel Analytics to count page views and see which pages get used. It does not use cookies to follow you across other websites, and it does not build a profile of you.",
-      "If you choose Essential only, this is what gets switched off.",
+      "We use Vercel Analytics and PostHog to count page views and see which pages get used. Neither follows you across other websites or builds a profile of you, and we never record your screen.",
+      "Until you choose Accept all, PostHog keeps its visitor id in memory only and forgets it when you close the tab. Accept all lets it remember your browser in local storage, so a return visit is not counted as a new person.",
     ],
   },
   {

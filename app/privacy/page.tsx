@@ -41,6 +41,7 @@ const sections: LegalSection[] = [
     list: [
       "Supabase — database and authentication.",
       "Vercel — hosting and page analytics.",
+      "PostHog — page analytics: which pages are visited, for how long, and which site sent the visitor. No session recordings, and nothing from the HQ admin area.",
       "Resend — sending email.",
       "Google — only if you choose to sign in with Google.",
       "Startups in the network — when you apply or ask to be matched, we share the relevant parts of your application with the startups being considered. We do not hand your profile to a startup you have not applied to.",
