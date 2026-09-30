@@ -6,6 +6,7 @@ import { DISCORD_INVITE_URL, einLine } from "@/lib/org";
 
 const LINKS = [
   { label: "Internship feed", href: "/internships" },
+  { label: "Articles", href: "/articles" },
   { label: "For startups", href: "/for-startups" },
   { label: "Contact", href: "/contact" },
   { label: "Privacy", href: "/privacy" },

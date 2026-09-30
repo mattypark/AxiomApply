@@ -48,7 +48,15 @@ export function HomeNav({ ctaHref, signedIn }: { ctaHref: string; signedIn: bool
           <a href="#faq" className="transition-opacity hover:opacity-60">
             Questions
           </a>
+          <Link href="/articles" className="transition-opacity hover:opacity-60">
+            Articles
+          </Link>
         </div>
+
+        {/* On phones the section links are hidden; Articles is a page, not a section, so it stays. */}
+        <Link href="/articles" className="ml-auto mr-3 text-[15px] font-medium text-ms-ink transition-opacity hover:opacity-60 sm:hidden">
+          Articles
+        </Link>
 
         <Link href={signedIn ? "/home" : ctaHref} className="ms-pill h-11 shrink-0 px-6 text-[15px]">
           {signedIn ? "Your home" : "Apply"}
