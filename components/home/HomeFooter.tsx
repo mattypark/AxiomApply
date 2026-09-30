@@ -7,8 +7,8 @@ import { DISCORD_INVITE_URL, einLine } from "@/lib/org";
 const LINKS = [
   { label: "Internship feed", href: "/internships" },
   { label: "Articles", href: "/articles" },
-  { label: "For startups", href: "/for-startups" },
-  { label: "Contact", href: "/contact" },
+  // Straight to both founders' inboxes rather than a form.
+  { label: "Contact", href: "mailto:matthew@axiompathways.org,frank@axiompathways.org" },
   { label: "Privacy", href: "/privacy" },
   { label: "Terms", href: "/terms" },
 ] as const;
@@ -29,11 +29,17 @@ export function HomeFooter() {
           <span className="text-[20px] font-semibold tracking-[-0.04em] text-ms-ink">axiom</span>
         </Link>
         <nav className="flex flex-wrap gap-x-5 gap-y-1.5 text-[13.5px] font-medium text-ms-body sm:gap-x-7 sm:gap-y-2 sm:text-[15px]">
-          {LINKS.map((link) => (
-            <Link key={link.href} href={link.href} className="transition-colors hover:text-ms-ink">
-              {link.label}
-            </Link>
-          ))}
+          {LINKS.map((link) =>
+            link.href.startsWith("mailto:") ? (
+              <a key={link.href} href={link.href} className="transition-colors hover:text-ms-ink">
+                {link.label}
+              </a>
+            ) : (
+              <Link key={link.href} href={link.href} className="transition-colors hover:text-ms-ink">
+                {link.label}
+              </Link>
+            ),
+          )}
         </nav>
       </div>
       <div className="mx-auto mt-4 flex w-full max-w-[90rem] flex-wrap items-center justify-between gap-3 text-[12.5px] text-ms-muted sm:mt-6 sm:gap-4 sm:text-[14px]">

@@ -38,8 +38,11 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      // Old Astro paths → new equivalents
-      { source: "/startups", destination: "/for-startups", permanent: true },
+      // Old Astro paths → new equivalents. The startup pitch page is gone
+      // (2026-09-30), so old links to it land on the home page instead of a
+      // 404. Temporary, so a future startup page can take the path back.
+      { source: "/startups", destination: "/", permanent: false },
+      { source: "/for-startups", destination: "/", permanent: false },
     ];
   },
 };
