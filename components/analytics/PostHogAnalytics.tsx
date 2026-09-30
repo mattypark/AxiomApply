@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import posthog from "posthog-js";
 
 /** Same key the cookie banner writes ("all" | "essential"). */
 const CONSENT_KEY = "ax_cookie_choice";
@@ -45,31 +44,42 @@ const consented = () => {
  */
 export function PostHogAnalytics() {
   useEffect(() => {
-    if (!KEY || posthog.__loaded) return;
+    if (!KEY) return;
+    let cancelled = false;
+    let onChoice: ((e: Event) => void) | null = null;
 
-    posthog.init(KEY, {
-      api_host: "/ingest",
-      ui_host: UI_HOST,
-      capture_pageview: "history_change",
-      capture_pageleave: true,
-      autocapture: false,
-      disable_session_recording: true,
-      disable_surveys: true,
-      person_profiles: "identified_only",
-      persistence: consented() ? "localStorage+cookie" : "memory",
-      before_send: (event) => {
-        if (!event) return null;
-        const url = event.properties?.$current_url as string | undefined;
-        return isHq(url) ? null : event;
-      },
+    // its own chunk, fetched after the page is up: never weighs on first paint
+    import("posthog-js").then(({ default: posthog }) => {
+      if (cancelled) return;
+      if (!posthog.__loaded) {
+        posthog.init(KEY, {
+          api_host: "/ingest",
+          ui_host: UI_HOST,
+          capture_pageview: "history_change",
+          capture_pageleave: true,
+          autocapture: false,
+          disable_session_recording: true,
+          disable_surveys: true,
+          person_profiles: "identified_only",
+          persistence: consented() ? "localStorage+cookie" : "memory",
+          before_send: (event) => {
+            if (!event) return null;
+            const url = event.properties?.$current_url as string | undefined;
+            return isHq(url) ? null : event;
+          },
+        });
+      }
+      onChoice = (e: Event) => {
+        const choice = (e as CustomEvent<string>).detail;
+        posthog.set_config({ persistence: choice === "all" ? "localStorage+cookie" : "memory" });
+      };
+      window.addEventListener(CONSENT_EVENT, onChoice);
     });
 
-    const onChoice = (e: Event) => {
-      const choice = (e as CustomEvent<string>).detail;
-      posthog.set_config({ persistence: choice === "all" ? "localStorage+cookie" : "memory" });
+    return () => {
+      cancelled = true;
+      if (onChoice) window.removeEventListener(CONSENT_EVENT, onChoice);
     };
-    window.addEventListener(CONSENT_EVENT, onChoice);
-    return () => window.removeEventListener(CONSENT_EVENT, onChoice);
   }, []);
 
   return null;
