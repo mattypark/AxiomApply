@@ -23,7 +23,7 @@ export default async function HqPage({ params }: { params: Promise<{ code: strin
   const { code } = await params;
   const actor = await gateHq(code);
   return (
-    <HqFrame>
+    <HqFrame code={code} current="applications">
       <HqLive code={code} viewer={actor.name} />
     </HqFrame>
   );
